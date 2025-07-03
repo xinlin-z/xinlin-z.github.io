@@ -6,8 +6,15 @@
     <description>Recent content on Xinlin&#39;s Blog</description>
     <generator>Hugo -- 0.147.8</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 18 Jun 2025 20:48:03 +1200</lastBuildDate>
+    <lastBuildDate>Wed, 02 Jul 2025 11:14:25 +1200</lastBuildDate>
     <atom:link href="https://xinlin-z.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Prompt Engineering Review</title>
+      <link>https://xinlin-z.github.io/posts/prompt-engineering-review/</link>
+      <pubDate>Wed, 02 Jul 2025 11:14:25 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/posts/prompt-engineering-review/</guid>
+      <description>&lt;p&gt;How you prompt Large Language Model (LLM), like chatGPT or Gemini, decides the responses you can get from. These techniques are called Prompt Engineering, which is one of the very basic skills that everyone should know a bit in today&amp;rsquo;s AI era. It&amp;rsquo;s crucial for both our daily using with chatGPT or Gemini and constructing AI agents. In this post, I try to review common prompt engineering techniques, and some techinical background knowledge about LLMs.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Backtracking Algorithm</title>
       <link>https://xinlin-z.github.io/posts/backtracking/</link>
