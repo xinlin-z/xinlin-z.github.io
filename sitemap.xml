@@ -2,20 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://xinlin-z.github.io/tags/llm/</loc>
+    <lastmod>2025-07-02T11:14:25+12:00</lastmod>
+  </url><url>
     <loc>https://xinlin-z.github.io/posts/</loc>
+    <lastmod>2025-07-02T11:14:25+12:00</lastmod>
+  </url><url>
+    <loc>https://xinlin-z.github.io/tags/prompt/</loc>
     <lastmod>2025-07-02T11:14:25+12:00</lastmod>
   </url><url>
     <loc>https://xinlin-z.github.io/posts/prompt-engineering-review/</loc>
     <lastmod>2025-07-02T11:14:25+12:00</lastmod>
   </url><url>
+    <loc>https://xinlin-z.github.io/tags/</loc>
+    <lastmod>2025-07-02T11:14:25+12:00</lastmod>
+  </url><url>
     <loc>https://xinlin-z.github.io/</loc>
     <lastmod>2025-07-02T11:14:25+12:00</lastmod>
+  </url><url>
+    <loc>https://xinlin-z.github.io/tags/algorithm/</loc>
+    <lastmod>2025-06-18T20:48:03+12:00</lastmod>
+  </url><url>
+    <loc>https://xinlin-z.github.io/tags/backtracking/</loc>
+    <lastmod>2025-06-18T20:48:03+12:00</lastmod>
   </url><url>
     <loc>https://xinlin-z.github.io/posts/backtracking/</loc>
     <lastmod>2025-06-18T20:48:03+12:00</lastmod>
   </url><url>
     <loc>https://xinlin-z.github.io/categories/</loc>
-  </url><url>
-    <loc>https://xinlin-z.github.io/tags/</loc>
   </url>
 </urlset>

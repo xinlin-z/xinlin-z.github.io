@@ -13,7 +13,7 @@
       <link>https://xinlin-z.github.io/posts/prompt-engineering-review/</link>
       <pubDate>Wed, 02 Jul 2025 11:14:25 +1200</pubDate>
       <guid>https://xinlin-z.github.io/posts/prompt-engineering-review/</guid>
-      <description>&lt;p&gt;How you prompt Large Language Model (LLM), like chatGPT or Gemini, decides the responses you can get from. These techniques are called Prompt Engineering, which is one of the very basic skills that everyone should know a bit in today&amp;rsquo;s AI era. It&amp;rsquo;s crucial for both our daily using with chatGPT or Gemini and constructing AI agents. In this post, I try to review common prompt engineering techniques, and some techinical background knowledge about LLMs.&lt;/p&gt;</description>
+      <description>&lt;p&gt;How you prompt fine-tuned Large Language Model (LLM), such as chatGPT or Gemini, decides generally what kinds of responses you can get. These techniques are called Prompt Engineering, which is one of the very basic skills that everyone should know a bit in today&amp;rsquo;s AI era. It&amp;rsquo;s crucial for both our daily life while interacting with chatGPT or Gemini and constructing LLM-based AI agents. In this post, I try to review common prompt engineering techniques, and some necessary techinical background knowledge about LLMs.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Backtracking Algorithm</title>
@@ -22,7 +22,7 @@
       <guid>https://xinlin-z.github.io/posts/backtracking/</guid>
       <description>&lt;p&gt;Backtracking algorithm is an elegant way to realize nested loop using recursive to search the solution space for your problem, especially for those problems that the depth of nested loop could not be determined beforehand. In this post, I try to demonstrate how to understand and code backtracking algorithm step by step with lots of examples.&lt;/p&gt;
 &lt;h2 id=&#34;what-is-backtracking-algorithm&#34;&gt;What is Backtracking Algorithm?&lt;/h2&gt;
-&lt;p&gt;I would like to think of backtracking algorithm as a search method. Imaging you are in a forest and you need find a way out. There are multiple choices at each intersection, and you don&amp;rsquo;t know which direction is right exactly. So, you pick out one direction randomly or in any order you prefer and keep going. If it is a dead end, you go back and choose another direction, otherwise you find a way out. During the whole process, there might be lots of &amp;ldquo;going back and choosing again&amp;rdquo; moments which is actually the spirit of backtracking.&lt;/p&gt;</description>
+&lt;p&gt;I would like to think of backtracking algorithm as a search method. Imaging you are in a forest and you need find a way out. There are multiple choices at each intersection, and you have no idea about which direction or path is right. So, you pick out one direction randomly or in any order you like and keep on going. If it is a dead end, you go back and choose another direction, otherwise you find a way out. During the whole process, there might be lots of &amp;ldquo;going back and choosing again&amp;rdquo; moments which is actually the spirit of backtracking.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
