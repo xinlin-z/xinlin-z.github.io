@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Pages on Xinlin&#39;s Blog</title>
+    <link>https://xinlin-z.github.io/pages/</link>
+    <description>Recent content in Pages on Xinlin&#39;s Blog</description>
+    <generator>Hugo -- 0.147.8</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 14 Jul 2025 12:57:00 +1200</lastBuildDate>
+    <atom:link href="https://xinlin-z.github.io/pages/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>About Me</title>
+      <link>https://xinlin-z.github.io/pages/about/</link>
+      <pubDate>Mon, 14 Jul 2025 12:57:00 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/pages/about/</guid>
+      <description>&lt;p&gt;I am a &lt;strong&gt;Software Engineer&lt;/strong&gt; with many years&amp;rsquo; experience. This is a little place that I organize my knowledge and skills, and express my technical ideas as well. Thanks for stopping by!&lt;/p&gt;
+&lt;p&gt;Feel free to connect with me on &lt;a href=&#34;https://www.linkedin.com/in/xinlinz&#34;&gt;LinkedIn&lt;/a&gt; or &lt;a href=&#34;https://github.com/xinlin-z&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Currently, I am Master&amp;rsquo;s Degree AUT student in New Zealand and looking for an internship opportunity in Auckland for my summer holiday (Nov. 2025 &amp;ndash; Feb. 2026). Thanks in advance.&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
