@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Data Structure on Xinlin&#39;s Blog</title>
+    <link>https://xinlin-z.github.io/tags/data-structure/</link>
+    <description>Recent content in Data Structure on Xinlin&#39;s Blog</description>
+    <generator>Hugo -- 0.147.8</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 18 Jul 2025 12:51:03 +1200</lastBuildDate>
+    <atom:link href="https://xinlin-z.github.io/tags/data-structure/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Built-in Data Structures and Algorithms in Python</title>
+      <link>https://xinlin-z.github.io/posts/builtin-dsa-python/</link>
+      <pubDate>Fri, 18 Jul 2025 12:51:03 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/posts/builtin-dsa-python/</guid>
+      <description>&lt;p&gt;It&amp;rsquo;s very important to choose the right data structure and algorithm for various programming tasks. Even when we are using high-level programming language such as Python, it&amp;rsquo;s still crucial in terms of time and space complexity. In this post, I&amp;rsquo;ll try to summary all built-in data structures and algorithms in Python as a recap and reference. There are so many details which could be covered in this post, please refer to Python&amp;rsquo;s official documents.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
