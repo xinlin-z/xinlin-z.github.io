@@ -2,19 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://xinlin-z.github.io/tags/algorithm/</loc>
+    <lastmod>2025-07-18T12:51:03+12:00</lastmod>
+  </url><url>
+    <loc>https://xinlin-z.github.io/posts/builtin-dsa-python/</loc>
+    <lastmod>2025-07-18T12:51:03+12:00</lastmod>
+  </url><url>
+    <loc>https://xinlin-z.github.io/tags/data-structure/</loc>
+    <lastmod>2025-07-18T12:51:03+12:00</lastmod>
+  </url><url>
+    <loc>https://xinlin-z.github.io/posts/</loc>
+    <lastmod>2025-07-18T12:51:03+12:00</lastmod>
+  </url><url>
+    <loc>https://xinlin-z.github.io/tags/python/</loc>
+    <lastmod>2025-07-18T12:51:03+12:00</lastmod>
+  </url><url>
+    <loc>https://xinlin-z.github.io/tags/</loc>
+    <lastmod>2025-07-18T12:51:03+12:00</lastmod>
+  </url><url>
+    <loc>https://xinlin-z.github.io/</loc>
+    <lastmod>2025-07-18T12:51:03+12:00</lastmod>
+  </url><url>
     <loc>https://xinlin-z.github.io/pages/about/</loc>
     <lastmod>2025-07-14T12:57:00+12:00</lastmod>
   </url><url>
     <loc>https://xinlin-z.github.io/pages/</loc>
     <lastmod>2025-07-14T12:57:00+12:00</lastmod>
   </url><url>
-    <loc>https://xinlin-z.github.io/</loc>
-    <lastmod>2025-07-14T12:57:00+12:00</lastmod>
-  </url><url>
     <loc>https://xinlin-z.github.io/tags/llm/</loc>
-    <lastmod>2025-07-02T11:14:25+12:00</lastmod>
-  </url><url>
-    <loc>https://xinlin-z.github.io/posts/</loc>
     <lastmod>2025-07-02T11:14:25+12:00</lastmod>
   </url><url>
     <loc>https://xinlin-z.github.io/tags/prompt-engineering/</loc>
@@ -22,12 +37,6 @@
   </url><url>
     <loc>https://xinlin-z.github.io/posts/prompt-engineering-review/</loc>
     <lastmod>2025-07-02T11:14:25+12:00</lastmod>
-  </url><url>
-    <loc>https://xinlin-z.github.io/tags/</loc>
-    <lastmod>2025-07-02T11:14:25+12:00</lastmod>
-  </url><url>
-    <loc>https://xinlin-z.github.io/tags/algorithm/</loc>
-    <lastmod>2025-06-18T20:48:03+12:00</lastmod>
   </url><url>
     <loc>https://xinlin-z.github.io/tags/backtracking/</loc>
     <lastmod>2025-06-18T20:48:03+12:00</lastmod>
