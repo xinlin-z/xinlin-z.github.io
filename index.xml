@@ -13,23 +13,27 @@
       <link>https://xinlin-z.github.io/posts/builtin-dsa-python/</link>
       <pubDate>Fri, 18 Jul 2025 12:51:03 +1200</pubDate>
       <guid>https://xinlin-z.github.io/posts/builtin-dsa-python/</guid>
-      <description>&lt;p&gt;It&amp;rsquo;s very important to choose the right data structure and algorithm for various programming tasks. Even when we are using high-level programming language such as Python, it&amp;rsquo;s still crucial in terms of time and space complexity. In this post, I&amp;rsquo;ll try to summary all built-in data structures and algorithms in Python as a recap and reference. There are so many details which could be covered in this post, please refer to Python&amp;rsquo;s official documents.&lt;/p&gt;</description>
+      <description>&lt;p&gt;It&amp;rsquo;s very important to choose the proper data structure and algorithm for various programming tasks. Even when we are using high-level programming language such as Python, it&amp;rsquo;s still crucial in terms of time and space complexity. In this post, I&amp;rsquo;ll try to summary all built-in data structures and algorithms in Python as a recap and reference. There are so many details which could be covered in this post, please refer to Python&amp;rsquo;s official documents.&lt;/p&gt;</description>
     </item>
     <item>
       <title>About Me</title>
       <link>https://xinlin-z.github.io/pages/about/</link>
       <pubDate>Mon, 14 Jul 2025 12:57:00 +1200</pubDate>
       <guid>https://xinlin-z.github.io/pages/about/</guid>
-      <description>&lt;p&gt;I am a &lt;strong&gt;Software Engineer&lt;/strong&gt; with many years&amp;rsquo; experience. This is a little place that I organize my knowledge and skills, and express my technical ideas as well. Thanks for stopping by!&lt;/p&gt;
+      <description>&lt;p&gt;I was a &lt;strong&gt;Software Engineer&lt;/strong&gt; with many years&amp;rsquo; experience, and now in my way to be an &lt;strong&gt;AI Engineer&lt;/strong&gt;. This is a little place where I organize my knowledge and skills, and express my technical ideas as well. Thanks for stopping by!&lt;/p&gt;
 &lt;p&gt;Feel free to connect with me on &lt;a href=&#34;https://www.linkedin.com/in/xinlinz&#34;&gt;LinkedIn&lt;/a&gt; or &lt;a href=&#34;https://github.com/xinlin-z&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Currently, I am Master&amp;rsquo;s Degree AUT student in New Zealand and looking for an internship opportunity in Auckland for my summer holiday (Nov. 2025 &amp;ndash; Feb. 2026). Thanks in advance.&lt;/strong&gt;&lt;/p&gt;</description>
+&lt;figure&gt;
+    &lt;img loading=&#34;lazy&#34; src=&#34;notebook_nj.jpg&#34;
+         alt=&#34;The earliest notebook I used when I was in Nanjing as a software engineer&#34;/&gt; &lt;figcaption&gt;
+            &lt;p&gt;The earliest notebook I used when I was in Nanjing as a software engineer&lt;/p&gt;</description>
     </item>
     <item>
       <title>Prompt Engineering Review</title>
       <link>https://xinlin-z.github.io/posts/prompt-engineering-review/</link>
       <pubDate>Wed, 02 Jul 2025 11:14:25 +1200</pubDate>
       <guid>https://xinlin-z.github.io/posts/prompt-engineering-review/</guid>
-      <description>&lt;p&gt;How you prompt fine-tuned Large Language Model (LLM), such as chatGPT or Gemini, decides generally what kinds of responses you can get. These techniques are called Prompt Engineering, which is one of the very basic skills that everyone should know a bit in today&amp;rsquo;s AI era. It&amp;rsquo;s crucial for both our daily life while interacting with chatGPT or Gemini and constructing LLM-based AI agents. In this post, I try to review common prompt engineering techniques, and some necessary techinical background knowledge about LLMs.&lt;/p&gt;</description>
+      <description>&lt;p&gt;&lt;strong&gt;First Update on Oct. 2nd, 2025&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;How you prompt the fine-tuned Large Language Model (LLM), such as ChatGPT or Gemini, decides generally what responses you can get. These techniques or tricks are called Prompt Engineering, which is one of the very basic skills that everyone should know a bit in today&amp;rsquo;s AI era. It&amp;rsquo;s crucial for both our daily life while talking with chatGPT or Gemini and building LLM-based AI agents.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Backtracking Algorithm</title>
