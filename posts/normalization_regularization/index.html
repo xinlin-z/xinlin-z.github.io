@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Normalization and Regularization | Xinlin&#39;s Blog</title>
+<meta name="keywords" content="Deep Learning, Machine Learning">
+<meta name="description" content="While training a model, a few important mathematical tricks have to be employed. Normalization and regularization techiniques belong to them. They are very important to successfully train models, and they are often confusing and hard to understand the details as well.
+Normalization vs Regularization
+To put it simple, normalization is applied on data. Before training a model, data should be normalized. There are a few irresistible benefits to do it. It stablizes the training process, speeds up model convergence significantly, and improve model&rsquo;s generalization capability.">
+<meta name="author" content="">
+<link rel="canonical" href="https://xinlin-z.github.io/posts/normalization_regularization/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://xinlin-z.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://xinlin-z.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://xinlin-z.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://xinlin-z.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://xinlin-z.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://xinlin-z.github.io/posts/normalization_regularization/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '\\[', right: '\\]', display: true}
+      ],
+      throwOnError : false
+    });"></script>
+<meta property="og:url" content="https://xinlin-z.github.io/posts/normalization_regularization/">
+  <meta property="og:site_name" content="Xinlin&#39;s Blog">
+  <meta property="og:title" content="Normalization and Regularization">
+  <meta property="og:description" content="While training a model, a few important mathematical tricks have to be employed. Normalization and regularization techiniques belong to them. They are very important to successfully train models, and they are often confusing and hard to understand the details as well.
+Normalization vs Regularization To put it simple, normalization is applied on data. Before training a model, data should be normalized. There are a few irresistible benefits to do it. It stablizes the training process, speeds up model convergence significantly, and improve model’s generalization capability.">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-10-12T15:23:25+12:00">
+    <meta property="article:modified_time" content="2025-10-12T15:23:25+12:00">
+    <meta property="article:tag" content="Deep Learning">
+    <meta property="article:tag" content="Machine Learning">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Normalization and Regularization">
+<meta name="twitter:description" content="While training a model, a few important mathematical tricks have to be employed. Normalization and regularization techiniques belong to them. They are very important to successfully train models, and they are often confusing and hard to understand the details as well.
+Normalization vs Regularization
+To put it simple, normalization is applied on data. Before training a model, data should be normalized. There are a few irresistible benefits to do it. It stablizes the training process, speeds up model convergence significantly, and improve model&rsquo;s generalization capability.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://xinlin-z.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Normalization and Regularization",
+      "item": "https://xinlin-z.github.io/posts/normalization_regularization/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Normalization and Regularization",
+  "name": "Normalization and Regularization",
+  "description": "While training a model, a few important mathematical tricks have to be employed. Normalization and regularization techiniques belong to them. They are very important to successfully train models, and they are often confusing and hard to understand the details as well.\nNormalization vs Regularization To put it simple, normalization is applied on data. Before training a model, data should be normalized. There are a few irresistible benefits to do it. It stablizes the training process, speeds up model convergence significantly, and improve model\u0026rsquo;s generalization capability.\n",
+  "keywords": [
+    "Deep Learning", "Machine Learning"
+  ],
+  "articleBody": "While training a model, a few important mathematical tricks have to be employed. Normalization and regularization techiniques belong to them. They are very important to successfully train models, and they are often confusing and hard to understand the details as well.\nNormalization vs Regularization To put it simple, normalization is applied on data. Before training a model, data should be normalized. There are a few irresistible benefits to do it. It stablizes the training process, speeds up model convergence significantly, and improve model’s generalization capability.\nRegularization is a model tuning technique by which the main purpose is to prevent overfitting while training. It has nothing to do with data, but adds constraint on learnable parameters of models. It also has the effect of improving model’s generalization.\nCola and Tom\nBoth normalization and regularization could be employed on model training process, and their intensities could be cancel out with each other.\nNormalization Applied on data.\nBasics Other terms for data normalization are feature scaling and standardization.\nMin-Max scaling. Scale feature values to $[0,1]$ range. $\\left(x_s=\\cfrac{x-x_{min}}{x_{max}-x_{min}}\\right)$ Standardization (Z-score). Scale feature values to Normal Distribution, $[-1,1]$ range with mean $0$ and standard deviation (s) of $1$. $\\left(z = \\cfrac{x-\\overline x}{s}\\right)$ After normalization, each feature loses its real-world unit and is forced to be distributed in a same small range.\nThe benefits of data normalization:\nEnsure each feature contribute equally. (Different features might have different ranges and units.) Stablize the training process. Speed up the model’s convergence. Improve the generalization and robustness. Data Leakage The most common pitfall of data normalization is data leakage. This happens when the data normalization is done before data splitting (split into train, validation and test).\nThere are two “correct” sequences to do data normalization:\n(very common) Data should be first split into train and test parts, and then normalize the whole train part. When you get the mean and standard deviation (std) values on the whole train dataset, apply them to test dataset and split train dataset into train and validation. (more rigorous) Data should be first split into train, validation and test parts. Then normalize train dataset, calculate mean and std values. Finally, apply mean and std on validation and test datasets. Approach 1 is acceptable because the difference is minimal and both train and validation datasets are used for model training and tuning. Performance on validation dataset is not the final interest. Both approaches prevent test dataset from being involved into mean and std calculcation. That’s important! I think another reason why approach 1 is very common is that it’s more convenient and requires less coding. E.g. the mean and std values for CIFAR-10 dataset from Internet are calculated on the whole train part by approach 1.\n# They are calculated from the whole train part. # RGB channels, each channel is treated as a feature. # Rescale [0,255] to [0,1] and then calculate z-socre! cifar10_mean = (0.4914, 0.4822, 0.4465) cifar10_std = (0.2470, 0.2435, 0.2616) Batch Normalization Batch normalization is not for data pre-processing. It’s employed as a learnable layer in neuron networks, especially CNNs. In order to stablize and speed up the model training, batch normalization is commonly applied just after convolutional layers.\nDeep neuron networks have multiple layers. After each layer’s calculation, the input for each layer would be shifted. Since we know the benefits of data normalization and apply it to input data, why not we apply it to the input data of hidden layers! That’s the intuition of batch normalization.\n$$y=\\gamma\\cdot\\cfrac{x-\\overline x}{s+\\epsilon}+\\beta$$\nThe input is $x$, and $y$ is output. Batch normalization calculcates $\\overline x$ and $s$ on mini-batch. $\\epsilon$ is a small fixed number used to prevent dividing zero. $\\gamma$ and $\\beta$ are two learnable parameters.\nBatch normalization is required a mini-batch while model training. Someone say the best mini-batch size is from 32 to 128. It depends! And batch normalization is usually implemented before activation layers. Experiments show a better performance of this implementation.\nConv/Linear → BatchNorm → Activation (ReLU/GELU etc.)\nIn CNNs on image tasks, batch normalization is applied on each channel (feature). One pair of $\\gamma$ and $\\beta$ for each channel. In fully connected layers, batch normalization is applied on each feature (neuron). One pair of $\\gamma$ and $\\beta$ for each feature.\nWhy there is a pair of learnable parameter for each feature? We don’t know what distribution for which layer is the best. There two parameters could make the model to learn the best input distribution, even undo the batch normalization.\nAnother key point in batch normalization is the running mean and std. They exist due to the fact that the difference between model training and prediction. Model training is executed by mini-batch. However, while prediction, there most likely be only one input each time. We cannot calculate mean and std on single input. So, the batch normalization layers consistently update the running mean and std, and use them while prediction.\nLayer Normalization Layer normalization normalizes the inputs across all features for each individual data sample. It’s very common in transformer architecture. Basically, layer normalization is the standardization of embedding vectors. (Embedding is the feature vector for each token. Each dimension is treated as a feature.)\nIn transformer architecture, the length of the sequence is undetermined. So, batch normalization is not applicable. Layer normalization is independently to the various sequence length.\nThe math formula for layer normalization is the same with batch normalization. And each feature gets a pair of $\\gamma$ and $\\beta$.\nIn the original transformer paper, the implementation of layer normalization is called Post-LN. Modern implementation is called Pre-LN.\n# Post-LN x = LN(x + Attention(x)) x = LN(x + FeedForward(x)) # Pre-LN, preferred! # clear gradient path # normalized input for each sub-layer x = x + Attention(LN(x)) x = x + FeedForward(LN(x)) Root Mean Square Layer Normalization (RMSNorm) Regularization Employed while training.\nBasics Regularization techniques are used to control the model training process, add penalties to large weights, or simulate ensemble.\nL1 \u0026 L2 L1 regularization adds a penalty which is the sum of the absolute value of all weights in a model to the loss function.\n$$loss=\\textit{data loss} + \\lambda\\cdot\\sum_i{\\left|w_i\\right|}$$\nL2 regularization adds a penalty which is the sum of the squared value of all weights in a model to the loss function. L2 regularization is also called weight decay.\n$$loss=\\textit{data loss} + \\cfrac{\\lambda}{2}\\cdot\\sum_i{w_i^2}$$\n$\\lambda$ is the penalty strength of regularization, which is a hyperparameter as well.\nL1 regularization could potentially drive weights to zero. However, L2 regularization couldn’t. Both of L1 and L2 regularization are trying to make the model learn smaller weights which could lower the sensitivity and keep the network’s response smooth. Imagin that there are infinity sets of weights for a model to performance well, and we choose the one with smaller weights by L1 or L2 regularization.\nPyTorch does not have built-in L1 regularization in the same way it has L2 regularization, but you can implement it easily.\nWeight Decay in SDG,Adam,AdamW In PyTorch, weight decay (L2 regularizaiton, default 0) is exactly the same with its mathematical definition in SGD optimizer (w/o momentum), but not exactly the same in Adam and AdamW optimizers (even though the name of the parameter is still called weight decay).\nSGD is a non-adaptive gradient optimizer, which means each parameter is updated by the same learning rate. Adam and AdamW are called adaptive gradient optimizers, which means the learning rate is rescaled respectively for each parameter by history gradient data.\nIn Adam optimizer, weight decay is first applied to current gradient, and then the decayed gradient would go through an adaptive mechanism before used to update parameters. The decoupled version AdamW (decouple the weight decay from gradient-based update) calculates adaptive gradient based only on current gradient, and then update parameters by adaptive gradient and weight decay. Neither Adam nor AdamW implements standard L2 regularization.\nDropout The key idea is to randomly drop units (along with their connections) from the neural network during training. This prevents units from co-adapting too much. During training, dropout samples from an exponential number of different “thinned” networks. At test time, it is easy to approximate the effect of averaging the predictions of all these thinned networks by simply using a single unthinned network that has smaller weights.\nDropout might be the most easy to use regularization technique in neuron network to prevent overfitting. However, where to put dropout layer? The most common place for dropout is after activation. In attention layer, dropout could be applied to attention weights and/or output.\nclass Head(nn.Module): \"\"\" one head of casual attention (self-attention, no mask) \"\"\" def __init__(self, input_size, head_size): super().__init__() self.H = head_size self.key = nn.Linear(input_size, head_size, bias=False) self.query = nn.Linear(input_size, head_size, bias=False) self.value = nn.Linear(input_size, head_size, bias=False) self.dropout = nn.Dropout(0.1) def forward(self, x): B, T, _ = x.shape # (B, T, input_size) k = self.key(x) # (B, T, head_size) q = self.query(x) # (B, T, head_size) v = self.value(x) # (B, T, head_size) # weight: (B,T,H) @ (B,H,T) -\u003e (B,T,T), scaled down by head size w = q @ k.transpose(-2,-1) * (self.H**-0.5) # Attention Dropout! w = self.dropout(F.softmax(w,dim=-1)) # (B,T,T) # return weighted aggregation of the values # (B,T,T) @ (B,T,H) -\u003e (B,T,H) return w @ v # Dropout is also applicable here! Dropout is applied element-wise to tensors, regardless of their shape. Each element is independently. So, dropout could be applied on any shape of tensor data.\nDropout not only randomly set element to be zero, but also rescale the remained element by $\\frac{1}{1-p}$ in order to keep the same expectation ($p$ is the dropout probability).\n\u003e\u003e\u003e a = torch.tensor((1,2,3,4),dtype=torch.float32) \u003e\u003e\u003e dropout = nn.Dropout(0.5) # p=0.5 \u003e\u003e\u003e dropout(a) tensor([0., 4., 6., 0.]) Spatial Dropout Conventional dropout is element-wise, while spatial dropout is channel-wise. Setting-to-zero and rescaling remainings are happened on a whole channle.\n\u003e\u003e\u003e a = torch.ones(1,4,2,2) # all 1 \u003e\u003e\u003e dropout = nn.Dropout2d(0.5) # spatial dropout \u003e\u003e\u003e dropout(a) tensor([[[[0., 0.], [0., 0.]], [[0., 0.], [0., 0.]], [[2., 2.], [2., 2.]], [[2., 2.], [2., 2.]]]]) In convolutional layer, spatial dropout could be more effective than element-wise dropout. Element-wise dropout does not suitable for convolutional layer due to the under-dropping problem (information leakage problem). Because nearby pixels are highly correlated, removed information could be recovered in following layer, like interpolation. Spatial dropout avoids this issue by channel-wise dropout operation.\nLike element-wise dropout, the best place for spatial dropout is still after activation.\nConv2d → BatchNorm → Activation → Dropout2d\nHowever, modern SOTA CNN architectures, such as ResNet, don’t use spatial dropout in convolutional layers at all because batch normalization technique reduced the need for the dropout method because of its regularization effect.\nDropBlock Early Stop Early stopping is generally considered a form of regularization, though it’s somewhat different from traditional regularization techniques. It implicitly regularizes by limiting optimization times.\nReference Ioffe, S., \u0026 Szegedy, C. (2015, June). Batch normalization: Accelerating deep network training by reducing internal covariate shift. In International conference on machine learning (pp. 448-456). pmlr. Ba, J. L., Kiros, J. R., \u0026 Hinton, G. E. (2016). Layer normalization. arXiv preprint arXiv:1607.06450. Loshchilov, I., \u0026 Hutter, F. (2017). Decoupled weight decay regularization. arXiv preprint arXiv:1711.05101. Srivastava, N., Hinton, G., Krizhevsky, A., Sutskever, I., \u0026 Salakhutdinov, R. (2014). Dropout: a simple way to prevent neural networks from overfitting. The journal of machine learning research, 15(1), 1929-1958. Lee, S., \u0026 Lee, C. (2020). Revisiting spatial dropout for regularizing convolutional neural networks. Multimedia Tools and Applications, 79(45), 34195-34207. ",
+  "wordCount" : "1897",
+  "inLanguage": "en",
+  "datePublished": "2025-10-12T15:23:25+12:00",
+  "dateModified": "2025-10-12T15:23:25+12:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://xinlin-z.github.io/posts/normalization_regularization/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Xinlin's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://xinlin-z.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://xinlin-z.github.io/" accesskey="h" title="Xinlin&#39;s Blog (Alt + H)">Xinlin&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://xinlin-z.github.io/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/pages/about" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Normalization and Regularization
+    </h1>
+    <div class="post-meta"><span title='2025-10-12 15:23:25 +1200 +1200'>October 12, 2025</span>
+
+</div>
+  </header> <div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#normalization-vs-regularization" aria-label="Normalization vs Regularization">Normalization vs Regularization</a></li>
+                <li>
+                    <a href="#normalization" aria-label="Normalization">Normalization</a><ul>
+                        
+                <li>
+                    <a href="#basics" aria-label="Basics">Basics</a></li>
+                <li>
+                    <a href="#data-leakage" aria-label="Data Leakage">Data Leakage</a></li>
+                <li>
+                    <a href="#batch-normalization" aria-label="Batch Normalization">Batch Normalization</a></li>
+                <li>
+                    <a href="#layer-normalization" aria-label="Layer Normalization">Layer Normalization</a></li></ul>
+                </li>
+                <li>
+                    <a href="#root-mean-square-layer-normalization-rmsnorm" aria-label="Root Mean Square Layer Normalization (RMSNorm)">Root Mean Square Layer Normalization (RMSNorm)</a></li>
+                <li>
+                    <a href="#regularization" aria-label="Regularization">Regularization</a><ul>
+                        
+                <li>
+                    <a href="#basics-1" aria-label="Basics">Basics</a></li>
+                <li>
+                    <a href="#l1--l2" aria-label="L1 &amp; L2">L1 &amp; L2</a></li>
+                <li>
+                    <a href="#weight-decay-in-sdgadamadamw" aria-label="Weight Decay in SDG,Adam,AdamW">Weight Decay in SDG,Adam,AdamW</a></li>
+                <li>
+                    <a href="#dropout" aria-label="Dropout">Dropout</a></li>
+                <li>
+                    <a href="#spatial-dropout" aria-label="Spatial Dropout">Spatial Dropout</a></li>
+                <li>
+                    <a href="#dropblock" aria-label="DropBlock">DropBlock</a></li>
+                <li>
+                    <a href="#early-stop" aria-label="Early Stop">Early Stop</a></li></ul>
+                </li>
+                <li>
+                    <a href="#reference" aria-label="Reference">Reference</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>While training a model, a few important mathematical tricks have to be employed. Normalization and regularization techiniques belong to them. They are very important to successfully train models, and they are often confusing and hard to understand the details as well.</p>
+<h2 id="normalization-vs-regularization">Normalization vs Regularization<a hidden class="anchor" aria-hidden="true" href="#normalization-vs-regularization">#</a></h2>
+<p>To put it simple, normalization is applied on data. Before training a model, data should be normalized. There are a few irresistible benefits to do it. It stablizes the training process, speeds up model convergence significantly, and improve model&rsquo;s generalization capability.</p>
+<p>Regularization is a model tuning technique by which the main purpose is to prevent overfitting while training. It has nothing to do with data, but adds constraint on learnable parameters of models. It also has the effect of improving model&rsquo;s generalization.</p>
+<figure>
+    <img loading="lazy" src="mycat.jpg"
+         alt="Normalization and Regularization"/> <figcaption>
+            <p>Cola and Tom</p>
+        </figcaption>
+</figure>
+
+<p>Both normalization and regularization could be employed on model training process, and their intensities could be cancel out with each other.</p>
+<h2 id="normalization">Normalization<a hidden class="anchor" aria-hidden="true" href="#normalization">#</a></h2>
+<p>Applied on data.</p>
+<h3 id="basics">Basics<a hidden class="anchor" aria-hidden="true" href="#basics">#</a></h3>
+<p>Other terms for data normalization are feature scaling and standardization.</p>
+<ul>
+<li>Min-Max scaling. Scale feature values to $[0,1]$ range. $\left(x_s=\cfrac{x-x_{min}}{x_{max}-x_{min}}\right)$</li>
+<li>Standardization (Z-score). Scale feature values to Normal Distribution, $[-1,1]$ range with mean $0$ and standard deviation (s) of $1$. $\left(z = \cfrac{x-\overline x}{s}\right)$</li>
+</ul>
+<p>After normalization, each feature loses its real-world unit and is forced to be distributed in a same small range.</p>
+<p>The benefits of data normalization:</p>
+<ul>
+<li>Ensure each feature contribute equally. (Different features might have different ranges and units.)</li>
+<li>Stablize the training process.</li>
+<li>Speed up the model&rsquo;s convergence.</li>
+<li>Improve the generalization and robustness.</li>
+</ul>
+<h3 id="data-leakage">Data Leakage<a hidden class="anchor" aria-hidden="true" href="#data-leakage">#</a></h3>
+<p>The most common pitfall of data normalization is data leakage. This happens when the data normalization is done before data splitting (split into train, validation and test).</p>
+<p>There are two &ldquo;correct&rdquo; sequences to do data normalization:</p>
+<ol>
+<li>(very common) Data should be first split into train and test parts, and then normalize the whole train part. When you get the mean and standard deviation (std) values on the whole train dataset, apply them to test dataset and split train dataset into train and validation.</li>
+<li>(more rigorous) Data should be first split into train, validation and test parts. Then normalize train dataset, calculate mean and std values. Finally, apply mean and std on validation and test datasets.</li>
+</ol>
+<p>Approach 1 is acceptable because the difference is minimal and both train and validation datasets are used for model training and tuning. Performance on validation dataset is not the final interest. Both approaches prevent test dataset from being involved into mean and std calculcation. That&rsquo;s important! I think another reason why approach 1 is very common is that it&rsquo;s more convenient and requires less coding. E.g. the mean and std values for CIFAR-10 dataset from Internet are calculated on the whole train part by approach 1.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># They are calculated from the whole train part.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># RGB channels, each channel is treated as a feature.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Rescale [0,255] to [0,1] and then calculate z-socre!</span>
+</span></span><span style="display:flex;"><span>cifar10_mean <span style="color:#f92672">=</span> (<span style="color:#ae81ff">0.4914</span>, <span style="color:#ae81ff">0.4822</span>, <span style="color:#ae81ff">0.4465</span>)
+</span></span><span style="display:flex;"><span>cifar10_std  <span style="color:#f92672">=</span> (<span style="color:#ae81ff">0.2470</span>, <span style="color:#ae81ff">0.2435</span>, <span style="color:#ae81ff">0.2616</span>)
+</span></span></code></pre></div><h3 id="batch-normalization">Batch Normalization<a hidden class="anchor" aria-hidden="true" href="#batch-normalization">#</a></h3>
+<p>Batch normalization is not for data pre-processing. It&rsquo;s employed as a learnable layer in neuron networks, especially CNNs. In order to stablize and speed up the model training, batch normalization is commonly applied just after convolutional layers.</p>
+<p>Deep neuron networks have multiple layers. After each layer&rsquo;s calculation, the input for each layer would be shifted. Since we know the benefits of data normalization and apply it to input data, why not we apply it to the input data of hidden layers! That&rsquo;s the intuition of batch normalization.</p>
+<p>$$y=\gamma\cdot\cfrac{x-\overline x}{s+\epsilon}+\beta$$</p>
+<p>The input is $x$, and $y$ is output. Batch normalization calculcates $\overline x$ and $s$ on mini-batch. $\epsilon$ is a small fixed number used to prevent dividing zero. $\gamma$ and $\beta$ are two learnable parameters.</p>
+<p>Batch normalization is required a mini-batch while model training. Someone say the best mini-batch size is from 32 to 128. It depends! And batch normalization is usually implemented before activation layers. Experiments show a better performance of this implementation.</p>
+<blockquote>
+<p>Conv/Linear → BatchNorm → Activation (ReLU/GELU etc.)</p></blockquote>
+<p>In CNNs on image tasks, batch normalization is applied on each channel (feature). One pair of $\gamma$ and $\beta$ for each channel. In fully connected layers, batch normalization is applied on each feature (neuron). One pair of $\gamma$ and $\beta$ for each feature.</p>
+<p>Why there is a pair of learnable parameter for each feature? We don&rsquo;t know what distribution for which layer is the best. There two parameters could make the model to learn the best input distribution, even undo the batch normalization.</p>
+<p>Another key point in batch normalization is the running mean and std. They exist due to the fact that the difference between model training and prediction. Model training is executed by mini-batch. However, while prediction, there most likely be only one input each time. We cannot calculate mean and std on single input. So, the batch normalization layers consistently update the running mean and std, and use them while prediction.</p>
+<h3 id="layer-normalization">Layer Normalization<a hidden class="anchor" aria-hidden="true" href="#layer-normalization">#</a></h3>
+<p>Layer normalization normalizes the inputs across all features for each individual data sample. It&rsquo;s very common in transformer architecture. Basically, layer normalization is the standardization of embedding vectors. (Embedding is the feature vector for each token. Each dimension is treated as a feature.)</p>
+<p>In transformer architecture, the length of the sequence is undetermined. So, batch normalization is not applicable. Layer normalization is independently to the various sequence length.</p>
+<p>The math formula for layer normalization is the same with batch normalization. And each feature gets a pair of $\gamma$ and $\beta$.</p>
+<p>In the original transformer paper, the implementation of layer normalization is called Post-LN. Modern implementation is called Pre-LN.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Post-LN</span>
+</span></span><span style="display:flex;"><span>x <span style="color:#f92672">=</span> LN(x <span style="color:#f92672">+</span> Attention(x))
+</span></span><span style="display:flex;"><span>x <span style="color:#f92672">=</span> LN(x <span style="color:#f92672">+</span> FeedForward(x))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Pre-LN, preferred!</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># clear gradient path</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># normalized input for each sub-layer</span>
+</span></span><span style="display:flex;"><span>x <span style="color:#f92672">=</span> x <span style="color:#f92672">+</span> Attention(LN(x))
+</span></span><span style="display:flex;"><span>x <span style="color:#f92672">=</span> x <span style="color:#f92672">+</span> FeedForward(LN(x))
+</span></span></code></pre></div><h2 id="root-mean-square-layer-normalization-rmsnorm">Root Mean Square Layer Normalization (RMSNorm)<a hidden class="anchor" aria-hidden="true" href="#root-mean-square-layer-normalization-rmsnorm">#</a></h2>
+<h2 id="regularization">Regularization<a hidden class="anchor" aria-hidden="true" href="#regularization">#</a></h2>
+<p>Employed while training.</p>
+<h3 id="basics-1">Basics<a hidden class="anchor" aria-hidden="true" href="#basics-1">#</a></h3>
+<p>Regularization techniques are used to control the model training process, add penalties to large weights, or simulate ensemble.</p>
+<h3 id="l1--l2">L1 &amp; L2<a hidden class="anchor" aria-hidden="true" href="#l1--l2">#</a></h3>
+<p>L1 regularization adds a penalty which is the sum of the absolute value of all weights in a model to the loss function.</p>
+<p>$$loss=\textit{data loss} + \lambda\cdot\sum_i{\left|w_i\right|}$$</p>
+<p>L2 regularization adds a penalty which is the sum of the squared value of all weights in a model to the loss function. L2 regularization is also called <strong>weight decay</strong>.</p>
+<p>$$loss=\textit{data loss} + \cfrac{\lambda}{2}\cdot\sum_i{w_i^2}$$</p>
+<p>$\lambda$ is the penalty strength of regularization, which is a hyperparameter as well.</p>
+<p>L1 regularization could potentially drive weights to zero. However, L2 regularization couldn&rsquo;t. Both of L1 and L2 regularization are trying to make the model learn smaller weights which could lower the sensitivity and keep the network&rsquo;s response smooth. Imagin that there are infinity sets of weights for a model to performance well, and we choose the one with smaller weights by L1 or L2 regularization.</p>
+<blockquote>
+<p>PyTorch does not have built-in L1 regularization in the same way it has L2 regularization, but you can implement it easily.</p></blockquote>
+<h3 id="weight-decay-in-sdgadamadamw">Weight Decay in SDG,Adam,AdamW<a hidden class="anchor" aria-hidden="true" href="#weight-decay-in-sdgadamadamw">#</a></h3>
+<p>In PyTorch, weight decay (L2 regularizaiton, default 0) is exactly the same with its mathematical definition in SGD optimizer (w/o momentum), but not exactly the same in Adam and AdamW optimizers (even though the name of the parameter is still called weight decay).</p>
+<blockquote>
+<p>SGD is a non-adaptive gradient optimizer, which means each parameter is updated by the same learning rate. Adam and AdamW are called adaptive gradient optimizers, which means the learning rate is rescaled respectively for each parameter by history gradient data.</p></blockquote>
+<p>In Adam optimizer, weight decay is first applied to current gradient, and then the decayed gradient would go through an adaptive mechanism before used to update parameters. The decoupled version AdamW (decouple the weight decay from gradient-based update) calculates adaptive gradient based only on current gradient, and then update parameters by adaptive gradient and weight decay. <strong>Neither Adam nor AdamW implements standard L2 regularization</strong>.</p>
+<h3 id="dropout">Dropout<a hidden class="anchor" aria-hidden="true" href="#dropout">#</a></h3>
+<blockquote>
+<p>The key idea is to randomly drop units (along with their connections) from the neural network during training. This prevents units from co-adapting too much. During training, dropout samples from an exponential number of different &ldquo;thinned&rdquo; networks. At test time, it is easy to approximate the effect of averaging the predictions of all these thinned networks by simply using a single unthinned network that has <strong>smaller</strong> weights.</p></blockquote>
+<p>Dropout might be the most easy to use regularization technique in neuron network to prevent overfitting. However, where to put dropout layer? The most common place for dropout is <strong>after activation</strong>. In attention layer, dropout could be applied to attention weights and/or output.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Head</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34; one head of casual attention (self-attention, no mask) &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, input_size, head_size):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>H <span style="color:#f92672">=</span> head_size
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>key <span style="color:#f92672">=</span>   nn<span style="color:#f92672">.</span>Linear(input_size, head_size, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>query <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Linear(input_size, head_size, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>value <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Linear(input_size, head_size, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>dropout <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Dropout(<span style="color:#ae81ff">0.1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        B, T, _ <span style="color:#f92672">=</span> x<span style="color:#f92672">.</span>shape <span style="color:#75715e"># (B, T, input_size)</span>
+</span></span><span style="display:flex;"><span>        k <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>key(x)   <span style="color:#75715e"># (B, T, head_size)</span>
+</span></span><span style="display:flex;"><span>        q <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>query(x) <span style="color:#75715e"># (B, T, head_size)</span>
+</span></span><span style="display:flex;"><span>        v <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>value(x) <span style="color:#75715e"># (B, T, head_size) </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># weight: (B,T,H) @ (B,H,T) -&gt; (B,T,T), scaled down by head size</span>
+</span></span><span style="display:flex;"><span>        w <span style="color:#f92672">=</span> q <span style="color:#f92672">@</span> k<span style="color:#f92672">.</span>transpose(<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">*</span> (self<span style="color:#f92672">.</span>H<span style="color:#f92672">**-</span><span style="color:#ae81ff">0.5</span>)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Attention Dropout!</span>
+</span></span><span style="display:flex;"><span>        w <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>dropout(F<span style="color:#f92672">.</span>softmax(w,dim<span style="color:#f92672">=-</span><span style="color:#ae81ff">1</span>))  <span style="color:#75715e"># (B,T,T)</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># return weighted aggregation of the values</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># (B,T,T) @ (B,T,H) -&gt; (B,T,H)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> w <span style="color:#f92672">@</span> v  <span style="color:#75715e"># Dropout is also applicable here!</span>
+</span></span></code></pre></div><p>Dropout is applied element-wise to tensors, regardless of their shape. Each element is independently. So, dropout could be applied on any shape of tensor data.</p>
+<p>Dropout not only randomly set element to be zero, but also rescale the remained element by $\frac{1}{1-p}$ in order to keep the same expectation ($p$ is the dropout probability).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> a <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>tensor((<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">4</span>),dtype<span style="color:#f92672">=</span>torch<span style="color:#f92672">.</span>float32)
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> dropout <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Dropout(<span style="color:#ae81ff">0.5</span>)  <span style="color:#75715e"># p=0.5</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> dropout(a)
+</span></span><span style="display:flex;"><span>tensor([<span style="color:#ae81ff">0.</span>, <span style="color:#ae81ff">4.</span>, <span style="color:#ae81ff">6.</span>, <span style="color:#ae81ff">0.</span>])
+</span></span></code></pre></div><h3 id="spatial-dropout">Spatial Dropout<a hidden class="anchor" aria-hidden="true" href="#spatial-dropout">#</a></h3>
+<p>Conventional dropout is element-wise, while spatial dropout is channel-wise. Setting-to-zero and rescaling remainings are happened on a whole channle.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> a <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>ones(<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">2</span>)      <span style="color:#75715e"># all 1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> dropout <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Dropout2d(<span style="color:#ae81ff">0.5</span>)  <span style="color:#75715e"># spatial dropout</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> dropout(a)
+</span></span><span style="display:flex;"><span>tensor([[[[<span style="color:#ae81ff">0.</span>, <span style="color:#ae81ff">0.</span>],
+</span></span><span style="display:flex;"><span>          [<span style="color:#ae81ff">0.</span>, <span style="color:#ae81ff">0.</span>]],
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>         [[<span style="color:#ae81ff">0.</span>, <span style="color:#ae81ff">0.</span>],
+</span></span><span style="display:flex;"><span>          [<span style="color:#ae81ff">0.</span>, <span style="color:#ae81ff">0.</span>]],
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>         [[<span style="color:#ae81ff">2.</span>, <span style="color:#ae81ff">2.</span>],
+</span></span><span style="display:flex;"><span>          [<span style="color:#ae81ff">2.</span>, <span style="color:#ae81ff">2.</span>]],
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>         [[<span style="color:#ae81ff">2.</span>, <span style="color:#ae81ff">2.</span>],
+</span></span><span style="display:flex;"><span>          [<span style="color:#ae81ff">2.</span>, <span style="color:#ae81ff">2.</span>]]]])
+</span></span></code></pre></div><p>In convolutional layer, spatial dropout could be more effective than element-wise dropout. Element-wise dropout does not suitable for convolutional layer due to the <strong>under-dropping problem (information leakage problem)</strong>. Because nearby pixels are highly correlated, removed information could be recovered in following layer, like interpolation. Spatial dropout avoids this issue by channel-wise dropout operation.</p>
+<p>Like element-wise dropout, the best place for spatial dropout is still after activation.</p>
+<blockquote>
+<p>Conv2d → BatchNorm → Activation → Dropout2d</p></blockquote>
+<p>However, modern SOTA CNN architectures, such as ResNet, don&rsquo;t use spatial dropout in convolutional layers at all because batch normalization technique reduced the need for the dropout method because of its regularization effect.</p>
+<h3 id="dropblock">DropBlock<a hidden class="anchor" aria-hidden="true" href="#dropblock">#</a></h3>
+<h3 id="early-stop">Early Stop<a hidden class="anchor" aria-hidden="true" href="#early-stop">#</a></h3>
+<p>Early stopping is generally considered a form of regularization, though it&rsquo;s somewhat different from traditional regularization techniques. It implicitly regularizes by limiting optimization times.</p>
+<h2 id="reference">Reference<a hidden class="anchor" aria-hidden="true" href="#reference">#</a></h2>
+<ul>
+<li>Ioffe, S., &amp; Szegedy, C. (2015, June). Batch normalization: Accelerating deep network training by reducing internal covariate shift. In International conference on machine learning (pp. 448-456). pmlr.</li>
+<li>Ba, J. L., Kiros, J. R., &amp; Hinton, G. E. (2016). Layer normalization. arXiv preprint arXiv:1607.06450.</li>
+<li>Loshchilov, I., &amp; Hutter, F. (2017). Decoupled weight decay regularization. arXiv preprint arXiv:1711.05101.</li>
+<li>Srivastava, N., Hinton, G., Krizhevsky, A., Sutskever, I., &amp; Salakhutdinov, R. (2014). Dropout: a simple way to prevent neural networks from overfitting. The journal of machine learning research, 15(1), 1929-1958.</li>
+<li>Lee, S., &amp; Lee, C. (2020). Revisiting spatial dropout for regularizing convolutional neural networks. Multimedia Tools and Applications, 79(45), 34195-34207.</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://xinlin-z.github.io/tags/deep-learning/">Deep Learning</a></li>
+      <li><a href="https://xinlin-z.github.io/tags/machine-learning/">Machine Learning</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://xinlin-z.github.io/">Xinlin&#39;s Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

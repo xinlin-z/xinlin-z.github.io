@@ -6,8 +6,17 @@
     <description>Recent content in Posts on Xinlin&#39;s Blog</description>
     <generator>Hugo -- 0.147.8</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 18 Jul 2025 12:51:03 +1200</lastBuildDate>
+    <lastBuildDate>Sun, 12 Oct 2025 15:23:25 +1200</lastBuildDate>
     <atom:link href="https://xinlin-z.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Normalization and Regularization</title>
+      <link>https://xinlin-z.github.io/posts/normalization_regularization/</link>
+      <pubDate>Sun, 12 Oct 2025 15:23:25 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/posts/normalization_regularization/</guid>
+      <description>&lt;p&gt;While training a model, a few important mathematical tricks have to be employed. Normalization and regularization techiniques belong to them. They are very important to successfully train models, and they are often confusing and hard to understand the details as well.&lt;/p&gt;
+&lt;h2 id=&#34;normalization-vs-regularization&#34;&gt;Normalization vs Regularization&lt;/h2&gt;
+&lt;p&gt;To put it simple, normalization is applied on data. Before training a model, data should be normalized. There are a few irresistible benefits to do it. It stablizes the training process, speeds up model convergence significantly, and improve model&amp;rsquo;s generalization capability.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Built-in Data Structures and Algorithms in Python</title>
       <link>https://xinlin-z.github.io/posts/builtin-dsa-python/</link>
