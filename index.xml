@@ -9,11 +9,11 @@
     <lastBuildDate>Sun, 12 Oct 2025 15:23:25 +1200</lastBuildDate>
     <atom:link href="https://xinlin-z.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Normalization and Regularization</title>
-      <link>https://xinlin-z.github.io/posts/normalization_regularization/</link>
+      <title>Normalization, Regularization and Learning Rate Scheduling</title>
+      <link>https://xinlin-z.github.io/posts/normalization-regularization/</link>
       <pubDate>Sun, 12 Oct 2025 15:23:25 +1200</pubDate>
-      <guid>https://xinlin-z.github.io/posts/normalization_regularization/</guid>
-      <description>&lt;p&gt;While training a model, a few important mathematical tricks have to be employed. Normalization and regularization techiniques belong to them. They are very important to successfully train models, and they are often confusing and hard to understand the details as well.&lt;/p&gt;
+      <guid>https://xinlin-z.github.io/posts/normalization-regularization/</guid>
+      <description>&lt;p&gt;While training a model, a few important mathematical tricks have to be employed. Normalization and regularization techiniques belong to them. They are very important to successfully train models, and they are often confusing and sometimes hard to understand the details as well. Additionally, learning rate scheduling is also very important while training models, especially large ones.&lt;/p&gt;
 &lt;h2 id=&#34;normalization-vs-regularization&#34;&gt;Normalization vs Regularization&lt;/h2&gt;
 &lt;p&gt;To put it simple, normalization is applied on data. Before training a model, data should be normalized. There are a few irresistible benefits to do it. It stablizes the training process, speeds up model convergence significantly, and improve model&amp;rsquo;s generalization capability.&lt;/p&gt;</description>
     </item>

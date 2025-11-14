@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Normalization, Regularization and Learning Rate Scheduling | Xinlin&#39;s Blog</title>
+<meta name="keywords" content="Deep Learning, Machine Learning, PyTorch">
+<meta name="description" content="While training a model, a few important mathematical tricks have to be employed. Normalization and regularization techiniques belong to them. They are very important to successfully train models, and they are often confusing and sometimes hard to understand the details as well. Additionally, learning rate scheduling is also very important while training models, especially large ones.
+Normalization vs Regularization
+To put it simple, normalization is applied on data. Before training a model, data should be normalized. There are a few irresistible benefits to do it. It stablizes the training process, speeds up model convergence significantly, and improve model&rsquo;s generalization capability.">
+<meta name="author" content="">
+<link rel="canonical" href="https://xinlin-z.github.io/posts/normalization-regularization/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.381f5ace0de1ab2efa08db7875cfe0360217fb9fce6341c41e7c271d15965494.css" integrity="sha256-OB9azg3hqy76CNt4dc/gNgIX&#43;5/OY0HEHnwnHRWWVJQ=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://xinlin-z.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://xinlin-z.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://xinlin-z.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://xinlin-z.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://xinlin-z.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://xinlin-z.github.io/posts/normalization-regularization/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '\\[', right: '\\]', display: true}
+      ],
+      throwOnError : false
+    });"></script>
+<meta property="og:url" content="https://xinlin-z.github.io/posts/normalization-regularization/">
+  <meta property="og:site_name" content="Xinlin&#39;s Blog">
+  <meta property="og:title" content="Normalization, Regularization and Learning Rate Scheduling">
+  <meta property="og:description" content="While training a model, a few important mathematical tricks have to be employed. Normalization and regularization techiniques belong to them. They are very important to successfully train models, and they are often confusing and sometimes hard to understand the details as well. Additionally, learning rate scheduling is also very important while training models, especially large ones.
+Normalization vs Regularization To put it simple, normalization is applied on data. Before training a model, data should be normalized. There are a few irresistible benefits to do it. It stablizes the training process, speeds up model convergence significantly, and improve model’s generalization capability.">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-10-12T15:23:25+12:00">
+    <meta property="article:modified_time" content="2025-10-12T15:23:25+12:00">
+    <meta property="article:tag" content="Deep Learning">
+    <meta property="article:tag" content="Machine Learning">
+    <meta property="article:tag" content="PyTorch">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Normalization, Regularization and Learning Rate Scheduling">
+<meta name="twitter:description" content="While training a model, a few important mathematical tricks have to be employed. Normalization and regularization techiniques belong to them. They are very important to successfully train models, and they are often confusing and sometimes hard to understand the details as well. Additionally, learning rate scheduling is also very important while training models, especially large ones.
+Normalization vs Regularization
+To put it simple, normalization is applied on data. Before training a model, data should be normalized. There are a few irresistible benefits to do it. It stablizes the training process, speeds up model convergence significantly, and improve model&rsquo;s generalization capability.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://xinlin-z.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Normalization, Regularization and Learning Rate Scheduling",
+      "item": "https://xinlin-z.github.io/posts/normalization-regularization/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Normalization, Regularization and Learning Rate Scheduling",
+  "name": "Normalization, Regularization and Learning Rate Scheduling",
+  "description": "While training a model, a few important mathematical tricks have to be employed. Normalization and regularization techiniques belong to them. They are very important to successfully train models, and they are often confusing and sometimes hard to understand the details as well. Additionally, learning rate scheduling is also very important while training models, especially large ones.\nNormalization vs Regularization To put it simple, normalization is applied on data. Before training a model, data should be normalized. There are a few irresistible benefits to do it. It stablizes the training process, speeds up model convergence significantly, and improve model\u0026rsquo;s generalization capability.\n",
+  "keywords": [
+    "Deep Learning", "Machine Learning", "PyTorch"
+  ],
+  "articleBody": "While training a model, a few important mathematical tricks have to be employed. Normalization and regularization techiniques belong to them. They are very important to successfully train models, and they are often confusing and sometimes hard to understand the details as well. Additionally, learning rate scheduling is also very important while training models, especially large ones.\nNormalization vs Regularization To put it simple, normalization is applied on data. Before training a model, data should be normalized. There are a few irresistible benefits to do it. It stablizes the training process, speeds up model convergence significantly, and improve model’s generalization capability.\nRegularization is the model tuning technique by which the main purpose is to prevent overfitting while training. It could be applied on training data, or add constraints to learnable parameters. It also has the effect of improving model’s generalization. Regularization techniques are very flexible.\nCola and Tom\nBoth normalization and regularization could be employed on model training process, and their intensities would be cancel out with each other.\nGeneralization Classical generalization theory suggests that to close the gap between train and test performance, we should aim for a simple model. What are the sense of simplicity:\nfewer parameters (lower dimensions) smoothness (not sensitive to small changes) However, modern deep learning models are becoming larger and larger, which is challenging this classic theory. And some network architectures and regularization techniques could be possibly used to justify over-parameterized models. E.g. the skip connection might skip a whole block and make those parameters inside the skipped block useless. E.g. dropout tricks don’t use all parameters in training.\nUnderfit and Overfit overfit: a model fits training data perfectly, but fails to predict unseen data. underfit: opposite of overfitting, not enough training or the model is too small to learning enough. In deep learning, a few common reasons could cause overfitting:\ninsufficient training data low quality of training data (contain errors) too large or complex of the model lack of regularization Curse of Dimensionality The curse of dimensionality refers to a set of problems that arise when dealing with data in high-dimensional spaces (i.e., datasets with a large number of features or dimensions, such as image data). Typically, the volume of the data space grows exponentially with the number of dimensions. With a fixed number of data points, these points become increasingly sparse and spread out in a high-dimensional space. The curse of dimensionality significantly increases the risk of overfitting. In a high-dimensional space with sparse data, a complex model has more “degrees of freedom” to fit the training data perfectly, including the noise. Because there are fewer data points relative to the number of dimensions, the model can easily find spurious patterns that don’t generalize. (The size of the dataset is related to the data’s dimension.)\nAbout high dimension space, I recently got an idea. The density of high dimension space is still equal everywhere, like 2D or 3D spaces.\nBenign Overfitting Interestingly, modern deep learning has challenged traditional views on overfitting. Very large models trained on large datasets can sometimes generalize well even when they have enough capacity to memorize the entire training set. This phenomenon, sometimes called benign overfitting, suggests the relationship between model size, data, and overfitting is more complex than previously thought.\nBenign overfitting is a phenomenon in machine learning where a model perfectly fits (interpolates) the training data, including its noise or random fluctuations, yet still generalizes well to unseen test data. This concept challenges the traditional view in statistical learning theory, which posits that fitting the noise in the training data (overfitting) should lead to a significant deterioration in performance on new data.\nBenign overfitting is typically observed in overparameterized models, such as modern deep neural networks, where the number of parameters is much larger than the number of data points. It is closely related to the double descent phenomenon.\nNormalization Normalization is applied on data. Other terms for data normalization are feature scaling and standardization. There are two main ways:\nMin-Max scaling. Scale feature values to $[0,1]$ range. $\\left(x_s=\\cfrac{x-x_{min}}{x_{max}-x_{min}}\\right)$ Standardization (Z-score). Scale feature values to Normal Distribution, $[-1,1]$ range with mean $0$ and standard deviation (s) of $1$. $\\left(z = \\cfrac{x-\\overline x}{s}\\right)$ After normalization, each feature loses its real-world unit and is forced to be distributed in a same small range. The benefits of data normalization:\nEnsure each feature contribute equally. (Different features might have different ranges and units.) Stablize the training process. Speed up the model’s convergence. Improve the generalization and robustness. Data Leakage The most common pitfall of data normalization is data leakage. This happens when the data normalization is done before data splitting (split into train, validation and test).\nThere are two “correct” sequences to do data normalization:\n(very common) Data should be first split into train and test parts, and then normalize the whole train part. When you get the mean and standard deviation (std) values on the whole train dataset, apply them to test dataset and split train dataset into train and validation. (more rigorous) Data should be first split into train, validation and test parts. Then normalize train dataset, calculate mean and std values. Finally, apply mean and std on validation and test datasets. Approach 1 is acceptable because the difference is minimal and both train and validation datasets are used for model training and tuning. Performance on validation dataset is not the final interest. Both approaches prevent test dataset from being involved into mean and std calculcation. That’s important! I think another reason why approach 1 is very common is that it’s more convenient and requires less coding. E.g. the mean and std values for CIFAR-10 dataset from Internet are calculated on the whole train part by approach 1.\n# They are calculated from the whole train part. # RGB channels, each channel is treated as a feature. # Rescale [0,255] to [0,1] and then calculate z-socre! cifar10_mean = (0.4914, 0.4822, 0.4465) cifar10_std = (0.2470, 0.2435, 0.2616) Validation Dataset How to decide how many data points should be split into validation dataset? Generally speaking, The smaller dataset you have, the larger percentage it should be. The key point is that your validation dataset must have to be representative to the whole dataset. The same is for the test dataset.\nFor ImageNet-1K dataset, people normally take validation part as test data since the label for test part is not public available. Training can be without specially handed out validation dataset from train part like in the original ResNet paper because the training plan is fixed ahead.\nBatch Normalization Batch normalization is not for data pre-processing. It’s employed as a learnable layer in neuron networks, especially CNNs. In order to stablize and speed up the model training, batch normalization is commonly applied just after convolutional layers.\nDeep neuron networks have multiple layers. After each layer’s calculation, the input for each layer would be shifted. Since we know the benefits of data normalization and apply it to input data, why not we apply it to the input data of hidden layers! That’s the intuition of batch normalization.\n$$y=\\gamma\\cdot\\cfrac{x-\\overline x}{s+\\epsilon}+\\beta$$\nThe input is $x$, and $y$ is output. Batch normalization calculcates $\\overline x$ and $s$ on mini-batch. $\\epsilon$ is a small fixed number used to prevent dividing zero. $\\gamma$ and $\\beta$ are two learnable parameters.\nBatch normalization is required a mini-batch while model training. Someone say the best mini-batch size is from 32 to 128. It depends! And batch normalization is usually implemented before activation layers. Experiments show a better performance on this sequence of implementation.\nConv → BatchNorm → Activation (ReLU/GELU/SiLU etc.)\nIn CNNs on image tasks, batch normalization is applied on each channel (feature). One pair of $\\gamma$ and $\\beta$ for each channel. In fully connected layers, batch normalization is also applied on each feature (neuron). One pair of $\\gamma$ and $\\beta$ for each feature neuron.\nWhy there is a pair of learnable parameter for each feature? Because we don’t know what distribution for which layer is the best. There two parameters could make the model to learn the best input distribution, even undo the batch normalization.\nAnother key point in batch normalization is the running mean and std. They exist due to the fact that the difference between model training and prediction. Model training is executed by mini-batch. However, while prediction, there most likely be only one input each time. We cannot calculate mean and std on single input. So, the batch normalization layers consistently update the running mean and std, and use them while prediction.\nSet bias=False in Conv layer when BatchNorm follows\nThis constant bias $b$ in filters of convolutional layer will be completely canceled out when the mean $\\overline x$ of the batch is calculated and subtracted during the batch normalization step (convolutional filters share the same weights and biases while moving position). The subsequent learnable shift parameter $\\beta$ in the BatchNorm layer serves the exact same purpose as the original bias $b$ (to shift the distribution).\nLayer Normalization Layer normalization normalizes the inputs across all features for each individual data sample. It’s very common in transformer architecture. Basically, layer normalization is the standardization of embedding vectors. (Embedding is the feature vector for each token. Each dimension is treated as a feature.)\nIn transformer architecture, the length of the sequence is undetermined. So, batch normalization is not applicable. Layer normalization is independently to the various batch length. The math formula for layer normalization is the same with batch normalization, and each feature gets a pair of $\\gamma$ and $\\beta$.\nIn the original transformer paper, the implementation of layer normalization is called Post-LN. Modern implementation is called Pre-LN in which there is a more clear gradient path.\n# Post-LN x = LN(x + Attention(x)) x = LN(x + FeedForward(x)) # Pre-LN, preferred! # normalized input for each sub-layer in attention block x = x + Attention(LN(x)) x = x + FeedForward(LN(x)) Root Mean Square Layer Normalization (RMSNorm) Regularization Regularization techniques help prevent overfitting by constraining or adding noise to the learning process, encouraging models to learn more generalizable patterns rather than memorizing the training data.\nL1 \u0026 L2 L1 regularization adds a penalty which is the sum of the absolute value of all weights in a model to the loss function.\n$$loss=\\textit{data loss} + \\lambda\\cdot\\sum_i{\\left|w_i\\right|}$$\nL2 regularization adds a penalty which is the sum of the squared value of all weights in a model to the loss function. L2 regularization is also called weight decay.\n$$loss=\\textit{data loss} + \\cfrac{\\lambda}{2}\\cdot\\sum_i{w_i^2}$$\n$\\lambda$ is the penalty strength of regularization, which is a hyperparameter as well.\nL1 regularization could potentially drive weights to zero. However, L2 regularization couldn’t. Both L1 and L2 regularization are trying to make the model learn smaller weights which could lower the sensitivity and keep the network’s response smooth. Imagin that there are infinity sets of weights for a model to performance well, and we choose the one with smaller weights by L1 or L2 regularization.\nPyTorch does not have built-in L1 regularization in the same way it has L2 regularization, but you can implement it easily.\nWeight Decay in SDG,Adam,AdamW Optimizers In PyTorch, weight decay (L2 regularizaiton, default 0) is equivalent with its mathematical definition in SGD and AdamW optimizer, but not exactly the same in Adam optimizers (even though the name of the parameter is still called weight decay).\nSGD is a non-adaptive gradient optimizer, which means each parameter is updated by its current gradient. Adam and AdamW are called adaptive gradient (or learning rate) optimizers, which means the current gradient is rescaled respectively for each parameter by history gradient data.\nIn Adam optimizer, weight decay is first applied to current gradient, and then the decayed gradient would go through an adaptive mechanism before used to update parameters. The decoupled version AdamW (decouple the weight decay from adaptive gradient calculation) calculates adaptive gradient based only on current gradient, and then update parameters by adaptive gradient and weight decay.\nDropout Dropout is an extremely effective, simple regularization technique. While training, dropout is implemented by only keeping a neuron active with some probability p (a hyperparameter), or setting it to zero otherwise. During training, Dropout can be interpreted as sampling a Neural Network within the full Neural Network, and only updating the parameters of the sampled network based on the input data. During testing there is no dropout applied, with the interpretation of evaluating an averaged prediction across the exponentially-sized ensemble of all sub-networks. (However, the exponential number of possible sampled networks are not independent because they share the parameters.)\nThe key idea is to randomly drop units (along with their connections) from the neural network during training. This prevents units from co-adapting too much. During training, dropout samples from an exponential number of different “thinned” networks. At test time, it is easy to approximate the effect of averaging the predictions of all these thinned networks by simply using a single unthinned network that has smaller weights.\nDropout might be one of the most easy to use regularization techniques in neuron network to prevent overfitting. However, where to put dropout layer is a bit tricky? The most common place for dropout is after activation. In CNNs, in order to keep spatial information, dropout is less common. If you want to apply dropout in CNN, do it after flatten layer. In attention block, dropout could be applied to attention weights and/or output.\nDropout is applied element-wise to tensors, regardless of their shape. Each element is independently. So, dropout could be applied on any shape of tensor data. Dropout not only randomly set element to be zero, but also rescale the remained element by $\\frac{1}{1-p}$ in order to keep the same expectation ($p$ is the dropout probability).\n\u003e\u003e\u003e a = torch.tensor((1,2,3,4),dtype=torch.float32) \u003e\u003e\u003e dropout = nn.Dropout(0.5) # p=0.5 \u003e\u003e\u003e dropout(a) tensor([0., 4., 6., 0.]) We can think of dropout as a way to add noise to the input of some hidden layers, but keep the whole expectation unchanged.\nDropout and BatchNorm\nModern CNN architectures, such as ResNet, don’t use dropout at all. When Dropout is used in conjunction with BatchNorm, it can sometimes lead to degraded performance or slower convergence. Dropout introduces its own noise by randomly setting activations to zero. This disrupts the distribution of the activations, which is exactly what BN is trying to stabilize. Furthermore, The BatchNorm layer calculates its mean and variance statistics based on the layer input after Dropout. If many inputs are zeroed out, the batch statistics become less reliable estimators of the true population statistics, which can hurt the model’s ability to generalize well during inference (when BatchNorm uses its fixed running mean and variance). Put it simple, element-wise dropout is not suitable for convolutional layers, which intensively employ BatchNorm as well.\nSpatial Dropout Conventional dropout is element-wise, while spatial dropout is channel-wise. Setting-to-zero and rescaling remains are happened on a whole channle.\n\u003e\u003e\u003e a = torch.ones(1,4,2,2) # all 1 \u003e\u003e\u003e dropout = nn.Dropout2d(0.5) # spatial dropout \u003e\u003e\u003e dropout(a) tensor([[[[0., 0.], [0., 0.]], [[0., 0.], [0., 0.]], [[2., 2.], [2., 2.]], [[2., 2.], [2., 2.]]]]) In convolutional layer, spatial dropout could be more effective than element-wise dropout. Element-wise dropout does not suitable for convolutional. One of the reasons is the under-dropping problem (information leakage problem). Because nearby pixels are highly correlated, removed information could be recovered in following layer, like interpolation. Spatial dropout avoids this issue by channel-wise dropout operation. Like element-wise dropout, the best place for spatial dropout is still after activation.\nConv2d → BatchNorm → Activation → Dropout2d\nHowever, modern SOTA CNN architectures, such as ResNet, don’t use spatial dropout at all. It might because batch normalization technique reduced the need for the dropout method because of its regularization effect.\nDropBlock DropPath (Stochastic Depth) Data Augmentation By injecting noise into training data, data augmentation techniques could force models to learning more general features and consequently improve generalization capability. Additionally, data augmentation could also prevent overfitting by enlarging the training data in a specific way. It is a very useful and helpful techinique, especially when training data is not sufficient.\nThere are lots of data augmentation tricks. However, you don’t need to apply all of them. The basic idea is that you should pick up those augmentation tricks which are helpful to your application. E.g. while working on CIFAR-10 dataset, there is no upside-down images in test dataset. So, random vertical flip is completely not necessary. The model is not expected to see any upside-down images. If you are working on improving robustness, you might need to apply some natural corruptions on to training images.\ncifar10_mean = (0.4914, 0.4822, 0.4465) cifar10_std = (0.2470, 0.2435, 0.2616) # This is the setting in the original paper of ResNet aug_transform = transforms.Compose( [ transforms.RandomCrop(32, padding=4), transforms.RandomHorizontalFlip(), transforms.ToTensor(), transforms.Normalize(cifar10_mean, cifar10_std) ] ) Early Stop Early stop is a classic technique, and is generally considered a form of regularization for training deep learning model, though it’s somewhat different from traditional regularization techniques. It implicitly regularizes by limiting optimization iterations. Early stop is the technique for potentially saving time and money.\nBy evaluating the loss on validation dataset, we could stop the training process when finding that there is no improvement for a fixed number of epochs or iterations. Except validation loss, the loss gap between train and validation data could also be helpful. Plateau learning rate decay is also often employed together with early stop.\nLearning Rate Scheduling Learning Rate Warm-up While training models, especially large models like ResNet-50 which has more than 25M parameters, it is more often to come across numeric instability in the early stage of training due to the randomly initialized weights. We might be able to overcome this issue by using very small learning rate in the first few epochs, and gradually increase learning rate until it reaches the target value. The most common strategy is linear learning rate warm-up.\nLearning rate warm-up is not a regularization method. It’s main purpose is to stablize the training process, not to prevent overfitting. It addresses issues like noisy gradients from random weight initialization, allowing the model to converge more reliably without exploding or vanishing updates. This ramp-up phase helps the optimizer “settle” before applying a full learning rate, but it doesn’t directly constrain the loss function or model complexity. While not regularization per se, learning rate warm-up can contribute to better generalization in practice. By enabling higher peak learning rates without instability, it allows the model to escape poor local minima more effectively, which might lead to flatter minima (associated with better generalization).\nGradient Max Norm It’s the Euclidean norm of gradient. Think of it as the length of gradient. Training a model is just like going down a hill. Imagin that we are very close to a minimal flat area, the length of gradient should not be very large because there are no very steep slopes. Large gradient with high learning rate is more likely to cause instability in training. Set a max norm for gradient in training process is a very useful safe guard.\nAnother perspective is the averaged loss value. The higher the loss, the higher possibility of large gradient. High loss means you are still far away from some minimal flat areas, and there might be very steep ways in front of you. So, be careful when your step is relatively large (high learning rate). E.g. when training ResNet-18 on CIFAR-10, we can get loss below 2 after the first epoch. However, when training ResNet-50 on ImageNet-1K, the loss might be still above 2 after the first 10 epochs.\nReproduce ResNet-50 on ImageNet-1K\nThe training process in the original paper of Resnet-50:\nbatch size: 256 weight decay: 1e-4 optimizer: SGD with momentum 0.9 learning rate 0.1 for first 30 epochs learning rate 0.01 for second 30 epochs learning rate 0.001 for last 30 epochs top-1 accuracy on validation dataset: 76.13% The first time I tried to train ResNet-50 on ImageNet-1K, every time at epoch 4, the loss became NaN. After applying Kaiming normalization, the loss became NaN as epoch 1. It’s better because I saved lots of time to get the NaN results. Then, I set a gradient max norm of 2 to avoid this issue. However, the final accuracy on validation dataset is 74.5%, which is a bit lower than around 76%. It might be because of the max norm of 2, which might be a bit aggressive to contrain gradients.\nUsing stabilizers like learning rate warm-up or gradient clipping (max norm) to fix NaN losses does not inherently mean it’s no longer a reproduction. The purpose should not be a strict bit-to-bit identical runs, but to achieve equivalent results. The original paper focused on the architecture, and it didn’t report any details about training process debugging. Furthermore, today’s hardwares are different, and every time the randomness is also impossbly identical. We should focus on results and high-level process. Fixing NaN is more like “debugging your environments”, not altering the model’s learning capability.\nLearning Rate Decay Learning rate decay is a technique in training neural networks where you gradually reduce the learning rate over time during the optimization process.\nAt the start of training, a larger learning rate helps you make rapid progress toward a good solution. But as you get closer to the optimal parameters, that same large learning rate can cause the optimizer to overshoot or oscillate around the minimum rather than settling into it. By reducing the learning rate, you allow the model to make finer adjustments and converge more smoothly.\nThe choice of decay schedule can significantly impact final model performance. Too aggressive decay might cause premature convergence to a suboptimal solution, while too slow decay wastes training time. While employing Adam or AdamW optimizer, which are adaptive learning rate optimizers, the actual decayed values of learning rate are not that sensitive comparing to SGD, but still matters!\nReference Ioffe, S., \u0026 Szegedy, C. (2015, June). Batch normalization: Accelerating deep network training by reducing internal covariate shift. In International conference on machine learning (pp. 448-456). pmlr. Ba, J. L., Kiros, J. R., \u0026 Hinton, G. E. (2016). Layer normalization. arXiv preprint arXiv:1607.06450. Loshchilov, I., \u0026 Hutter, F. (2017). Decoupled weight decay regularization. arXiv preprint arXiv:1711.05101. Ba, J. L., Kiros, J. R., \u0026 Hinton, G. E. (2016). Layer normalization. arXiv preprint arXiv:1607.06450. Srivastava, N., Hinton, G., Krizhevsky, A., Sutskever, I., \u0026 Salakhutdinov, R. (2014). Dropout: a simple way to prevent neural networks from overfitting. The journal of machine learning research, 15(1), 1929-1958. Lee, S., \u0026 Lee, C. (2020). Revisiting spatial dropout for regularizing convolutional neural networks. Multimedia Tools and Applications, 79(45), 34195-34207. ",
+  "wordCount" : "3754",
+  "inLanguage": "en",
+  "datePublished": "2025-10-12T15:23:25+12:00",
+  "dateModified": "2025-10-12T15:23:25+12:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://xinlin-z.github.io/posts/normalization-regularization/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Xinlin's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://xinlin-z.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://xinlin-z.github.io/" accesskey="h" title="Xinlin&#39;s Blog (Alt + H)">Xinlin&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://xinlin-z.github.io/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/pages/about" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Normalization, Regularization and Learning Rate Scheduling
+    </h1>
+    <div class="post-meta"><span title='2025-10-12 15:23:25 +1200 +1200'>October 12, 2025</span>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#normalization-vs-regularization" aria-label="Normalization vs Regularization">Normalization vs Regularization</a></li>
+                <li>
+                    <a href="#generalization" aria-label="Generalization">Generalization</a></li>
+                <li>
+                    <a href="#underfit-and-overfit" aria-label="Underfit and Overfit">Underfit and Overfit</a></li>
+                <li>
+                    <a href="#curse-of-dimensionality" aria-label="Curse of Dimensionality">Curse of Dimensionality</a></li>
+                <li>
+                    <a href="#benign-overfitting" aria-label="Benign Overfitting">Benign Overfitting</a></li>
+                <li>
+                    <a href="#normalization" aria-label="Normalization">Normalization</a><ul>
+                        
+                <li>
+                    <a href="#data-leakage" aria-label="Data Leakage">Data Leakage</a></li>
+                <li>
+                    <a href="#validation-dataset" aria-label="Validation Dataset">Validation Dataset</a></li>
+                <li>
+                    <a href="#batch-normalization" aria-label="Batch Normalization">Batch Normalization</a></li>
+                <li>
+                    <a href="#layer-normalization" aria-label="Layer Normalization">Layer Normalization</a></li>
+                <li>
+                    <a href="#root-mean-square-layer-normalization-rmsnorm" aria-label="Root Mean Square Layer Normalization (RMSNorm)">Root Mean Square Layer Normalization (RMSNorm)</a></li></ul>
+                </li>
+                <li>
+                    <a href="#regularization" aria-label="Regularization">Regularization</a><ul>
+                        
+                <li>
+                    <a href="#l1--l2" aria-label="L1 &amp; L2">L1 &amp; L2</a></li>
+                <li>
+                    <a href="#weight-decay-in-sdgadamadamw-optimizers" aria-label="Weight Decay in SDG,Adam,AdamW Optimizers">Weight Decay in SDG,Adam,AdamW Optimizers</a></li>
+                <li>
+                    <a href="#dropout" aria-label="Dropout">Dropout</a></li>
+                <li>
+                    <a href="#spatial-dropout" aria-label="Spatial Dropout">Spatial Dropout</a></li>
+                <li>
+                    <a href="#dropblock" aria-label="DropBlock">DropBlock</a></li>
+                <li>
+                    <a href="#droppath-stochastic-depth" aria-label="DropPath (Stochastic Depth)">DropPath (Stochastic Depth)</a></li>
+                <li>
+                    <a href="#data-augmentation" aria-label="Data Augmentation">Data Augmentation</a></li>
+                <li>
+                    <a href="#early-stop" aria-label="Early Stop">Early Stop</a></li></ul>
+                </li>
+                <li>
+                    <a href="#learning-rate-scheduling" aria-label="Learning Rate Scheduling">Learning Rate Scheduling</a><ul>
+                        
+                <li>
+                    <a href="#learning-rate-warm-up" aria-label="Learning Rate Warm-up">Learning Rate Warm-up</a></li>
+                <li>
+                    <a href="#gradient-max-norm" aria-label="Gradient Max Norm">Gradient Max Norm</a></li>
+                <li>
+                    <a href="#learning-rate-decay" aria-label="Learning Rate Decay">Learning Rate Decay</a></li></ul>
+                </li>
+                <li>
+                    <a href="#reference" aria-label="Reference">Reference</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>While training a model, a few important mathematical tricks have to be employed. Normalization and regularization techiniques belong to them. They are very important to successfully train models, and they are often confusing and sometimes hard to understand the details as well. Additionally, learning rate scheduling is also very important while training models, especially large ones.</p>
+<h2 id="normalization-vs-regularization">Normalization vs Regularization<a hidden class="anchor" aria-hidden="true" href="#normalization-vs-regularization">#</a></h2>
+<p>To put it simple, normalization is applied on data. Before training a model, data should be normalized. There are a few irresistible benefits to do it. It stablizes the training process, speeds up model convergence significantly, and improve model&rsquo;s generalization capability.</p>
+<p>Regularization is the model tuning technique by which the main purpose is to prevent overfitting while training. It could be applied on training data, or add constraints to learnable parameters. It also has the effect of improving model&rsquo;s generalization. Regularization techniques are very flexible.</p>
+<figure>
+    <img loading="lazy" src="mycat.jpg"
+         alt="Normalization and Regularization"/> <figcaption>
+            <p>Cola and Tom</p>
+        </figcaption>
+</figure>
+
+<p>Both normalization and regularization could be employed on model training process, and their intensities would be cancel out with each other.</p>
+<h2 id="generalization">Generalization<a hidden class="anchor" aria-hidden="true" href="#generalization">#</a></h2>
+<p>Classical generalization theory suggests that to close the gap between train and test performance, we should aim for a simple model. What are the sense of simplicity:</p>
+<ul>
+<li>fewer parameters (lower dimensions)</li>
+<li>smoothness (not sensitive to small changes)</li>
+</ul>
+<p>However, modern deep learning models are becoming larger and larger, which is challenging this classic theory. And some network architectures and regularization techniques could be possibly used to justify over-parameterized models. E.g. the skip connection might skip a whole block and make those parameters inside the skipped block useless. E.g. dropout tricks don&rsquo;t use all parameters in training.</p>
+<h2 id="underfit-and-overfit">Underfit and Overfit<a hidden class="anchor" aria-hidden="true" href="#underfit-and-overfit">#</a></h2>
+<ul>
+<li>overfit: a model fits training data perfectly, but fails to predict unseen data.</li>
+<li>underfit: opposite of overfitting, not enough training or the model is too small to learning enough.</li>
+</ul>
+<p>In deep learning, a few common reasons could cause overfitting:</p>
+<ul>
+<li>insufficient training data</li>
+<li>low quality of training data (contain errors)</li>
+<li>too large or complex of the model</li>
+<li>lack of regularization</li>
+</ul>
+<h2 id="curse-of-dimensionality">Curse of Dimensionality<a hidden class="anchor" aria-hidden="true" href="#curse-of-dimensionality">#</a></h2>
+<p>The curse of dimensionality refers to a set of problems that arise when dealing with data in high-dimensional spaces (i.e., datasets with a large number of features or dimensions, such as image data). Typically, the volume of the data space grows exponentially with the number of dimensions. With a fixed number of data points, these points become increasingly sparse and spread out in a high-dimensional space. The curse of dimensionality significantly increases the risk of overfitting. In a high-dimensional space with sparse data, a complex model has more &ldquo;degrees of freedom&rdquo; to fit the training data perfectly, including the noise. Because there are fewer data points relative to the number of dimensions, the model can easily find spurious patterns that don&rsquo;t generalize. (The size of the dataset is related to the data’s dimension.)</p>
+<blockquote>
+<p>About high dimension space, I recently got an idea. The density of high dimension space is still equal everywhere, like 2D or 3D spaces.</p></blockquote>
+<h2 id="benign-overfitting">Benign Overfitting<a hidden class="anchor" aria-hidden="true" href="#benign-overfitting">#</a></h2>
+<p>Interestingly, modern deep learning has challenged traditional views on overfitting. Very large models trained on large datasets can sometimes generalize well even when they have enough capacity to memorize the entire training set. This phenomenon, sometimes called <strong>benign overfitting</strong>, suggests the relationship between model size, data, and overfitting is more complex than previously thought.</p>
+<p>Benign overfitting is a phenomenon in machine learning where a model perfectly fits (interpolates) the training data, including its noise or random fluctuations, yet still generalizes well to unseen test data. This concept challenges the traditional view in statistical learning theory, which posits that fitting the noise in the training data (overfitting) should lead to a significant deterioration in performance on new data.</p>
+<p>Benign overfitting is typically observed in <strong>overparameterized models</strong>, such as modern deep neural networks, where the number of parameters is much larger than the number of data points. It is closely related to the <strong>double descent</strong> phenomenon.</p>
+<h2 id="normalization">Normalization<a hidden class="anchor" aria-hidden="true" href="#normalization">#</a></h2>
+<p>Normalization is applied on data. Other terms for data normalization are feature scaling and standardization. There are two main ways:</p>
+<ul>
+<li>Min-Max scaling. Scale feature values to $[0,1]$ range. $\left(x_s=\cfrac{x-x_{min}}{x_{max}-x_{min}}\right)$</li>
+<li>Standardization (Z-score). Scale feature values to Normal Distribution, $[-1,1]$ range with mean $0$ and standard deviation (s) of $1$. $\left(z = \cfrac{x-\overline x}{s}\right)$</li>
+</ul>
+<p>After normalization, each feature loses its real-world unit and is forced to be distributed in a same small range. The benefits of data normalization:</p>
+<ul>
+<li>Ensure each feature contribute equally. (Different features might have different ranges and units.)</li>
+<li>Stablize the training process.</li>
+<li>Speed up the model&rsquo;s convergence.</li>
+<li>Improve the generalization and robustness.</li>
+</ul>
+<h3 id="data-leakage">Data Leakage<a hidden class="anchor" aria-hidden="true" href="#data-leakage">#</a></h3>
+<p>The most common pitfall of data normalization is data leakage. This happens when the data normalization is done before data splitting (split into train, validation and test).</p>
+<p>There are two &ldquo;correct&rdquo; sequences to do data normalization:</p>
+<ol>
+<li>(very common) Data should be first split into train and test parts, and then normalize the whole train part. When you get the mean and standard deviation (std) values on the whole train dataset, apply them to test dataset and split train dataset into train and validation.</li>
+<li>(more rigorous) Data should be first split into train, validation and test parts. Then normalize train dataset, calculate mean and std values. Finally, apply mean and std on validation and test datasets.</li>
+</ol>
+<p>Approach 1 is acceptable because the difference is minimal and both train and validation datasets are used for model training and tuning. Performance on validation dataset is not the final interest. Both approaches prevent test dataset from being involved into mean and std calculcation. That&rsquo;s important! I think another reason why approach 1 is very common is that it&rsquo;s more convenient and requires less coding. E.g. the mean and std values for CIFAR-10 dataset from Internet are calculated on the whole train part by approach 1.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># They are calculated from the whole train part.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># RGB channels, each channel is treated as a feature.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Rescale [0,255] to [0,1] and then calculate z-socre!</span>
+</span></span><span style="display:flex;"><span>cifar10_mean <span style="color:#f92672">=</span> (<span style="color:#ae81ff">0.4914</span>, <span style="color:#ae81ff">0.4822</span>, <span style="color:#ae81ff">0.4465</span>)
+</span></span><span style="display:flex;"><span>cifar10_std  <span style="color:#f92672">=</span> (<span style="color:#ae81ff">0.2470</span>, <span style="color:#ae81ff">0.2435</span>, <span style="color:#ae81ff">0.2616</span>)
+</span></span></code></pre></div><h3 id="validation-dataset">Validation Dataset<a hidden class="anchor" aria-hidden="true" href="#validation-dataset">#</a></h3>
+<p>How to decide how many data points should be split into validation dataset? Generally speaking, The smaller dataset you have, the larger percentage it should be. The key point is that your validation dataset must have to be representative to the whole dataset. The same is for the test dataset.</p>
+<blockquote>
+<p>For ImageNet-1K dataset, people normally take validation part as test data since the label for test part is not public available. Training can be without specially handed out validation dataset from train part like in the original ResNet paper because the training plan is fixed ahead.</p></blockquote>
+<h3 id="batch-normalization">Batch Normalization<a hidden class="anchor" aria-hidden="true" href="#batch-normalization">#</a></h3>
+<p>Batch normalization is not for data pre-processing. It&rsquo;s employed as a learnable layer in neuron networks, especially CNNs. In order to stablize and speed up the model training, batch normalization is commonly applied just after convolutional layers.</p>
+<p>Deep neuron networks have multiple layers. After each layer&rsquo;s calculation, the input for each layer would be shifted. Since we know the benefits of data normalization and apply it to input data, why not we apply it to the input data of hidden layers! That&rsquo;s the intuition of batch normalization.</p>
+<p>$$y=\gamma\cdot\cfrac{x-\overline x}{s+\epsilon}+\beta$$</p>
+<p>The input is $x$, and $y$ is output. Batch normalization calculcates $\overline x$ and $s$ on mini-batch. $\epsilon$ is a small fixed number used to prevent dividing zero. $\gamma$ and $\beta$ are two learnable parameters.</p>
+<p>Batch normalization is required a mini-batch while model training. Someone say the best mini-batch size is from 32 to 128. It depends! And batch normalization is usually implemented before activation layers. Experiments show a better performance on this sequence of implementation.</p>
+<blockquote>
+<p>Conv → BatchNorm → Activation (ReLU/GELU/SiLU etc.)</p></blockquote>
+<p>In CNNs on image tasks, batch normalization is applied on each channel (feature). One pair of $\gamma$ and $\beta$ for each channel. In fully connected layers, batch normalization is also applied on each feature (neuron). One pair of $\gamma$ and $\beta$ for each feature neuron.</p>
+<p>Why there is a pair of learnable parameter for each feature? Because we don&rsquo;t know what distribution for which layer is the best. There two parameters could make the model to learn the best input distribution, even undo the batch normalization.</p>
+<p>Another key point in batch normalization is the running mean and std. They exist due to the fact that the difference between model training and prediction. Model training is executed by mini-batch. However, while prediction, there most likely be only one input each time. We cannot calculate mean and std on single input. So, the batch normalization layers consistently update the running mean and std, and use them while prediction.</p>
+<p><strong>Set bias=False in Conv layer when BatchNorm follows</strong></p>
+<p>This constant bias $b$ in filters of convolutional layer will be completely canceled out when the mean $\overline x$ of the batch is calculated and subtracted during the batch normalization step (convolutional filters share the same weights and biases while moving position). The subsequent learnable shift parameter $\beta$ in the BatchNorm layer serves the exact same purpose as the original bias $b$ (to shift the distribution).</p>
+<h3 id="layer-normalization">Layer Normalization<a hidden class="anchor" aria-hidden="true" href="#layer-normalization">#</a></h3>
+<p>Layer normalization normalizes the inputs across all features for each individual data sample. It&rsquo;s very common in transformer architecture. Basically, layer normalization is the standardization of embedding vectors. (Embedding is the feature vector for each token. Each dimension is treated as a feature.)</p>
+<p>In transformer architecture, the length of the sequence is undetermined. So, batch normalization is not applicable. Layer normalization is independently to the various batch length. The math formula for layer normalization is the same with batch normalization, and each feature gets a pair of $\gamma$ and $\beta$.</p>
+<p>In the original transformer paper, the implementation of layer normalization is called <strong>Post-LN</strong>. Modern implementation is called <strong>Pre-LN</strong> in which there is a more clear gradient path.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Post-LN</span>
+</span></span><span style="display:flex;"><span>x <span style="color:#f92672">=</span> LN(x <span style="color:#f92672">+</span> Attention(x))
+</span></span><span style="display:flex;"><span>x <span style="color:#f92672">=</span> LN(x <span style="color:#f92672">+</span> FeedForward(x))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Pre-LN, preferred!</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># normalized input for each sub-layer in attention block</span>
+</span></span><span style="display:flex;"><span>x <span style="color:#f92672">=</span> x <span style="color:#f92672">+</span> Attention(LN(x))
+</span></span><span style="display:flex;"><span>x <span style="color:#f92672">=</span> x <span style="color:#f92672">+</span> FeedForward(LN(x))
+</span></span></code></pre></div><h3 id="root-mean-square-layer-normalization-rmsnorm">Root Mean Square Layer Normalization (RMSNorm)<a hidden class="anchor" aria-hidden="true" href="#root-mean-square-layer-normalization-rmsnorm">#</a></h3>
+<h2 id="regularization">Regularization<a hidden class="anchor" aria-hidden="true" href="#regularization">#</a></h2>
+<p>Regularization techniques help prevent overfitting by constraining or adding noise to the learning process, encouraging models to learn more generalizable patterns rather than memorizing the training data.</p>
+<h3 id="l1--l2">L1 &amp; L2<a hidden class="anchor" aria-hidden="true" href="#l1--l2">#</a></h3>
+<p>L1 regularization adds a penalty which is the sum of the absolute value of all weights in a model to the loss function.</p>
+<p>$$loss=\textit{data loss} + \lambda\cdot\sum_i{\left|w_i\right|}$$</p>
+<p>L2 regularization adds a penalty which is the sum of the squared value of all weights in a model to the loss function. L2 regularization is also called <strong>weight decay</strong>.</p>
+<p>$$loss=\textit{data loss} + \cfrac{\lambda}{2}\cdot\sum_i{w_i^2}$$</p>
+<p>$\lambda$ is the penalty strength of regularization, which is a hyperparameter as well.</p>
+<p>L1 regularization could potentially drive weights to zero. However, L2 regularization couldn&rsquo;t. Both L1 and L2 regularization are trying to make the model learn smaller weights which could lower the sensitivity and keep the network&rsquo;s response smooth. Imagin that there are infinity sets of weights for a model to performance well, and we choose the one with smaller weights by L1 or L2 regularization.</p>
+<blockquote>
+<p>PyTorch does not have built-in L1 regularization in the same way it has L2 regularization, but you can implement it easily.</p></blockquote>
+<h3 id="weight-decay-in-sdgadamadamw-optimizers">Weight Decay in SDG,Adam,AdamW Optimizers<a hidden class="anchor" aria-hidden="true" href="#weight-decay-in-sdgadamadamw-optimizers">#</a></h3>
+<p>In PyTorch, weight decay (L2 regularizaiton, default 0) is equivalent with its mathematical definition in SGD and AdamW optimizer, but not exactly the same in Adam optimizers (even though the name of the parameter is still called weight decay).</p>
+<blockquote>
+<p>SGD is a non-adaptive gradient optimizer, which means each parameter is updated by its current gradient. Adam and AdamW are called adaptive gradient (or learning rate) optimizers, which means the current gradient is rescaled respectively for each parameter by history gradient data.</p></blockquote>
+<p>In Adam optimizer, weight decay is first applied to current gradient, and then the decayed gradient would go through an adaptive mechanism before used to update parameters. The decoupled version AdamW (decouple the weight decay from adaptive gradient calculation) calculates adaptive gradient based only on current gradient, and then update parameters by adaptive gradient and weight decay.</p>
+<h3 id="dropout">Dropout<a hidden class="anchor" aria-hidden="true" href="#dropout">#</a></h3>
+<p>Dropout is an extremely effective, simple regularization technique. While training, dropout is implemented by only keeping a neuron active with some probability p (a hyperparameter), or setting it to zero otherwise. During training, Dropout can be interpreted as sampling a Neural Network within the full Neural Network, and only updating the parameters of the sampled network based on the input data. During testing there is no dropout applied, with the interpretation of evaluating an averaged prediction across the exponentially-sized ensemble of all sub-networks. (However, the exponential number of possible sampled networks are not independent because they share the parameters.)</p>
+<blockquote>
+<p>The key idea is to randomly drop units (along with their connections) from the neural network during training. This prevents units from co-adapting too much. During training, dropout samples from an exponential number of different &ldquo;thinned&rdquo; networks. At test time, it is easy to approximate the effect of averaging the predictions of all these thinned networks by simply using a single unthinned network that has <strong>smaller</strong> weights.</p></blockquote>
+<p>Dropout might be one of the most easy to use regularization techniques in neuron network to prevent overfitting. However, where to put dropout layer is a bit tricky? The most common place for dropout is <strong>after activation</strong>. In CNNs, in order to keep spatial information, dropout is less common. If you want to apply dropout in CNN, do it after flatten layer. In attention block, dropout could be applied to attention weights and/or output.</p>
+<p>Dropout is applied element-wise to tensors, regardless of their shape. Each element is independently. So, dropout could be applied on any shape of tensor data. Dropout not only randomly set element to be zero, but also rescale the remained element by $\frac{1}{1-p}$ in order to keep the same expectation ($p$ is the dropout probability).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> a <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>tensor((<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">4</span>),dtype<span style="color:#f92672">=</span>torch<span style="color:#f92672">.</span>float32)
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> dropout <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Dropout(<span style="color:#ae81ff">0.5</span>)  <span style="color:#75715e"># p=0.5</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> dropout(a)
+</span></span><span style="display:flex;"><span>tensor([<span style="color:#ae81ff">0.</span>, <span style="color:#ae81ff">4.</span>, <span style="color:#ae81ff">6.</span>, <span style="color:#ae81ff">0.</span>])
+</span></span></code></pre></div><p>We can think of dropout as a way to add noise to the input of some hidden layers, but keep the whole expectation unchanged.</p>
+<p><strong>Dropout and BatchNorm</strong></p>
+<p>Modern CNN architectures, such as ResNet, don&rsquo;t use dropout at all. When Dropout is used in conjunction with BatchNorm, it can sometimes lead to degraded performance or slower convergence. Dropout introduces its own noise by randomly setting activations to zero. This disrupts the distribution of the activations, which is exactly what BN is trying to stabilize. Furthermore, The BatchNorm layer calculates its mean and variance statistics based on the layer input after Dropout. If many inputs are zeroed out, the batch statistics become less reliable estimators of the true population statistics, which can hurt the model&rsquo;s ability to generalize well during inference (when BatchNorm uses its fixed running mean and variance). Put it simple, element-wise dropout is not suitable for convolutional layers, which intensively employ BatchNorm as well.</p>
+<h3 id="spatial-dropout">Spatial Dropout<a hidden class="anchor" aria-hidden="true" href="#spatial-dropout">#</a></h3>
+<p>Conventional dropout is element-wise, while spatial dropout is channel-wise. Setting-to-zero and rescaling remains are happened on a whole channle.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> a <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>ones(<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">2</span>)      <span style="color:#75715e"># all 1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> dropout <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Dropout2d(<span style="color:#ae81ff">0.5</span>)  <span style="color:#75715e"># spatial dropout</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> dropout(a)
+</span></span><span style="display:flex;"><span>tensor([[[[<span style="color:#ae81ff">0.</span>, <span style="color:#ae81ff">0.</span>],
+</span></span><span style="display:flex;"><span>          [<span style="color:#ae81ff">0.</span>, <span style="color:#ae81ff">0.</span>]],
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>         [[<span style="color:#ae81ff">0.</span>, <span style="color:#ae81ff">0.</span>],
+</span></span><span style="display:flex;"><span>          [<span style="color:#ae81ff">0.</span>, <span style="color:#ae81ff">0.</span>]],
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>         [[<span style="color:#ae81ff">2.</span>, <span style="color:#ae81ff">2.</span>],
+</span></span><span style="display:flex;"><span>          [<span style="color:#ae81ff">2.</span>, <span style="color:#ae81ff">2.</span>]],
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>         [[<span style="color:#ae81ff">2.</span>, <span style="color:#ae81ff">2.</span>],
+</span></span><span style="display:flex;"><span>          [<span style="color:#ae81ff">2.</span>, <span style="color:#ae81ff">2.</span>]]]])
+</span></span></code></pre></div><p>In convolutional layer, spatial dropout could be more effective than element-wise dropout. Element-wise dropout does not suitable for convolutional. One of the reasons is the <strong>under-dropping problem (information leakage problem)</strong>. Because nearby pixels are highly correlated, removed information could be recovered in following layer, like interpolation. Spatial dropout avoids this issue by channel-wise dropout operation. Like element-wise dropout, the best place for spatial dropout is still after activation.</p>
+<blockquote>
+<p>Conv2d → BatchNorm → Activation → Dropout2d</p></blockquote>
+<p>However, modern SOTA CNN architectures, such as ResNet, don&rsquo;t use spatial dropout at all. It might because batch normalization technique reduced the need for the dropout method because of its regularization effect.</p>
+<h3 id="dropblock">DropBlock<a hidden class="anchor" aria-hidden="true" href="#dropblock">#</a></h3>
+<h3 id="droppath-stochastic-depth">DropPath (Stochastic Depth)<a hidden class="anchor" aria-hidden="true" href="#droppath-stochastic-depth">#</a></h3>
+<h3 id="data-augmentation">Data Augmentation<a hidden class="anchor" aria-hidden="true" href="#data-augmentation">#</a></h3>
+<p>By injecting noise into training data, data augmentation techniques could force models to learning more general features and consequently improve generalization capability. Additionally, data augmentation could also prevent overfitting by enlarging the training data in a specific way. It is a very useful and helpful techinique, especially when training data is not sufficient.</p>
+<p>There are lots of data augmentation tricks. However, you don&rsquo;t need to apply all of them. The basic idea is that you should pick up those augmentation tricks which are helpful to your application. E.g. while working on CIFAR-10 dataset, there is no upside-down images in test dataset. So, random vertical flip is completely not necessary. The model is not expected to see any upside-down images. If you are working on improving robustness, you might need to apply some natural corruptions on to training images.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>cifar10_mean <span style="color:#f92672">=</span> (<span style="color:#ae81ff">0.4914</span>, <span style="color:#ae81ff">0.4822</span>, <span style="color:#ae81ff">0.4465</span>)
+</span></span><span style="display:flex;"><span>cifar10_std  <span style="color:#f92672">=</span> (<span style="color:#ae81ff">0.2470</span>, <span style="color:#ae81ff">0.2435</span>, <span style="color:#ae81ff">0.2616</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># This is the setting in the original paper of ResNet</span>
+</span></span><span style="display:flex;"><span>aug_transform <span style="color:#f92672">=</span> transforms<span style="color:#f92672">.</span>Compose(
+</span></span><span style="display:flex;"><span>    [
+</span></span><span style="display:flex;"><span>        transforms<span style="color:#f92672">.</span>RandomCrop(<span style="color:#ae81ff">32</span>, padding<span style="color:#f92672">=</span><span style="color:#ae81ff">4</span>),
+</span></span><span style="display:flex;"><span>        transforms<span style="color:#f92672">.</span>RandomHorizontalFlip(),
+</span></span><span style="display:flex;"><span>        transforms<span style="color:#f92672">.</span>ToTensor(),
+</span></span><span style="display:flex;"><span>        transforms<span style="color:#f92672">.</span>Normalize(cifar10_mean, cifar10_std)
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><h3 id="early-stop">Early Stop<a hidden class="anchor" aria-hidden="true" href="#early-stop">#</a></h3>
+<p>Early stop is a classic technique, and is generally considered a form of regularization for training deep learning model, though it&rsquo;s somewhat different from traditional regularization techniques. It implicitly regularizes by limiting optimization iterations. Early stop is the technique for potentially saving time and money.</p>
+<p>By evaluating the loss on validation dataset, we could stop the training process when finding that there is no improvement for a fixed number of epochs or iterations. Except validation loss, the loss gap between train and validation data could also be helpful. Plateau learning rate decay is also often employed together with early stop.</p>
+<h2 id="learning-rate-scheduling">Learning Rate Scheduling<a hidden class="anchor" aria-hidden="true" href="#learning-rate-scheduling">#</a></h2>
+<h3 id="learning-rate-warm-up">Learning Rate Warm-up<a hidden class="anchor" aria-hidden="true" href="#learning-rate-warm-up">#</a></h3>
+<p>While training models, especially large models like ResNet-50 which has more than 25M parameters, it is more often to come across numeric instability in the early stage of training due to the randomly initialized weights. We might be able to overcome this issue by using very small learning rate in the first few epochs, and gradually increase learning rate until it reaches the target value. The most common strategy is linear learning rate warm-up.</p>
+<p>Learning rate warm-up is not a regularization method. It&rsquo;s main purpose is to stablize the training process, not to prevent overfitting. It addresses issues like noisy gradients from random weight initialization, allowing the model to converge more reliably without exploding or vanishing updates. This ramp-up phase helps the optimizer &ldquo;settle&rdquo; before applying a full learning rate, but it doesn&rsquo;t directly constrain the loss function or model complexity. While not regularization per se, learning rate warm-up can contribute to better generalization in practice. By enabling higher peak learning rates without instability, it allows the model to escape poor local minima more effectively, which might lead to flatter minima (associated with better generalization).</p>
+<h3 id="gradient-max-norm">Gradient Max Norm<a hidden class="anchor" aria-hidden="true" href="#gradient-max-norm">#</a></h3>
+<p>It&rsquo;s the Euclidean norm of gradient. Think of it as the length of gradient. Training a model is just like going down a hill. Imagin that we are very close to a minimal flat area, the length of gradient should not be very large because there are no very steep slopes. Large gradient with high learning rate is more likely to cause instability in training. Set a max norm for gradient in training process is a very useful safe guard.</p>
+<p>Another perspective is the averaged loss value. The higher the loss, the higher possibility of large gradient. High loss means you are still far away from some minimal flat areas, and there might be very steep ways in front of you. So, be careful when your step is relatively large (high learning rate). E.g. when training ResNet-18 on CIFAR-10, we can get loss below 2 after the first epoch. However, when training ResNet-50 on ImageNet-1K, the loss might be still above 2 after the first 10 epochs.</p>
+<p><strong>Reproduce ResNet-50 on ImageNet-1K</strong></p>
+<p>The training process in the original paper of Resnet-50:</p>
+<ul>
+<li>batch size: 256</li>
+<li>weight decay: 1e-4</li>
+<li>optimizer: SGD with momentum 0.9</li>
+<li>learning rate 0.1 for first 30 epochs</li>
+<li>learning rate 0.01 for second 30 epochs</li>
+<li>learning rate 0.001 for last 30 epochs</li>
+<li>top-1 accuracy on validation dataset: 76.13%</li>
+</ul>
+<p>The first time I tried to train ResNet-50 on ImageNet-1K, every time at epoch 4, the loss became NaN. After applying Kaiming normalization, the loss became NaN as epoch 1. It&rsquo;s better because I saved lots of time to get the NaN results. Then, I set a gradient max norm of 2 to avoid this issue. However, the final accuracy on validation dataset is 74.5%, which is a bit lower than around 76%. It might be because of the max norm of 2, which might be a bit aggressive to contrain gradients.</p>
+<p><strong>Using stabilizers like learning rate warm-up or gradient clipping (max norm) to fix NaN losses does not inherently mean it&rsquo;s no longer a reproduction</strong>. The purpose should not be a strict bit-to-bit identical runs, but to achieve equivalent results. The original paper focused on the architecture, and it didn&rsquo;t report any details about training process debugging. Furthermore, today&rsquo;s hardwares are different, and every time the randomness is also impossbly identical. We should focus on results and high-level process. Fixing NaN is more like &ldquo;debugging your environments&rdquo;, not altering the model&rsquo;s learning capability.</p>
+<h3 id="learning-rate-decay">Learning Rate Decay<a hidden class="anchor" aria-hidden="true" href="#learning-rate-decay">#</a></h3>
+<p>Learning rate decay is a technique in training neural networks where you gradually reduce the learning rate over time during the optimization process.</p>
+<p>At the start of training, a larger learning rate helps you make rapid progress toward a good solution. But as you get closer to the optimal parameters, that same large learning rate can cause the optimizer to overshoot or oscillate around the minimum rather than settling into it. By reducing the learning rate, you allow the model to make finer adjustments and converge more smoothly.</p>
+<p>The choice of decay schedule can significantly impact final model performance. Too aggressive decay might cause premature convergence to a suboptimal solution, while too slow decay wastes training time. While employing Adam or AdamW optimizer, which are adaptive learning rate optimizers, the actual decayed values of learning rate are not that sensitive comparing to SGD, but still matters!</p>
+<h2 id="reference">Reference<a hidden class="anchor" aria-hidden="true" href="#reference">#</a></h2>
+<ul>
+<li>Ioffe, S., &amp; Szegedy, C. (2015, June). Batch normalization: Accelerating deep network training by reducing internal covariate shift. In International conference on machine learning (pp. 448-456). pmlr.</li>
+<li>Ba, J. L., Kiros, J. R., &amp; Hinton, G. E. (2016). Layer normalization. arXiv preprint arXiv:1607.06450.</li>
+<li>Loshchilov, I., &amp; Hutter, F. (2017). Decoupled weight decay regularization. arXiv preprint arXiv:1711.05101.</li>
+<li>Ba, J. L., Kiros, J. R., &amp; Hinton, G. E. (2016). Layer normalization. arXiv preprint arXiv:1607.06450.</li>
+<li>Srivastava, N., Hinton, G., Krizhevsky, A., Sutskever, I., &amp; Salakhutdinov, R. (2014). Dropout: a simple way to prevent neural networks from overfitting. The journal of machine learning research, 15(1), 1929-1958.</li>
+<li>Lee, S., &amp; Lee, C. (2020). Revisiting spatial dropout for regularizing convolutional neural networks. Multimedia Tools and Applications, 79(45), 34195-34207.</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://xinlin-z.github.io/tags/deep-learning/">Deep Learning</a></li>
+      <li><a href="https://xinlin-z.github.io/tags/machine-learning/">Machine Learning</a></li>
+      <li><a href="https://xinlin-z.github.io/tags/pytorch/">PyTorch</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://xinlin-z.github.io/">Xinlin&#39;s Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
