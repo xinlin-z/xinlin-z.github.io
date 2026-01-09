@@ -6,8 +6,15 @@
     <description>Recent content in Deep Learning on Xinlin&#39;s Blog</description>
     <generator>Hugo -- 0.147.8</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 12 Oct 2025 15:23:25 +1200</lastBuildDate>
+    <lastBuildDate>Fri, 05 Dec 2025 20:03:25 +1200</lastBuildDate>
     <atom:link href="https://xinlin-z.github.io/tags/deep-learning/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Convolutional Neuron Networks (CNN)</title>
+      <link>https://xinlin-z.github.io/posts/cnn/</link>
+      <pubDate>Fri, 05 Dec 2025 20:03:25 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/posts/cnn/</guid>
+      <description>&lt;p&gt;Convolutional neuron networks (CNN) have been revolutionized image-related Artificial Intellegence (AI) tasks. This kind of neuron network architectures have been obtained huge success. Furthermore, CNNs are very interesting. They have many design elements and variants you could play with. Academic researches might pursue a beauty of purity and emphasize the unique feature they proposed. However, in industry application, it&amp;rsquo;s not necessary to build a network pure. It&amp;rsquo;s highly possible to combine all necessary design elements together. However, we should have a deep understand of all these design elements.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Normalization, Regularization and Learning Rate Scheduling</title>
       <link>https://xinlin-z.github.io/posts/normalization-regularization/</link>

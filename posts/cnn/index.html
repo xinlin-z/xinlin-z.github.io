@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Convolutional Neuron Networks (CNN) | Xinlin&#39;s Blog</title>
+<meta name="keywords" content="Deep Learning, CNN, PyTorch">
+<meta name="description" content="Convolutional neuron networks (CNN) have been revolutionized image-related Artificial Intellegence (AI) tasks. This kind of neuron network architectures have been obtained huge success. Furthermore, CNNs are very interesting. They have many design elements and variants you could play with. Academic researches might pursue a beauty of purity and emphasize the unique feature they proposed. However, in industry application, it&rsquo;s not necessary to build a network pure. It&rsquo;s highly possible to combine all necessary design elements together. However, we should have a deep understand of all these design elements.">
+<meta name="author" content="">
+<link rel="canonical" href="https://xinlin-z.github.io/posts/cnn/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.381f5ace0de1ab2efa08db7875cfe0360217fb9fce6341c41e7c271d15965494.css" integrity="sha256-OB9azg3hqy76CNt4dc/gNgIX&#43;5/OY0HEHnwnHRWWVJQ=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://xinlin-z.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://xinlin-z.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://xinlin-z.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://xinlin-z.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://xinlin-z.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://xinlin-z.github.io/posts/cnn/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '\\[', right: '\\]', display: true}
+      ],
+      throwOnError : false
+    });"></script>
+<meta property="og:url" content="https://xinlin-z.github.io/posts/cnn/">
+  <meta property="og:site_name" content="Xinlin&#39;s Blog">
+  <meta property="og:title" content="Convolutional Neuron Networks (CNN)">
+  <meta property="og:description" content="Convolutional neuron networks (CNN) have been revolutionized image-related Artificial Intellegence (AI) tasks. This kind of neuron network architectures have been obtained huge success. Furthermore, CNNs are very interesting. They have many design elements and variants you could play with. Academic researches might pursue a beauty of purity and emphasize the unique feature they proposed. However, in industry application, it’s not necessary to build a network pure. It’s highly possible to combine all necessary design elements together. However, we should have a deep understand of all these design elements.">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-05T20:03:25+12:00">
+    <meta property="article:modified_time" content="2025-12-05T20:03:25+12:00">
+    <meta property="article:tag" content="Deep Learning">
+    <meta property="article:tag" content="CNN">
+    <meta property="article:tag" content="PyTorch">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Convolutional Neuron Networks (CNN)">
+<meta name="twitter:description" content="Convolutional neuron networks (CNN) have been revolutionized image-related Artificial Intellegence (AI) tasks. This kind of neuron network architectures have been obtained huge success. Furthermore, CNNs are very interesting. They have many design elements and variants you could play with. Academic researches might pursue a beauty of purity and emphasize the unique feature they proposed. However, in industry application, it&rsquo;s not necessary to build a network pure. It&rsquo;s highly possible to combine all necessary design elements together. However, we should have a deep understand of all these design elements.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://xinlin-z.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Convolutional Neuron Networks (CNN)",
+      "item": "https://xinlin-z.github.io/posts/cnn/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Convolutional Neuron Networks (CNN)",
+  "name": "Convolutional Neuron Networks (CNN)",
+  "description": "Convolutional neuron networks (CNN) have been revolutionized image-related Artificial Intellegence (AI) tasks. This kind of neuron network architectures have been obtained huge success. Furthermore, CNNs are very interesting. They have many design elements and variants you could play with. Academic researches might pursue a beauty of purity and emphasize the unique feature they proposed. However, in industry application, it\u0026rsquo;s not necessary to build a network pure. It\u0026rsquo;s highly possible to combine all necessary design elements together. However, we should have a deep understand of all these design elements.\n",
+  "keywords": [
+    "Deep Learning", "CNN", "PyTorch"
+  ],
+  "articleBody": "Convolutional neuron networks (CNN) have been revolutionized image-related Artificial Intellegence (AI) tasks. This kind of neuron network architectures have been obtained huge success. Furthermore, CNNs are very interesting. They have many design elements and variants you could play with. Academic researches might pursue a beauty of purity and emphasize the unique feature they proposed. However, in industry application, it’s not necessary to build a network pure. It’s highly possible to combine all necessary design elements together. However, we should have a deep understand of all these design elements.\nNeural network is a complicated math function. Deep learning model is the combination of all kinds of basic operations, and trained by back-propagation algorithm. Design network architectures based on your data and application!\nCNN’s Inductive Bias Inductive biases are inner assumptions of each specific neuron network architecture that could make learning possible. They are prior knowledge built into a learning model that guide how to interpret the data it sees. There are just infinite number of hypotheses that could learn from and fit the training data. Inductive biases help narrow down the search space and guide the learning process. Interestingly, CNN and Vision Transformer (ViT) have completely different inductive biases, even though both of them could be applied to image tasks. Below are main inductive biases built in CNN architectures:\nSpatial Locality, which assumes that nearby pixels in an image are more related and important to each other than distant pixels. This is implemented by small receptive fields. Normally, they are 3x3 or 5x5 kernels (filters), and only touch local neighborhoods. Hierarchical Feature Learning, which means a stack of convolutional layers that learn features from small and simple ones to large and complex ones in a hierarchical way. This is realized by multiple convolutional layers stacked in between non-linear layers and pooling layers in the network [15]. Translation Invariance, which means the convolution process is exactly the same wherever the regions on the images. This is achieved by shared weights and bias of each filter. Translation Equivariance, which means that the same object would have the same output in feature map in the same location as the input object no matter where the input object is located in the input image. $f(T(x))=T(f(x))$. A desired characteristic for object detection. Tang Yuan, Tom in English\nAlexNet Modern CNN architecture started from AlexNet [1] in 2012. We can think of it as an enlarged version of old LeNet.\nconvolutional layers with filters size of 11x11, 5x5 and 3x3 ReLU activation function pooling layers (max pooling) final fully connected layers Classic 3-Layer Sequence: Conv -\u003e ReLU -\u003e Pooling. Pooling layers are used to reduce resolution. So, there is a hard limit for the depth by this design.\nThese are the very basic CNN design elements.\nThe effect of pooling layer\nreduce resolution When there are some minor changes on the input image, such as different viewpoint, size, illumination, rotation or noises, the output would be the same. This is realized by pooling layer which aggregates information on a small region so that when there are some small changes in that small region, the output of that region in pooling layer might keep the same. ZFNet In the cornerstone paper [15], the authors proved a few important characristics of CNN networks:\nhierarchical feature learning feature convergence takes time (high layer feature maps need more epochs to learn and converge) capability of transfer learning the network is actually looking at the object, not just the background (occlusion sensitivity) as the network goes deeper, the number of channel (feature map) should be larger This paper didn’t just visualize AlexNet (the 2012 ImageNet winner). They used their Deconvnet tool to “debug” it. By seeing exactly what AlexNet was struggling with, they made several targeted adjustments that resulted in the ZFNet, which won the competition in 2013.\nChange first conv layer from 11x11 stride 4 to 7x7 stride 2, which could captured much finer detail and smoother features and providing a better foundation for the deeper layers to build upon. Make middle layers wider by increasing width of layer 3 from 384 to 512, increasing width of layer 4 from 384 to 1024, and increasing width of layer 5 from 256 to 512. Why increase the number of channels as CNN networks go deeper?\nTrade-off between spatial dimension and channel dimension (a.k.a width of convolution). By increasing the channels as spatial size decreases, the increasing of width compensate the loss of spatial resolution and maintain the network’s capability to represent complex patterns. Low level features are small and simple, no need too many feature types (maps). High level features are more complex, we need to know more “what” instead of “where”. Like a dictionary, we only need a few letters, but we have so many different words. One insight is that even though there are so many feature maps in the final conv layer, for a specific input, only a few of them are really activated (Channel Sparsity). VGG Started from the Visual Geometry Group (VGG) [2] at Oxford University in 2014, people began to talk about CNN Block and Network Family, such as VGG block and VGG family. CNNs became designs with both layer-based and block-based. A network family is a series of design based on same block design.\nVGG Block: consecutive 3x3 with padding 1 filters (Conv + ReLU) deep and narrow outperforms shallow and wide (deep means more non-linearity) still has final fully connected layers with large number of parameters Family: VGG16, VGG19… The suffix number indicates how many learnable layers. (Conventionally, people only count convolutional and fully connected layers as learnable layers, not include BN.) Classic CNN architectures such as LeNet and AlexNet, they employed a classic 3-layer sequence design which consists of a convolutional layer with padding to keep resolution followed by a non-linear layer, and then a pooling layer to reduce resolution. Each of these 3-layer sequence would reduce the spatial resolution (R) by 50%. This design set a hard limit for the number of convolutional layers to $\\log_2{R}$ and for the depth of CNN network as well.\nIn order to solve this issue, in VGG architecture, multiple convolutional layers were stacked together between each downsampling pooling layer. These stacked convolutional layers are all 3x3 with padding 1 for keeping the resolution unchanged. And these stacked convolutional layers combined with the following pooling layer together is called a block in VGG.\nTypical VGG Block: Conv (3x3 pad 1) -\u003e ReLU -\u003e … -\u003e Conv (3x3 pad 1) -\u003e ReLU -\u003e MaxPool (2x2). By this design, neuron networks could become deeper with more non-linear transforms.\nBy this block design, VGG network could become deeper than its predecessors and achieve better performance. Nonetheless, two successive 3x3 convolutional filters touch the same pixel area as one 5x5 filter does but with less paramters and better performance. In other words, deep and narrow neuron network outperforms shallow and wide counterparts significantly. Since VGG, 3x3 with padding 1 convolutional filter becomes a gold standard in CNN architecture design.\nTwo consecutive 3x3 filters touch the same area that one 5x5 filter does. The former has 3x3xChannelx2=18C weights, while the latter has 5x5xChannel=25C weights. The former has two non-linearities, while the latter only has one.\ndef vgg_block(num_convs, out_channels): layers = [] for _ in range(num_convs): layers.append(nn.LazyConv2d(out_channels, kernel_size=3, padding=1)) layers.append(nn.ReLU()) layers.append(nn.MaxPool2d(kernel_size=2,stride=2)) return nn.Sequential(*layers) NiN In Network in Network (NiN) [3] design, in order to remove the fully connected layers at the end of the architecture and keep the number of non-linear layer more or less the same, a NiN block was proposed which consists of a 3x3, 5x5 or 11x11 convolutional layer (as in AlexNet) followed by multiple 1x1 convolutional layers. This design significantly decreased the number of parameter of CNN network. It also introduced the Global Average Pooling (GAP) layer at the end to replace fully connected layers.\n1x1 convolutional layer (pointwise conv) to add non-linearity without destroying the spatial structure 1x1 convolutional layer could be interpreted as a fully connected layer for each pixel (small network in big network) employ global average pooling layer to remove fully connected layers (only effectvie with added non-linearity) Typical NiN Block: Conv –\u003e 1x1 Conv –\u003e 1x1 Conv. Pooling layer is in between NiN blocks.\ndef nin_block(out_channels, kernel_size, stride, padding): return nn.Sequential( nn.LazyConv2d(out_channels, kernel_size, stride, padding), nn.ReLU(), nn.LazyConv2d(out_channels, kernel_size=1), nn.ReLU(), nn.LazyConv2d(out_channels, kernel_size=1), nn.ReLU()) GoogLeNet (Inception) GoogLeNet [4] (captical middle L to honor LeNet) introduces the ideas of network branching and feature concatenation. The block in GoogLeNet is called Inception Block. Instead of deciding which size of convolutional layer is better by human, we could let the training process to discover it automatically. Between the input and the output in a inception block, there are multiple parallel paths to guide the data flow, and in each path it consists of one or two different sized convolutional layers. It is possible and expected that the data flow would go through multiple paths so that a concatenation operation is required at the output layer. However, the purpose of the concatenation operation is not only to make the whole computation feasible, but also served an important function which is to gather various features generated from different paths since all paths have the same input.\nnetwork branching feature concatenation bottleneck design The 1x1 convolutional layer exists in each and every branches in inception block.\nclass InceptionBlock(nn.Module): def __init__(self, c1, c2, c3, c4): \"\"\" c1--c4 are the number of output channels for each branch, each branch has different output channel number, block output channel: c1 + c2[1] + c3[1] + c4 \"\"\" super().__init__() # branch 1, 1x1 conv self.branch1 = nn.Sequential( nn.LazyConv2d(c1, kernel_size=1), nn.ReLU() ) # branch 2, 1x1 conv --\u003e 3x3 conv self.branch2 = nn.Sequential( nn.LazyConv2d(c2[0], kernel_size=1), nn.ReLU(), nn.LazyConv2d(c2[1], kernel_size=3, padding=1), nn.ReLU() ) # branch 3, 1x1 conv --\u003e 5x5 conv self.branch3 = nn.Sequential( nn.LazyConv2d(c3[0], kernel_size=1), nn.ReLU(), nn.LazyConv2d(c3[1], kernel_size=5, padding=2), nn.ReLU() ) # branch 4, 3x3 maxpooling --\u003e 1x1 conv self.branch4 = nn.Sequential( nn.MaxPool2d(kernel_size=3, stride=1, padding=1), nn.LazyConv2d(c4, kernel_size=1), nn.ReLU() ) def forward(self, x): b1 = self.branch1(x) b2 = self.branch2(x) b3 = self.branch3(x) b4 = self.branch4(x) return torch.cat((b1,b2,b3,b4), dim=1) The functionalities of 1x1 convolution:\nChannel dimension modification. It could enlarge or reduce (compress) the number of channel. Add non-linearity if activation function follows. Reduce computation complexity. This is done by bottleneck design, such as 1x1 conv before 3x3 and 5x5 conv in branch 2 and 3. (Inception block introduces bottleneck design. ResNet formalizes the bottleneck block. Generally speaking, small conv filter is always more computationally efficient than big one, such as two 3x3 is cheaper than one 5x5.) == Bottleneck == Task: (256,28,28) --\u003e (128,28,28) by 5x5 conv with padding 2 WITHOUT 1×1 bottleneck: Cost = 28×28×256×128×5×5 = 642M operations WITH 1×1 bottleneck (Channel: 256 --\u003e 32 --\u003e 128): Cost = 28×28×256×32×1×1 + 28×28×32×128×5×5 = 6.4M + 80.3M = 86.7M operations Savings: 86.5% reduction! 🎉 The inception block can be shown that the solution space of this architecture is a strict subspace of the solution space of a single large layer (e.g. 5×5 conv) operating on a high-dimensional embedding. The Inception block is designed to be an efficient, modular, and sparse replacement for a single, large convolutional layer. It is practically superior, and theoretically less expressive than a single giant layer. The split-transform-merge behavior of Inception blocks is expected to approach the representational power of large and dense layers, but at a considerably lower computational complexity.\nBN-Inception (V2) BatchNorm (BN) was first introduced in [16] together with Inception V2 module. Two main improvements for BN-Inception:\nadd BatchNorm after each conv layer replace 5x5 conv with two consecutive 3x3 conv Inception (V3) GoogLeNet could reach roughly the same performance as VGG in ImageNet competition but with less parameters. GoogLeNet is still more parameter-efficient than some of its successors. In [13]: “Although VGGNet has the compelling feature of architectural simplicity, this comes at a high cost: evaluating the network requires a lot of computation. On the other hand, the Inception architecture of GoogLeNet was also designed to perform well even under strict constraints on memory and computational budget. For example, GoogleNet employed around 7 million parameters, which represented a 9× reduction with respect to its predecessor AlexNet, which used 60 million parameters. Furthermore, VGGNet employed about 3x more parameters than AlexNet.”\nResNet (V1) As the CNN architectures go deeper and deeper, how could we make sure that the function represented by CNN network is becoming strictly more expressive and not just different? Residual Block in ResNet [5] solved this problem in an ingenious way by adding a residual connection. Besides, in order to speed up the training process for deeper and deeper CNN networks, Batch Normalization, which follows convolutional layer, is also added into residual block. Sometimes, the skip connection should have a 1x1 convolutional layer (stride 2) to align the channel width and data resolution, and make the computation feasible. Residual block is just like a special case of inception block. But, a significant different comparing with inception block is that residual block employ addition operation instead of concatenation, and that’s the reason why 1x1 convolutional layer is necessary. Nonetheless, the skip connection also make gradient flow more easier.\nskip connection (shortcut, addition not concatenation) BatchNorm after Conv bottleneck block for even deeper architecture strided convolution replaces pooling layer post-activation (activation after addition) stem + multi-stage design since the network is deeper, each stage halve the resolution at the beginning, and each stage has multiple blocks class ResBlock(nn.Module): def __init__(self, n_channel, stride=1, use_1x1conv=False): \"\"\" When the input channel is not the equal output channel, use_1x1conv has to be True. \"\"\" assert stride in (1, 2) super().__init__() if use_1x1conv: # projection shortcut: increase channels and/or halve resolution self.shortcut = nn.Sequential( nn.LazyConv2d(n_channel, kernel_size=1, stride=stride, bias=False), nn.LazyBatchNorm2d() ) else: # empty nn.Sequential acts as a identity function self.shortcut = nn.Sequential() # 3x3 --\u003e 3x3 self.seq = nn.Sequential( nn.LazyConv2d(n_channel, kernel_size=3, stride=stride, padding=1, bias=False), nn.LazyBatchNorm2d(), nn.ReLU(), nn.LazyConv2d(n_channel, kernel_size=3, padding=1, bias=False), nn.LazyBatchNorm2d() ) def forward(self, x): # nn.ReLU is part of network, F.relu is just a function. return F.relu(self.seq(x)+self.shortcut(x)) In order to improve the computation efficiency and reduce the number of parameters, ResNet also introduces a bottleneck block design. This allowed ResNet-50, ResNet-101, and ResNet-152 to be trained effectively.\nclass BotResBlock(nn.Module): def __init__(self, n_channel, stride=1, factor=4, use_1x1conv=False): assert num_channels%factor == 0 assert stride in (1, 2) super().__init__() if use_1x1conv: self.shortcut = nn.Sequential( nn.LazyConv2d(n_channel, kernel_size=1, stride=stride, bias=False), nn.LazyBatchNorm2d() ) else: self.shortcut = nn.Sequential() # bottleneck: 1x1 --\u003e 3x3 --\u003e 1x1 # reduce computation and keep channel number self.seq = nn.Sequential( nn.LazyConv2d(n_channel//factor, kernel_size=1, bias=False), nn.LazyBatchNorm2d(), nn.ReLU(), nn.LazyConv2d(n_channel//factor, kernel_size=3, stride=stride, padding=1, bias=False), nn.LazyBatchNorm2d(), nn.ReLU(), nn.LazyConv2d(n_channel, kernel_size=1, bias=False), nn.LazyBatchNorm2d() ) def forward(self, x): return F.relu(self.seq(x)+self.shortcut(x)) The above two residual block designs are called post-activation (activation after shortcut) ResNet as well.\nStrided Convolution\nWhen stride is bigger than 1, it’s called strided convolution. In ResNet design, pooling layer is replaced by strided convolution layer (except the stem part). Typically, stride=2 with padding=1 is used in ResNet to downsampling resolution 50%.\n\u003e\u003e\u003e a = torch.randn(1,3,32,32) \u003e\u003e\u003e conv = nn.Conv2d(3,3,kernel_size=3,stride=2,padding=1) \u003e\u003e\u003e conv(a).shape torch.Size([1, 3, 16, 16]) Pooling layers (like Max Pooling or Average Pooling) discard spatial information by taking the maximum or average value over a region. While this works well for reducing dimension, it results in a loss of potential features. In contrast, a strided convolution reduces the spatial size while simultaneously performing a learned transformation on the data. It’s a learned downsampling. It imporves the information density as well.\nWhen downsampling by strided 1x1 convolution in the shortcut connection, it would loss 75% information (1 pixel out of 4 pixels), and this is the trade-off in ResNet design. The main purpose of shortcut connection is the to keep the shape and preserve identity values, not to extract features.\nResNet (V2, Pre-activation) The core problem: Gradient Flow in Deep Networks. In very deep networks, gradients can vanish (become too small) or explode (become too large) as they backpropagate through many layers. ResNet’s skip connections help, but the design details matter a lot. Pre-activation [6] means that the activation is before the shortcut connection.\nOne variant in [6] is called full pre-activation which is favored in many modern implementation. The “full” distinguishes it from partial pre-activation designs. It ensures that BatchNorm and ReLU are applied to the block’s input before it branches into:\nThe main residual path (the convolutions). The shortcut path (1×1 projection for downsampling/channel matching). This way, every convolution (weight layer) in the entire block, on both paths, is preceded by BN → ReLU. There is no ReLU after the residual addition (to preserve clean identity-like signal propagation). BN and ReLU are applied to shortcut path only when downsampling or channel matching. Otherwise, shortcut path has is pure identity path. In non-full (or partial) pre-activation variants, BN → ReLU is applied only to the residual path. The shortcut (especially 1x1 projection shortcuts) operates on the raw, unnormalized/unactivated input.\nA full pre-activation ResNet-50 implementation is in Appendix.\nResNet design details:\nThe initial layers is called stem, which reduces the resolution. ResNet blocks are organized into stages. Resolution reduction only happens at the beginning of each stage. The first block in each stage reduce resolution by strided convolution except the block in the first stage. Bottleneck block is only used on ResNet-50 or above. There are 3 conv layers in bottleneck block, while 2 conv layers in non-bottleneck (basic) block. Those 1x1 conv which are employed in shortcut paths are not counted in the literal 50 of ResNet-50. DenseNet The basic idea of DenseNet [7] is Feature Reuse. In each block, every layer receives inputs from all previous layers. DenseNet uses concatenation operation, not addition. Each layer contributes a few more feature maps (growth rate) based on all feature maps learned by previous layers in one block.\nfeature reuse by channel concatenation pre-activation block design transtion block to reduce resolution by average pooling layer and reduce channel number by 1x1 conv the number of feature map doesn’t have to be doubled every time (progressive increase), highly parameter-efficient class DenseBlock(nn.Module): def __init__(self, n_layer, growth_rate): super().__init__() self.layers = nn.ModuleList() for _ in range(n_layer): self.layers.append(nn.Sequential( nn.LazyBatchNorm2d(), nn.ReLU(), nn.LazyConv2d(growth_rate, kernel_size=3, padding=1, bias=False) )) def forward(self, x): for layer in self.layers: y = layer(x) x = torch.cat((x,y), dim=1) return x class DenseBotBlock(nn.Module): def __init__(self, n_layer, growth_rate, factor=4): super().__init__() self.layers = nn.ModuleList() for _ in range(n_layer): self.layers.append(nn.Sequential( nn.LazyBatchNorm2d(), nn.ReLU(), nn.LazyConv2d(growth_rate*factor, kernel_size=1, bias=False), nn.LazyBatchNorm2d(), nn.ReLU(), nn.LazyConv2d(growth_rate, kernel_size=3, padding=1, bias=False) )) def forward(self, x): for layer in self.layers: y = layer(x) x = torch.cat((x,y), dim=1) return x class DenseTransition(nn.Module): def __init__(self, n_channel=None): \"\"\" when n_channel is None, no channel compression \"\"\" super().__init__() self.transition = nn.Sequential( nn.LazyBatchNorm2d(), nn.ReLU(), nn.LazyConv2d(n_channel, kernel_size=1, bias=False) if n_channel else nn.Sequential(), nn.AvgPool2d(kernel_size=2, stride=2) ) def forward(self, x): return self.transition(x) ResNeXt ResNeXt [8] introduces grouped convolution into ResNet. Actually, the core idea of ResNeXt is not grouped convolution. It’s called Aggregated Residual Transformation, and each transformaion path is required to be independent. It’s just accidentally and mathematically the same as grouped convolution.\nGrouped convolution is a variation of the standard convolution operation that’s crucial for architectures like ResNeXt and MobileNet. It was originally introduced in the AlexNet architecture to distribute the model across multiple GPUs. Here the grouped convolution is mainly used to improve computational efficiency. Grouped Convolution splits both the input feature maps and the convolutional filters into a pre-defined number of groups (G). The convolution then happens independently within each group. Finally, concatenation is applied on all outputs from each group. Grouped convolution is also a branching design but with a single line of PyTorch code to realize.\nThe computation complexity of grouped convolution:\ncomplexity of convolution: $O(C_{in}\\cdot C_{out})$ complexity of grouped convolution: $O(g\\cdot C_{in}/g \\cdot C_{out}/g)=O((C_{in}\\cdot C_{out})/g)$ class ResNeXtBlock(nn.Module): \"\"\" post-activation ResNeXt bottleneck block \"\"\" def __init__(self, n_group, n_channel, factor, stride, use_1x1conv): # here cannot check the input channel and n_group, assert n_channel%factor == 0 assert (n_channel//factor) % n_group == 0 assert stride in (1, 2) assert factor in (1, 2, 4) super().__init__() if use_1x1conv: self.shortcut = nn.Sequential( nn.LazyConv2d(n_channel, kernel_size=1, stride=stride, bias=False), nn.LazyBatchNorm2d() ) else: self.shortcut = nn.Sequential() # 1x1 --\u003e 3x3 (grouped conv) --\u003e 1x1 self.seq = nn.Sequential( nn.LazyConv2d(n_channel//factor, kernel_size=1, bias=False), nn.LazyBatchNorm2d(), nn.ReLU(), nn.LazyConv2d(n_channel//factor, kernel_size=3, padding=1, stride=stride, groups=n_group, bias=False), nn.LazyBatchNorm2d(), nn.ReLU(), nn.LazyConv2d(n_channel, kernel_size=1, bias=False), nn.LazyBatchNorm2d() ) def forward(self, x): return F.relu(self.seq(x)+self.shortcut(x)) ResNeXt only has bottleneck design. 1x1 conv is used for channel compressing or expansion so that they could not be accounted in the independent transformation path. In a basic ResNet block, there are two consecutive 3x3 conv, apply grouped convolution on either 3x3 conv layer would break the independent transformation path, and this implementation is called Trivial Wider ResNet block in paper and loss cardinality. Nonetheless, like ResNet, ResNeXt also has post-activation (V1) and pre-activation (V2) versions.\nMobileNet (V1) Aimed to reduce computation complexity and lantency, MobileNet [9] employs Depthwise Separable Convolution. There are two separate steps:\ndepthwise convolution (grouped conv, group number is equal the number of input channel), each channel is only convoluted by only one filter (it’s like to apply a mapping upon each channel) pointwise convolution (1x1 conv), combine all outputs from each channel together Fully convolutional operation is factorized into two separable steps above. Strided convolution is employed in MobileNet to reduce resolution. No skip connection in MobileNet V1.\nclass DSConv(nn.Module): \"\"\" Depthwise Separable Conv of MobileNet V1 \"\"\" def __init__(self, in_channels, out_channels, stride=1): super().__init__() # depthwise convolution, keep the channel number self.depthwise = nn.Sequential( nn.Conv2d(in_channels, in_channels, kernel_size=3, stride=stride, padding=1, groups=in_channels, bias=False), nn.BatchNorm2d(in_channels), nn.ReLU(inplace=True) ) # pointwise convolution, change the channel number self.pointwise = nn.Sequential( nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, padding=0, bias=False), nn.BatchNorm2d(out_channels), nn.ReLU(inplace=True) ) def forward(self, x): x = self.depthwise(x) x = self.pointwise(x) return x MobileNet (V2) MobileNet V2 [10] introduced an inverted residual and linear bottleneck block.\nInverted residual structure expands channel width first, and then apply depthwise convolution. Finally, pointwise convolution is employed to shrink the width back (thin –\u003e wide –\u003e thin). In ResNet’s bottleneck design, the channel width is shrank first (wide –\u003e thin –\u003e wide). So, here in MobileNet V2, we call it Inverted.\nclass InvertedResidualBlock(nn.Module): \"\"\" Inverted Residual Block - the core building block of MobileNet V2 Structure: 1. Expansion: 1x1 conv to expand channels (thin -\u003e wide) 2. Depthwise: 3x3 depthwise conv for spatial filtering 3. Projection: 1x1 conv to project back (wide -\u003e thin), no activation 4. Skip connection is applied only if dimensions match and no resolution reduction \"\"\" def __init__(self, in_channels, out_channels, stride, expand_ratio): super().__init__() self.use_residual = (stride == 1 and in_channels == out_channels) hidden_dim = int(in_channels * expand_ratio) layers = [] # expansion if expand_ratio != 1: layers.extend([ nn.Conv2d(in_channels, hidden_dim, kernel_size=1, bias=False), nn.BatchNorm2d(hidden_dim), nn.ReLU(inplace=True) ]) # depthwise convolution layers.extend([ nn.Conv2d(hidden_dim, hidden_dim, kernel_size=3, stride=stride, padding=1, groups=hidden_dim, bias=False), nn.BatchNorm2d(hidden_dim), nn.ReLU(inplace=True) ]) # projection (linear bottleneck - no activation!) layers.extend([ nn.Conv2d(hidden_dim, out_channels, kernel_size=1, bias=False), nn.BatchNorm2d(out_channels) # Note: NO ReLU here! This is the linear bottleneck ]) self.blk = nn.Sequential(*layers) def forward(self, x): if self.use_residual: return x + self.blk(x) else: return self.blk(x) Linear in MobileNet V2 design means no activation at the end of the block. It is important to remove non-linearity in the narrow layers in order to maintain representational power [10].\nSkip connnection is only applied when dimensions match and there is no resolution reduction. The layer structure looks like a post-activation design. However, since there is no activation at the end, it’s also like pre-activation. So, people don’t say these two terms when discussing MobileNet.\nSENet Squeeze and Excitation Network (SENet) [11] introduces an ingenuine channel weighting mechanism into existing CNN architectures. People call SE structure a lightweight attention mechanism.\nclass SEBlock(nn.Module): \"\"\" Squeeze-and-Excitation Block \"\"\" def __init__(self, in_channels, reduction_ratio=16): super().__init__() n_dim = in_channels // reduction_ratio self.seblk = nn.Sequential( nn.AdaptiveAvgPool2d(1), nn.Conv2d(in_channels, n_dim, kernel_size=1), nn.ReLU(inplace=True), nn.Conv2d(n_dim, in_channels, kernel_size=1), nn.Sigmoid() ) def forward(self, x): return x * self.seblk(x) SE block is inserted just before shortcut connection in ResNet, after activation layer (post-act) or conv layer (pre-act). The general ideology of placement of SE block is that where do you want the “attention” happens! If Group Norm (GN) is employed, try to not make the bottleneck dimension smaller than the number of channel groups.\nIf changing ReLU in SE block to GELU (standard activation in transformer architectures), you might get a bit performance boost without introducing any learnable parameters. MBConv block uses lightweight SiLU which needs less computation than GELU. Both SiLU and GELU are smooth functions.\nEfficientNet (MBConv) The core idea of EfficientNet [12] is called Compound Scaling, which is a principled and balanced way to scale convolutional neural networks across three dimensions, depth (number of layers), width (number of channels), and resolution (input image size), by using a single compound coefficient. Previous scaling methods typically focused on one or two dimensions arbitrarily (e.g., deeper networks like ResNet, wider like Wide ResNet, or higher resolution inputs). These approaches often led to diminishing returns because the dimensions interact: increasing depth alone helps with feature complexity but wastes capacity if width or resolution are too small, and vice versa.\nThe building block in EfficientNet is called MBConv block, which is actually the same design of MobileNetV2 inverted residual and linear bottleneck block, but with two enhancements:\nemploy SE block after depthwise conv layer (best place proved by [14]) employ SiLU (Sigmoid Linear Unit, Swish) activation exclusively in the whole network EfficientNet (V2) ShuffleNet RegNet ConvMixer NLNet \u0026 GCNet Non-Local neural Network (NLNet) [17] is the pioneer in attention mechanism design. It tries to solve the issue caused by conv layers by which only a small receptive field could be seen. We can stack lots of conv layers to enlarge the receptive field. However, this is not cheap way. NLNet block is like SENet block, which is also a plugin design and could be used in any CNN architecture. The basic idea is that each pixel computes with all other pixels to get an attention map, and finally add this attention map back to input.\nHowever, researchers found that each pixel’s attention map is almost identical in NLNet. This is resonable. For a single image, important areas should be the same for each pixel. Based on this observation, Global Context neural Network (GCNet) [18] was design to replace NLNet as a lightweight global attention mechanism in CNN architecture.\nclass LazyGC(nn.Module): def __init__(self, ratio=16): super().__init__() self.ratio = ratio self.conv_mask = nn.LazyConv2d(1, kernel_size=1) self.softmax = nn.Softmax(dim=-1) self.transform = None def forward(self, x): batch, channels, _, _ = x.size() # --- 1. Context Modeling (Global Attention) --- # [B, C, H, W] -\u003e [B, C, H*W] input_x = x.view(batch, channels, -1) # [B, C, N] input_x = input_x.unsqueeze(1) # [B, 1, C, N] # shared attention mask mask = self.conv_mask(x).view(batch, 1, -1) # [B, 1, N] mask = self.softmax(mask).unsqueeze(-1) # [B, 1, N, 1] # weighted global average: [B, 1, C, 1] --\u003e [B, C, 1, 1] context = torch.matmul(input_x, mask).view(batch, channels, 1, 1) # --- 2. Transform (Bottleneck with LayerNorm) --- if self.transform is None: n_dim = max(channels // self.ratio, 1) self.transform = nn.Sequential( nn.Conv2d(channels, n_dim, kernel_size=1, bias=False), nn.GroupNorm(1, n_dim), #nn.LayerNorm((n_dim,1,1)), nn.SiLU(inplace=True), nn.Conv2d(n_dim, channels, kernel_size=1) ) self.transform.to(x.device) # --- 3. Fusion (Addition) --- # Each channel adds a single value by broadcast, which is the # global context for that channel. It's calculated by weighted # sum of each channel and the Shared Attention Mask. return x + self.transform(context) Researchers found that GC block consistently outperforms SE block becaseu GC block does two things together: scale channel and add global context information to each channel.\nConvNeXt The researchers conducted a series of experiments started from ResNet with different designs borrowed from transformer architecture, especially Swin Transformer, and ended up with a pure ConvNet which outperforms transformers on some famous benchmark datasets. This is the “ConvNet for the 2020s”.\nChange stage compute ratio, and make the 3rd stage even more computationally expensive. E.g., from (3,4,6,3) of ResNet-50 to (3,3,9,3). (smaller channel width) Change stem to “pathify”. 4x4 conv with padding 4, non-overlapping. Depthwise and 1x1 conv. Inverted bottleneck with moving up depthwise conv layer. Large kernel size. 7x7 conv with padding 3. GELU and fewer activation layers. Only one GELU in each block, like transformer block. Position-wise layer normalization. Separate downsampling layers by 2x2 conv with stride 2 and increasing channel width. (Norm –\u003e Conv) The below implementation of postion-wise LN is from my blog post normalization, regularization and learning rate scheduling.\nclass FastPositionwiseLN(nn.Module): def __init__(self, n_channel): super().__init__() self.gamma = nn.Parameter(torch.ones(1, n_channel, 1, 1)) self.beta = nn.Parameter(torch.zeros(1, n_channel, 1, 1)) def forward(self, x): # calculate mean and variance across the channel dimension (dim=1) mean = x.mean(1, keepdim=True) var = x.var(1, keepdim=True, unbiased=False) # biased in original paper # standardization x = (x - mean) / torch.sqrt(var + 1e-8) return self.gamma*x + self.beta class ConvNeXtBlock(nn.Module): \"\"\" ConvNeXt block without Layer Scale and Drop Path \"\"\" def __init__(self, n_channel): super().__init__() self.net = nn.Sequential( # non-lazy conv is more safe due to the requirement of consistent channel width nn.Conv2d(n_channel, n_channel, kernel_size=7, padding=3, groups=n_channel, bias=False), FastPositionwiseLN(n_channel), nn.LazyConv2d(n_channel*4, kernel_size=1), nn.GELU(), nn.LazyConv2d(n_channel, kernel_size=1) ) def forward(self, x): return x + self.net(x) Reference Krizhevsky, A., Sutskever, I., \u0026 Hinton, G. E. (2012). Imagenet classification with deep convolutional neural networks. Advances in neural information processing systems, 25. Simonyan, K., \u0026 Zisserman, A. (2014). Very deep convolutional networks for large-scale image recognition. arXiv preprint arXiv:1409.1556. Lin, M., Chen, Q., \u0026 Yan, S. (2013). Network in network. arXiv preprint arXiv:1312.4400. Szegedy, C., Liu, W., Jia, Y., Sermanet, P., Reed, S., Anguelov, D., … \u0026 Rabinovich, A. (2015). Going deeper with convolutions. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 1-9). He, K., Zhang, X., Ren, S., \u0026 Sun, J. (2016). Deep residual learning for image recognition. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 770-778). He, K., Zhang, X., Ren, S., \u0026 Sun, J. (2016, September). Identity mappings in deep residual networks. In European conference on computer vision (pp. 630-645). Cham: Springer International Publishing. Huang, G., Liu, Z., Van Der Maaten, L., \u0026 Weinberger, K. Q. (2017). Densely connected convolutional networks. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 4700-4708). Xie, S., Girshick, R., Dollár, P., Tu, Z., \u0026 He, K. (2017). Aggregated residual transformations for deep neural networks. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 1492-1500). Howard, A. G., Zhu, M., Chen, B., Kalenichenko, D., Wang, W., Weyand, T., … \u0026 Adam, H. (2017). Mobilenets: Efficient convolutional neural networks for mobile vision applications. arXiv preprint arXiv:1704.04861. Sandler, M., Howard, A., Zhu, M., Zhmoginov, A., \u0026 Chen, L. C. (2018). Mobilenetv2: Inverted residuals and linear bottlenecks. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 4510-4520). Hu, J., Shen, L., \u0026 Sun, G. (2018). Squeeze-and-excitation networks. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 7132-7141). Tan, M., \u0026 Le, Q. (2019, May). Efficientnet: Rethinking model scaling for convolutional neural networks. In International conference on machine learning (pp. 6105-6114). PMLR. Szegedy, C., Vanhoucke, V., Ioffe, S., Shlens, J., \u0026 Wojna, Z. (2016). Rethinking the inception architecture for computer vision. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 2818-2826). Hoang, V. T., \u0026 Jo, K. H. (2021, July). Practical analysis on architecture of EfficientNet. In 2021 14th International Conference on Human System Interaction (HSI) (pp. 1-4). IEEE. Zeiler, M. D., \u0026 Fergus, R. (2014, September). Visualizing and understanding convolutional networks. In European conference on computer vision (pp. 818-833). Cham: Springer International Publishing. Ioffe, S. (2015). Batch normalization: Accelerating deep network training by reducing internal covariate shift. arXiv preprint arXiv:1502.03167. Wang, X., Girshick, R., Gupta, A., \u0026 He, K. (2018). Non-local neural networks. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 7794-7803). Cao, Y., Xu, J., Lin, S., Wei, F., \u0026 Hu, H. (2019). Gcnet: Non-local networks meet squeeze-excitation networks and beyond. In Proceedings of the IEEE/CVF international conference on computer vision workshops (pp. 0-0). Appendix ReLU6 $relu6=min(max(0,x),6)$\nMobileNet (introduced in 2017 by Google) is optimized for mobile and embedded vision applications, emphasizing low latency, small model size, and efficient inference on resource-constrained hardware. ReLU6 was chosen over CNN standard ReLU for several key reasons tied to these goals:\nQuantization Compatibility: MobileNets are designed for deployment with low-precision quantization (e.g., 8-bit integers) to speed up inference and reduce memory footprint. ReLU6’s output range (0–6) maps efficiently to unsigned 8-bit values (0–255) (use 8 bits to represent float number from 0 to 6), minimizing quantization error and preserving accuracy during fixed-point arithmetic which is common on mobile CPUs/GPUs. The “6” is an empirical choice for this bit-width compression. Standard ReLU’s unbounded positives can lead to overflow or higher error in such setups. Numerical Stability: By capping activations at 6, ReLU6 prevents extreme values from propagating through the network, reducing the risk of gradient explosions or instability during training, especially in deeper or wider models like MobileNet’s depthwise separable convolutions. This “keeps values small and within a manageable range.” Mobile Hardware Efficiency: On edge devices (e.g., smartphones), where floating-point operations are expensive, ReLU6’s bounded range simplifies optimizations in frameworks like TensorFlow Lite. It was a deliberate choice in the original MobileNet architecture to align with quantized training pipelines. Full Pre-Activation ResNet-50 Implementation Got 74.6% top-1 accuracy by training on 4xGPU with standard 90 epochs and other configurations.\nclass LazyBatchNormAct2d(nn.Module): def __init__(self): super().__init__() self.net = nn.Sequential( nn.LazyBatchNorm2d(), nn.ReLU(inplace=True) ) def forward(self, x): return self.net(x) class PreBotResBlock(nn.Module): def __init__(self, n_channel, stride=1, factor=4, use_1x1conv=False): assert n_channel % factor == 0 assert stride in (1, 2) super().__init__() self.use_1x1conv = use_1x1conv self.bna = LazyBatchNormAct2d() if use_1x1conv: self.shortcut = nn.LazyConv2d(n_channel, kernel_size=1, stride=stride, bias=False) else: self.shortcut = nn.Identity() self.seq = nn.Sequential( nn.LazyConv2d(n_channel//factor, kernel_size=1, bias=False), LazyBatchNormAct2d(), nn.LazyConv2d(n_channel//factor, kernel_size=3, stride=stride, padding=1, bias=False), LazyBatchNormAct2d(), nn.LazyConv2d(n_channel, kernel_size=1, bias=False) ) def forward(self, x): y = self.bna(x) z = self.shortcut(y) if self.use_1x1conv else self.shortcut(x) return self.seq(y) + z class PreResNet50(nn.Module): \"\"\" Full Pre-activation bottleneck ResNet-50 for ImageNet-1k Implemented by Xinlin Zhang (https://xinlin-z.github.io) \"\"\" def __init__(self): super().__init__() stages = nn.Sequential( # stage 1, 3 blocks PreBotResBlock(256, use_1x1conv=True), PreBotResBlock(256), PreBotResBlock(256), # stage 2, 4 blocks PreBotResBlock(512, stride=2, use_1x1conv=True), PreBotResBlock(512), PreBotResBlock(512), PreBotResBlock(512), # stage 3, 6 blocks PreBotResBlock(1024, stride=2, use_1x1conv=True), PreBotResBlock(1024), PreBotResBlock(1024), PreBotResBlock(1024), PreBotResBlock(1024), PreBotResBlock(1024), # stage 4, 3 blocks PreBotResBlock(2048, stride=2, use_1x1conv=True), PreBotResBlock(2048), PreBotResBlock(2048), ) self.net = nn.Sequential( nn.LazyConv2d(64, kernel_size=7, stride=2, padding=3), nn.MaxPool2d(kernel_size=3, stride=2, padding=1), # (64,56,56) stages, nn.AdaptiveAvgPool2d(1), nn.LazyConv2d(1000, kernel_size=1), nn.Flatten(start_dim=1) ) def forward(self, x): return self.net(x) Deconv vs. Transposed Conv vs. Upsampling+Conv Deconvolution is the reversed operation of standard convolution.\nTransposed convolution is not Deconvolution. However, in some context, these two terms are used interchangably. They are only similar in the sense of the same output spatial dimensions. Transposed convolution doesn’t reverse the standard convolution by values, rather by dimensions only. It does exactly what a standard convolutional layer does but on a modified input feature map.\nHow is the input feature map modified?\n$s$ is stride, $p$ is padding, $k$ is kernel size, imagine that they are all applied on output to generate input. Between each row and column in the input, insert $z=s-1$ zeros. Pad the zero-inserting feature map with $p’=p-k-1$ zeros. Carry out standard convolution on the padded feature map with hidden stride=1. Upsampling+Conv is like transposed conv, but employing upsampling algorithm (bilinear, bicubic, or nearest neighbor) to resize the input feature maps, and then followed by standard 3x3 conv layer. Modern CNN architectures perfer this way because:\noutput is more smooth and with natural boundaries (might blur sharp edges), no checkerboard artifacts (transposed conv often has) more efficient and stable Weights Init for CNNs Recommend using Kaiming initialization for more stable training and fast converging. There are a few other names for Kaiming initialization:\nKaiming initialization MSRA initialization He initialization Kaiming normalization They are all the same thing!\nCode pattern:\nclass XXNet(nn.Module): def __init__(self, *args, **kwargs): super().__init__() ... # code for building layers (non-lazy) self.apply(self.init_conv_kaiming_normal_relu) def init_conv_kaiming_normal_relu(self, m): if isinstance(m, nn.Conv2d): nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu') def forward(self, x): ... ",
+  "wordCount" : "5965",
+  "inLanguage": "en",
+  "datePublished": "2025-12-05T20:03:25+12:00",
+  "dateModified": "2025-12-05T20:03:25+12:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://xinlin-z.github.io/posts/cnn/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Xinlin's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://xinlin-z.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://xinlin-z.github.io/" accesskey="h" title="Xinlin&#39;s Blog (Alt + H)">Xinlin&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://xinlin-z.github.io/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/pages/about" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Convolutional Neuron Networks (CNN)
+    </h1>
+    <div class="post-meta"><span title='2025-12-05 20:03:25 +1200 +1200'>December 5, 2025</span>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#cnns-inductive-bias" aria-label="CNN&rsquo;s Inductive Bias">CNN&rsquo;s Inductive Bias</a></li>
+                <li>
+                    <a href="#alexnet" aria-label="AlexNet">AlexNet</a></li>
+                <li>
+                    <a href="#zfnet" aria-label="ZFNet">ZFNet</a></li>
+                <li>
+                    <a href="#vgg" aria-label="VGG">VGG</a></li>
+                <li>
+                    <a href="#nin" aria-label="NiN">NiN</a></li>
+                <li>
+                    <a href="#googlenet-inception" aria-label="GoogLeNet (Inception)">GoogLeNet (Inception)</a></li>
+                <li>
+                    <a href="#bn-inception-v2" aria-label="BN-Inception (V2)">BN-Inception (V2)</a></li>
+                <li>
+                    <a href="#inception-v3" aria-label="Inception (V3)">Inception (V3)</a></li>
+                <li>
+                    <a href="#resnet-v1" aria-label="ResNet (V1)">ResNet (V1)</a></li>
+                <li>
+                    <a href="#resnet-v2-pre-activation" aria-label="ResNet (V2, Pre-activation)">ResNet (V2, Pre-activation)</a></li>
+                <li>
+                    <a href="#densenet" aria-label="DenseNet">DenseNet</a></li>
+                <li>
+                    <a href="#resnext" aria-label="ResNeXt">ResNeXt</a></li>
+                <li>
+                    <a href="#mobilenet-v1" aria-label="MobileNet (V1)">MobileNet (V1)</a></li>
+                <li>
+                    <a href="#mobilenet-v2" aria-label="MobileNet (V2)">MobileNet (V2)</a></li>
+                <li>
+                    <a href="#senet" aria-label="SENet">SENet</a></li>
+                <li>
+                    <a href="#efficientnet-mbconv" aria-label="EfficientNet (MBConv)">EfficientNet (MBConv)</a></li>
+                <li>
+                    <a href="#efficientnet-v2" aria-label="EfficientNet (V2)">EfficientNet (V2)</a></li>
+                <li>
+                    <a href="#shufflenet" aria-label="ShuffleNet">ShuffleNet</a></li>
+                <li>
+                    <a href="#regnet" aria-label="RegNet">RegNet</a></li>
+                <li>
+                    <a href="#convmixer" aria-label="ConvMixer">ConvMixer</a></li>
+                <li>
+                    <a href="#nlnet--gcnet" aria-label="NLNet &amp; GCNet">NLNet &amp; GCNet</a></li>
+                <li>
+                    <a href="#convnext" aria-label="ConvNeXt">ConvNeXt</a></li>
+                <li>
+                    <a href="#reference" aria-label="Reference">Reference</a></li>
+                <li>
+                    <a href="#appendix" aria-label="Appendix">Appendix</a><ul>
+                        
+                <li>
+                    <a href="#relu6" aria-label="ReLU6">ReLU6</a></li>
+                <li>
+                    <a href="#full-pre-activation-resnet-50-implementation" aria-label="Full Pre-Activation ResNet-50 Implementation">Full Pre-Activation ResNet-50 Implementation</a></li>
+                <li>
+                    <a href="#deconv-vs-transposed-conv-vs-upsamplingconv" aria-label="Deconv vs. Transposed Conv vs. Upsampling&#43;Conv">Deconv vs. Transposed Conv vs. Upsampling+Conv</a></li>
+                <li>
+                    <a href="#weights-init-for-cnns" aria-label="Weights Init for CNNs">Weights Init for CNNs</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>Convolutional neuron networks (CNN) have been revolutionized image-related Artificial Intellegence (AI) tasks. This kind of neuron network architectures have been obtained huge success. Furthermore, CNNs are very interesting. They have many design elements and variants you could play with. Academic researches might pursue a beauty of purity and emphasize the unique feature they proposed. However, in industry application, it&rsquo;s not necessary to build a network pure. It&rsquo;s highly possible to combine all necessary design elements together. However, we should have a deep understand of all these design elements.</p>
+<blockquote>
+<p>Neural network is a complicated math function. Deep learning model is the combination of all kinds of basic operations, and trained by back-propagation algorithm. Design network architectures based on your data and application!</p></blockquote>
+<h2 id="cnns-inductive-bias">CNN&rsquo;s Inductive Bias<a hidden class="anchor" aria-hidden="true" href="#cnns-inductive-bias">#</a></h2>
+<p>Inductive biases are inner assumptions of each specific neuron network architecture that could make learning possible. They are prior knowledge built into a learning model that guide how to interpret the data it sees. There are just infinite number of hypotheses that could learn from and fit the training data. Inductive biases help narrow down the search space and guide the learning process. Interestingly, CNN and Vision Transformer (ViT) have completely different inductive biases, even though both of them could be applied to image tasks. Below are main inductive biases built in CNN architectures:</p>
+<ul>
+<li>Spatial Locality, which assumes that nearby pixels in an image are more related and important to each other than distant pixels. This is implemented by small receptive fields. Normally, they are 3x3 or 5x5 kernels (filters), and only touch local neighborhoods.</li>
+<li>Hierarchical Feature Learning, which means a stack of convolutional layers that learn features from small and simple ones to large and complex ones in a hierarchical way. This is realized by multiple convolutional layers stacked in between non-linear layers and pooling layers in the network [15].</li>
+<li>Translation Invariance, which means the convolution process is exactly the same wherever the regions on the images. This is achieved by shared weights and bias of each filter.</li>
+<li>Translation Equivariance, which means that the same object would have the same output in feature map in the same location as the input object no matter where the input object is located in the input image. $f(T(x))=T(f(x))$. A desired characteristic for object detection.</li>
+</ul>
+<figure>
+    <img loading="lazy" src="tang_yuan.png"
+         alt="Tang Yuan, Tom in English"/> <figcaption>
+            <p>Tang Yuan, Tom in English</p>
+        </figcaption>
+</figure>
+
+<h2 id="alexnet">AlexNet<a hidden class="anchor" aria-hidden="true" href="#alexnet">#</a></h2>
+<p>Modern CNN architecture started from AlexNet [1] in 2012. We can think of it as an enlarged version of old LeNet.</p>
+<ul>
+<li>convolutional layers with filters size of 11x11, 5x5 and 3x3</li>
+<li>ReLU activation function</li>
+<li>pooling layers (max pooling)</li>
+<li>final fully connected layers</li>
+</ul>
+<blockquote>
+<p>Classic 3-Layer Sequence: Conv -&gt; ReLU -&gt; Pooling. Pooling layers are used to reduce resolution. So, there is a hard limit for the depth by this design.</p></blockquote>
+<p>These are the very basic CNN design elements.</p>
+<p><strong>The effect of pooling layer</strong></p>
+<ul>
+<li>reduce resolution</li>
+<li>When there are some minor changes on the input image, such as different viewpoint, size, illumination, rotation or noises, the output would be the same. This is realized by pooling layer which aggregates information on a small region so that when there are some small changes in that small region, the output of that region in pooling layer might keep the same.</li>
+</ul>
+<h2 id="zfnet">ZFNet<a hidden class="anchor" aria-hidden="true" href="#zfnet">#</a></h2>
+<p>In the cornerstone paper [15], the authors proved a few important characristics of CNN networks:</p>
+<ul>
+<li>hierarchical feature learning</li>
+<li>feature convergence takes time (high layer feature maps need more epochs to learn and converge)</li>
+<li>capability of transfer learning</li>
+<li>the network is actually looking at the object, not just the background (occlusion sensitivity)</li>
+<li>as the network goes deeper, the number of channel (feature map) should be larger</li>
+</ul>
+<p>This paper didn&rsquo;t just visualize AlexNet (the 2012 ImageNet winner). They used their Deconvnet tool to &ldquo;debug&rdquo; it. By seeing exactly what AlexNet was struggling with, they made several targeted adjustments that resulted in the ZFNet, which won the competition in 2013.</p>
+<ul>
+<li>Change first conv layer from 11x11 stride 4 to 7x7 stride 2, which could captured much finer detail and smoother features and providing a better foundation for the deeper layers to build upon.</li>
+<li>Make middle layers wider by increasing width of layer 3 from 384 to 512, increasing width of layer 4 from 384 to 1024, and increasing width of layer 5 from 256 to 512.</li>
+</ul>
+<p><strong>Why increase the number of channels as CNN networks go deeper?</strong></p>
+<ul>
+<li>Trade-off between spatial dimension and channel dimension (a.k.a <strong>width of convolution</strong>).</li>
+<li>By increasing the channels as spatial size decreases, the increasing of width compensate the loss of spatial resolution and maintain the network&rsquo;s capability to represent complex patterns.</li>
+<li>Low level features are small and simple, no need too many feature types (maps). High level features are more complex, we need to know more &ldquo;what&rdquo; instead of &ldquo;where&rdquo;. Like a dictionary, we only need a few letters, but we have so many different words. One insight is that even though there are so many feature maps in the final conv layer, for a specific input, only a few of them are really activated (<strong>Channel Sparsity</strong>).</li>
+</ul>
+<h2 id="vgg">VGG<a hidden class="anchor" aria-hidden="true" href="#vgg">#</a></h2>
+<p>Started from the Visual Geometry Group (VGG) [2] at Oxford University in 2014, people began to talk about CNN Block and Network Family, such as VGG block and VGG family. CNNs became designs with both layer-based and block-based. A network family is a series of design based on same block design.</p>
+<ul>
+<li>VGG Block: consecutive 3x3 with padding 1 filters (Conv + ReLU)</li>
+<li>deep and narrow outperforms shallow and wide (deep means more non-linearity)</li>
+<li>still has final fully connected layers with large number of parameters</li>
+<li>Family: VGG16, VGG19&hellip; The suffix number indicates how many <strong>learnable layers</strong>. (Conventionally, people only count convolutional and fully connected layers as learnable layers, not include BN.)</li>
+</ul>
+<p>Classic CNN architectures such as LeNet and AlexNet, they employed a classic 3-layer sequence design which consists of a convolutional layer with padding to keep resolution followed by a non-linear layer, and then a pooling layer to reduce resolution. Each of these 3-layer sequence would reduce the spatial resolution (R) by 50%. This design set a <strong>hard limit</strong> for the number of convolutional layers to $\log_2{R}$ and for the depth of CNN network as well.</p>
+<p>In order to solve this issue, in VGG architecture, multiple convolutional layers were stacked together between each downsampling pooling layer. These stacked convolutional layers are all <strong>3x3 with padding 1</strong> for keeping the resolution unchanged. And these stacked convolutional layers combined with the following pooling layer together is called a block in VGG.</p>
+<blockquote>
+<p>Typical VGG Block: Conv (3x3 pad 1) -&gt; ReLU -&gt; &hellip; -&gt; Conv (3x3 pad 1) -&gt; ReLU -&gt; MaxPool (2x2). By this design, neuron networks could become deeper with more non-linear transforms.</p></blockquote>
+<p>By this block design, VGG network could become deeper than its predecessors and achieve better performance. Nonetheless, two successive 3x3 convolutional filters touch the same pixel area as one 5x5 filter does but with less paramters and better performance. In other words, deep and narrow neuron network outperforms shallow and wide counterparts significantly. Since VGG, 3x3 with padding 1 convolutional filter becomes a gold standard in CNN architecture design.</p>
+<blockquote>
+<p>Two consecutive 3x3 filters touch the same area that one 5x5 filter does. The former has 3x3xChannelx2=18C weights, while the latter has 5x5xChannel=25C weights. The former has two non-linearities, while the latter only has one.</p></blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">vgg_block</span>(num_convs, out_channels):
+</span></span><span style="display:flex;"><span>    layers <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(num_convs):
+</span></span><span style="display:flex;"><span>        layers<span style="color:#f92672">.</span>append(nn<span style="color:#f92672">.</span>LazyConv2d(out_channels, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>, padding<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>))
+</span></span><span style="display:flex;"><span>        layers<span style="color:#f92672">.</span>append(nn<span style="color:#f92672">.</span>ReLU())
+</span></span><span style="display:flex;"><span>    layers<span style="color:#f92672">.</span>append(nn<span style="color:#f92672">.</span>MaxPool2d(kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>,stride<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> nn<span style="color:#f92672">.</span>Sequential(<span style="color:#f92672">*</span>layers)
+</span></span></code></pre></div><h2 id="nin">NiN<a hidden class="anchor" aria-hidden="true" href="#nin">#</a></h2>
+<p>In Network in Network (NiN) [3] design, in order to remove the fully connected layers at the end of the architecture and keep the number of non-linear layer more or less the same, a NiN block was proposed which consists of a 3x3, 5x5 or 11x11 convolutional layer (as in AlexNet) followed by multiple 1x1 convolutional layers. This design significantly decreased the number of parameter of CNN network. It also introduced the Global Average Pooling (GAP) layer at the end to replace fully connected layers.</p>
+<ul>
+<li><strong>1x1 convolutional layer (pointwise conv)</strong> to add non-linearity without destroying the spatial structure</li>
+<li>1x1 convolutional layer could be interpreted as a fully connected layer for each pixel (small network in big network)</li>
+<li>employ global average pooling layer to remove fully connected layers (only effectvie with added non-linearity)</li>
+</ul>
+<blockquote>
+<p>Typical NiN Block: Conv &ndash;&gt; 1x1 Conv &ndash;&gt; 1x1 Conv. Pooling layer is in between NiN blocks.</p></blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">nin_block</span>(out_channels, kernel_size, stride, padding):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>        nn<span style="color:#f92672">.</span>LazyConv2d(out_channels, kernel_size, stride, padding),
+</span></span><span style="display:flex;"><span>        nn<span style="color:#f92672">.</span>ReLU(),
+</span></span><span style="display:flex;"><span>        nn<span style="color:#f92672">.</span>LazyConv2d(out_channels, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>),
+</span></span><span style="display:flex;"><span>        nn<span style="color:#f92672">.</span>ReLU(),
+</span></span><span style="display:flex;"><span>        nn<span style="color:#f92672">.</span>LazyConv2d(out_channels, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>),
+</span></span><span style="display:flex;"><span>        nn<span style="color:#f92672">.</span>ReLU())
+</span></span></code></pre></div><h2 id="googlenet-inception">GoogLeNet (Inception)<a hidden class="anchor" aria-hidden="true" href="#googlenet-inception">#</a></h2>
+<p>GoogLeNet [4] (captical middle <code>L</code> to honor LeNet) introduces the ideas of network branching and feature concatenation. The block in GoogLeNet is called Inception Block. Instead of deciding which size of convolutional layer is better by human, we could let the training process to discover it automatically. Between the input and the output in a inception block, there are multiple parallel paths to guide the data flow, and in each path it consists of one or two different sized convolutional layers. It is possible and expected that the data flow would go through multiple paths so that a concatenation operation is required at the output layer. However, the purpose of the concatenation operation is not only to make the whole computation feasible, but also served an important function which is to gather various features generated from different paths since all paths have the same input.</p>
+<ul>
+<li>network branching</li>
+<li>feature concatenation</li>
+<li>bottleneck design</li>
+</ul>
+<p>The 1x1 convolutional layer exists in each and every branches in inception block.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">InceptionBlock</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, c1, c2, c3, c4):
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;&#34;&#34; c1--c4 are the number of output channels for each branch,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            each branch has different output channel number,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            block output channel: c1 + c2[1] + c3[1] + c4
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># branch 1, 1x1 conv</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>branch1 <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(c1, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU()
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># branch 2, 1x1 conv --&gt; 3x3 conv</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>branch2 <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(c2[<span style="color:#ae81ff">0</span>], kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(c2[<span style="color:#ae81ff">1</span>], kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>, padding<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU()
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># branch 3, 1x1 conv --&gt; 5x5 conv</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>branch3 <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(c3[<span style="color:#ae81ff">0</span>], kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(c3[<span style="color:#ae81ff">1</span>], kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>, padding<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU()
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># branch 4, 3x3 maxpooling --&gt; 1x1 conv</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>branch4 <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>MaxPool2d(kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>, stride<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, padding<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(c4, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU()
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        b1 <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>branch1(x)
+</span></span><span style="display:flex;"><span>        b2 <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>branch2(x)
+</span></span><span style="display:flex;"><span>        b3 <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>branch3(x)
+</span></span><span style="display:flex;"><span>        b4 <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>branch4(x)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> torch<span style="color:#f92672">.</span>cat((b1,b2,b3,b4), dim<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span></code></pre></div><p><strong>The functionalities of 1x1 convolution:</strong></p>
+<ul>
+<li>Channel dimension modification. It could enlarge or reduce (compress) the number of channel.</li>
+<li>Add non-linearity if activation function follows.</li>
+<li>Reduce computation complexity. This is done by <strong>bottleneck</strong> design, such as 1x1 conv before 3x3 and 5x5 conv in branch 2 and 3. (Inception block introduces bottleneck design. ResNet formalizes the bottleneck block. Generally speaking, small conv filter is always more computationally efficient than big one, such as two 3x3 is cheaper than one 5x5.)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>== Bottleneck ==
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Task: (256,28,28) --&gt; (128,28,28) by 5x5 conv with padding 2
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>WITHOUT 1×1 bottleneck:
+</span></span><span style="display:flex;"><span>Cost = 28×28×256×128×5×5 = 642M operations
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>WITH 1×1 bottleneck (Channel: 256 --&gt; 32 --&gt; 128):
+</span></span><span style="display:flex;"><span>Cost = 28×28×256×32×1×1 + 28×28×32×128×5×5
+</span></span><span style="display:flex;"><span>     = 6.4M + 80.3M = 86.7M operations
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Savings: 86.5% reduction! 🎉
+</span></span></code></pre></div><blockquote>
+<p>The inception block can be shown that the solution space of this architecture is a strict subspace of the solution space of a single large layer (e.g. 5×5 conv) operating on a high-dimensional embedding. The Inception block is designed to be an efficient, modular, and sparse replacement for a single, large convolutional layer. It is practically superior, and theoretically less expressive than a single giant layer. The <strong>split-transform-merge</strong> behavior of Inception blocks is expected to approach the representational power of large and dense layers, but at a considerably lower computational complexity.</p></blockquote>
+<h2 id="bn-inception-v2">BN-Inception (V2)<a hidden class="anchor" aria-hidden="true" href="#bn-inception-v2">#</a></h2>
+<p>BatchNorm (BN) was first introduced in [16] together with Inception V2 module. Two main improvements for BN-Inception:</p>
+<ul>
+<li>add BatchNorm after each conv layer</li>
+<li>replace 5x5 conv with two consecutive 3x3 conv</li>
+</ul>
+<h2 id="inception-v3">Inception (V3)<a hidden class="anchor" aria-hidden="true" href="#inception-v3">#</a></h2>
+<p>GoogLeNet could reach roughly the same performance as VGG in ImageNet competition but with less parameters. GoogLeNet is still more parameter-efficient than some of its successors. In [13]: &ldquo;Although VGGNet has the compelling feature of architectural simplicity, this comes at a high cost: evaluating the network requires a lot of computation. On the other hand, the Inception architecture of GoogLeNet was also designed to perform well even under strict constraints on memory and computational budget. For example, GoogleNet employed around 7 million parameters, which represented a 9× reduction with respect to its predecessor AlexNet, which used 60 million parameters. Furthermore, VGGNet employed about 3x more parameters than AlexNet.&rdquo;</p>
+<h2 id="resnet-v1">ResNet (V1)<a hidden class="anchor" aria-hidden="true" href="#resnet-v1">#</a></h2>
+<p>As the CNN architectures go deeper and deeper, how could we make sure that the function represented by CNN network is becoming <strong>strictly more expressive</strong> and not just different? Residual Block in ResNet [5] solved this problem in an ingenious way by adding a residual connection. Besides, in order to speed up the training process for deeper and deeper CNN networks, Batch Normalization, which follows convolutional layer, is also added into residual block. Sometimes, the skip connection should have a 1x1 convolutional layer (stride 2) to align the channel width and data resolution, and make the computation feasible. Residual block is just like a special case of inception block. But, a significant different comparing with inception block is that residual block employ addition operation instead of concatenation, and that’s the reason why 1x1 convolutional layer is necessary. Nonetheless, the skip connection also make gradient flow more easier.</p>
+<ul>
+<li>skip connection (shortcut, addition not concatenation)</li>
+<li>BatchNorm after Conv</li>
+<li>bottleneck block for even deeper architecture</li>
+<li>strided convolution replaces pooling layer</li>
+<li>post-activation (activation after addition)</li>
+<li>stem + multi-stage design since the network is deeper, each stage halve the resolution at the beginning, and each stage has multiple blocks</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ResBlock</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, n_channel, stride<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, use_1x1conv<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;&#34;&#34; When the input channel is not the equal output channel,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            use_1x1conv has to be True.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">assert</span> stride <span style="color:#f92672">in</span> (<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> use_1x1conv:
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># projection shortcut: increase channels and/or halve resolution</span>
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>shortcut <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>LazyConv2d(n_channel, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>                                         stride<span style="color:#f92672">=</span>stride,
+</span></span><span style="display:flex;"><span>                                         bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>LazyBatchNorm2d()
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># empty nn.Sequential acts as a identity function</span>
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>shortcut <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 3x3 --&gt; 3x3</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>seq <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(n_channel, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>,
+</span></span><span style="display:flex;"><span>                                     stride<span style="color:#f92672">=</span>stride,
+</span></span><span style="display:flex;"><span>                                     padding<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>                                     bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyBatchNorm2d(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(n_channel, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>, padding<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyBatchNorm2d()
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># nn.ReLU is part of network, F.relu is just a function.</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> F<span style="color:#f92672">.</span>relu(self<span style="color:#f92672">.</span>seq(x)<span style="color:#f92672">+</span>self<span style="color:#f92672">.</span>shortcut(x))
+</span></span></code></pre></div><p>In order to improve the computation efficiency and reduce the number of parameters, ResNet also introduces a <strong>bottleneck block</strong> design. This allowed ResNet-50, ResNet-101, and ResNet-152 to be trained effectively.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BotResBlock</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, n_channel, stride<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, factor<span style="color:#f92672">=</span><span style="color:#ae81ff">4</span>, use_1x1conv<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">assert</span> num_channels<span style="color:#f92672">%</span>factor <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">assert</span> stride <span style="color:#f92672">in</span> (<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> use_1x1conv:
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>shortcut <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>LazyConv2d(n_channel, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>                                         stride<span style="color:#f92672">=</span>stride,
+</span></span><span style="display:flex;"><span>                                         bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>LazyBatchNorm2d()
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>shortcut <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># bottleneck: 1x1 --&gt; 3x3 --&gt; 1x1</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># reduce computation and keep channel number</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>seq <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(n_channel<span style="color:#f92672">//</span>factor, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyBatchNorm2d(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(n_channel<span style="color:#f92672">//</span>factor, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>,
+</span></span><span style="display:flex;"><span>                                             stride<span style="color:#f92672">=</span>stride,
+</span></span><span style="display:flex;"><span>                                             padding<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>                                             bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyBatchNorm2d(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(n_channel, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyBatchNorm2d()
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> F<span style="color:#f92672">.</span>relu(self<span style="color:#f92672">.</span>seq(x)<span style="color:#f92672">+</span>self<span style="color:#f92672">.</span>shortcut(x))
+</span></span></code></pre></div><p>The above two residual block designs are called <strong>post-activation</strong> (activation after shortcut) ResNet as well.</p>
+<p><strong>Strided Convolution</strong></p>
+<p>When stride is bigger than 1, it&rsquo;s called strided convolution. In ResNet design, pooling layer is replaced by strided convolution layer (except the stem part). Typically, <code>stride=2</code> with <code>padding=1</code> is used in ResNet to downsampling resolution 50%.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> a <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>randn(<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">32</span>,<span style="color:#ae81ff">32</span>)
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> conv <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Conv2d(<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">3</span>,kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>,stride<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>,padding<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> conv(a)<span style="color:#f92672">.</span>shape
+</span></span><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>Size([<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">16</span>, <span style="color:#ae81ff">16</span>])
+</span></span></code></pre></div><p>Pooling layers (like Max Pooling or Average Pooling) discard spatial information by taking the maximum or average value over a region. While this works well for reducing dimension, it results in a loss of potential features. In contrast, a strided convolution reduces the spatial size while simultaneously performing a learned transformation on the data. It&rsquo;s a learned downsampling. It imporves the information density as well.</p>
+<p>When downsampling by strided 1x1 convolution in the shortcut connection, it would loss 75% information (1 pixel out of 4 pixels), and this is the trade-off in ResNet design. The main purpose of shortcut connection is the to keep the shape and preserve identity values, not to extract features.</p>
+<h2 id="resnet-v2-pre-activation">ResNet (V2, Pre-activation)<a hidden class="anchor" aria-hidden="true" href="#resnet-v2-pre-activation">#</a></h2>
+<p>The core problem: Gradient Flow in Deep Networks. In very deep networks, gradients can vanish (become too small) or explode (become too large) as they backpropagate through many layers. ResNet&rsquo;s skip connections help, but the design details matter a lot. Pre-activation [6] means that the activation is before the shortcut connection.</p>
+<p>One variant in [6] is called full pre-activation which is favored in many modern implementation. The &ldquo;full&rdquo; distinguishes it from partial pre-activation designs. It ensures that BatchNorm and ReLU are applied to the block&rsquo;s input before it branches into:</p>
+<ul>
+<li>The main residual path (the convolutions).</li>
+<li>The shortcut path (1×1 projection for downsampling/channel matching).</li>
+</ul>
+<p>This way, every convolution (weight layer) in the entire block, on both paths, is preceded by BN → ReLU. There is no ReLU after the residual addition (to preserve clean identity-like signal propagation). BN and ReLU are applied to shortcut path only when downsampling or channel matching. Otherwise, shortcut path has is pure identity path. In non-full (or partial) pre-activation variants, BN → ReLU is applied only to the residual path. The shortcut (especially 1x1 projection shortcuts) operates on the raw, unnormalized/unactivated input.</p>
+<blockquote>
+<p>A <a href="#full-pre-activation-resnet-50-implementation">full pre-activation ResNet-50 implementation</a> is in Appendix.</p></blockquote>
+<p>ResNet design details:</p>
+<ul>
+<li>The initial layers is called stem, which reduces the resolution.</li>
+<li>ResNet blocks are organized into stages. Resolution reduction only happens at the beginning of each stage.</li>
+<li>The first block in each stage reduce resolution by strided convolution except the block in the first stage.</li>
+<li>Bottleneck block is only used on ResNet-50 or above. There are 3 conv layers in bottleneck block, while 2 conv layers in non-bottleneck (basic) block.</li>
+<li>Those 1x1 conv which are employed in shortcut paths are not counted in the literal 50 of ResNet-50.</li>
+</ul>
+<h2 id="densenet">DenseNet<a hidden class="anchor" aria-hidden="true" href="#densenet">#</a></h2>
+<p>The basic idea of DenseNet [7] is <strong>Feature Reuse</strong>. In each block, every layer receives inputs from all previous layers. DenseNet uses concatenation operation, not addition. Each layer contributes a few more feature maps (growth rate) based on all feature maps learned by previous layers in one block.</p>
+<ul>
+<li>feature reuse by channel concatenation</li>
+<li>pre-activation block design</li>
+<li>transtion block to reduce resolution by average pooling layer and reduce channel number by 1x1 conv</li>
+<li>the number of feature map doesn&rsquo;t have to be doubled every time (progressive increase), highly parameter-efficient</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DenseBlock</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, n_layer, growth_rate):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>layers <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>ModuleList()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(n_layer):
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>append(nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>LazyBatchNorm2d(),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>ReLU(),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>LazyConv2d(growth_rate, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>, padding<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>            ))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> layer <span style="color:#f92672">in</span> self<span style="color:#f92672">.</span>layers:
+</span></span><span style="display:flex;"><span>            y <span style="color:#f92672">=</span> layer(x)
+</span></span><span style="display:flex;"><span>            x <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>cat((x,y), dim<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DenseBotBlock</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, n_layer, growth_rate, factor<span style="color:#f92672">=</span><span style="color:#ae81ff">4</span>):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>layers <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>ModuleList()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(n_layer):
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>append(nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>LazyBatchNorm2d(),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>ReLU(),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>LazyConv2d(growth_rate<span style="color:#f92672">*</span>factor, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>LazyBatchNorm2d(),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>ReLU(),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>LazyConv2d(growth_rate, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>, padding<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>            ))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> layer <span style="color:#f92672">in</span> self<span style="color:#f92672">.</span>layers:
+</span></span><span style="display:flex;"><span>            y <span style="color:#f92672">=</span> layer(x)
+</span></span><span style="display:flex;"><span>            x <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>cat((x,y), dim<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DenseTransition</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, n_channel<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;&#34;&#34; when n_channel is None, no channel compression &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>transition <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyBatchNorm2d(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(n_channel,
+</span></span><span style="display:flex;"><span>                          kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>                          bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>) <span style="color:#66d9ef">if</span> n_channel <span style="color:#66d9ef">else</span> nn<span style="color:#f92672">.</span>Sequential(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>AvgPool2d(kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>, stride<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>transition(x)
+</span></span></code></pre></div><h2 id="resnext">ResNeXt<a hidden class="anchor" aria-hidden="true" href="#resnext">#</a></h2>
+<p>ResNeXt [8] introduces grouped convolution into ResNet. Actually, the core idea of ResNeXt is not grouped convolution. It&rsquo;s called Aggregated Residual Transformation, and each transformaion path is required to be independent. It&rsquo;s just accidentally and mathematically the same as grouped convolution.</p>
+<p>Grouped convolution is a variation of the standard convolution operation that&rsquo;s crucial for architectures like ResNeXt and MobileNet. It was originally introduced in the AlexNet architecture to distribute the model across multiple GPUs. Here the grouped convolution is mainly used to improve computational efficiency. Grouped Convolution splits both the input feature maps and the convolutional filters into a pre-defined number of groups (G). The convolution then happens independently within each group. Finally, concatenation is applied on all outputs from each group. Grouped convolution is also a branching design but with a single line of PyTorch code to realize.</p>
+<p>The computation complexity of grouped convolution:</p>
+<ul>
+<li>complexity of convolution: $O(C_{in}\cdot C_{out})$</li>
+<li>complexity of grouped convolution: $O(g\cdot C_{in}/g \cdot C_{out}/g)=O((C_{in}\cdot C_{out})/g)$</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ResNeXtBlock</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34; post-activation ResNeXt bottleneck block &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, n_group, n_channel, factor, stride, use_1x1conv):
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># here cannot check the input channel and n_group,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">assert</span> n_channel<span style="color:#f92672">%</span>factor <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">assert</span> (n_channel<span style="color:#f92672">//</span>factor) <span style="color:#f92672">%</span> n_group <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">assert</span> stride <span style="color:#f92672">in</span> (<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">assert</span> factor <span style="color:#f92672">in</span> (<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">4</span>)
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> use_1x1conv:
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>shortcut <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>LazyConv2d(n_channel, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>                                         stride<span style="color:#f92672">=</span>stride,
+</span></span><span style="display:flex;"><span>                                         bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>LazyBatchNorm2d()
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>shortcut <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 1x1 --&gt; 3x3 (grouped conv) --&gt; 1x1</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>seq <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(n_channel<span style="color:#f92672">//</span>factor, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyBatchNorm2d(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(n_channel<span style="color:#f92672">//</span>factor, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>,
+</span></span><span style="display:flex;"><span>                                             padding<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>                                             stride<span style="color:#f92672">=</span>stride,
+</span></span><span style="display:flex;"><span>                                             groups<span style="color:#f92672">=</span>n_group,
+</span></span><span style="display:flex;"><span>                                             bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyBatchNorm2d(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(n_channel, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyBatchNorm2d()
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> F<span style="color:#f92672">.</span>relu(self<span style="color:#f92672">.</span>seq(x)<span style="color:#f92672">+</span>self<span style="color:#f92672">.</span>shortcut(x))
+</span></span></code></pre></div><p>ResNeXt only has bottleneck design. 1x1 conv is used for channel compressing or expansion so that they could not be accounted in the independent transformation path. In a basic ResNet block, there are two consecutive 3x3 conv, apply grouped convolution on either 3x3 conv layer would break the independent transformation path, and this implementation is called Trivial Wider ResNet block in paper and loss cardinality. Nonetheless, like ResNet, ResNeXt also has post-activation (V1) and pre-activation (V2) versions.</p>
+<h2 id="mobilenet-v1">MobileNet (V1)<a hidden class="anchor" aria-hidden="true" href="#mobilenet-v1">#</a></h2>
+<p>Aimed to reduce computation complexity and lantency, MobileNet [9] employs <strong>Depthwise Separable Convolution</strong>. There are two separate steps:</p>
+<ul>
+<li>depthwise convolution (grouped conv, group number is equal the number of input channel), each channel is only convoluted by only one filter (it&rsquo;s like to apply a mapping upon each channel)</li>
+<li>pointwise convolution (1x1 conv), combine all outputs from each channel together</li>
+</ul>
+<p>Fully convolutional operation is factorized into two separable steps above. Strided convolution is employed in MobileNet to reduce resolution. No skip connection in MobileNet V1.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DSConv</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34; Depthwise Separable Conv of MobileNet V1 &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, in_channels, out_channels, stride<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># depthwise convolution, keep the channel number</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>depthwise <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>Conv2d(in_channels, in_channels, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>, 
+</span></span><span style="display:flex;"><span>                      stride<span style="color:#f92672">=</span>stride, padding<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, groups<span style="color:#f92672">=</span>in_channels, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>BatchNorm2d(in_channels),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU(inplace<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># pointwise convolution, change the channel number</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>pointwise <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>Conv2d(in_channels, out_channels, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, 
+</span></span><span style="display:flex;"><span>                      stride<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, padding<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>BatchNorm2d(out_channels),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU(inplace<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>depthwise(x)
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>pointwise(x)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x
+</span></span></code></pre></div><h2 id="mobilenet-v2">MobileNet (V2)<a hidden class="anchor" aria-hidden="true" href="#mobilenet-v2">#</a></h2>
+<p>MobileNet V2 [10] introduced an inverted residual and linear bottleneck block.</p>
+<p>Inverted residual structure expands channel width first, and then apply depthwise convolution. Finally, pointwise convolution is employed to shrink the width back (thin &ndash;&gt; wide &ndash;&gt; thin). In ResNet&rsquo;s bottleneck design, the channel width is shrank first (wide &ndash;&gt; thin &ndash;&gt; wide). So, here in MobileNet V2, we call it Inverted.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">InvertedResidualBlock</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34; Inverted Residual Block - the core building block of MobileNet V2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Structure:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    1. Expansion:  1x1 conv to expand channels (thin -&gt; wide)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    2. Depthwise:  3x3 depthwise conv for spatial filtering
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    3. Projection: 1x1 conv to project back (wide -&gt; thin), no activation
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    4. Skip connection is applied only if dimensions match and no resolution reduction
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, in_channels, out_channels, stride, expand_ratio):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>use_residual <span style="color:#f92672">=</span> (stride <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">and</span> in_channels <span style="color:#f92672">==</span> out_channels)
+</span></span><span style="display:flex;"><span>        hidden_dim <span style="color:#f92672">=</span> int(in_channels <span style="color:#f92672">*</span> expand_ratio)
+</span></span><span style="display:flex;"><span>        layers <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># expansion</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> expand_ratio <span style="color:#f92672">!=</span> <span style="color:#ae81ff">1</span>:
+</span></span><span style="display:flex;"><span>            layers<span style="color:#f92672">.</span>extend([
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>Conv2d(in_channels, hidden_dim, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>BatchNorm2d(hidden_dim),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>ReLU(inplace<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>            ])
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># depthwise convolution</span>
+</span></span><span style="display:flex;"><span>        layers<span style="color:#f92672">.</span>extend([
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>Conv2d(hidden_dim, hidden_dim, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>, stride<span style="color:#f92672">=</span>stride,
+</span></span><span style="display:flex;"><span>                      padding<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, groups<span style="color:#f92672">=</span>hidden_dim, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>BatchNorm2d(hidden_dim),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU(inplace<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>        ])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># projection (linear bottleneck - no activation!)</span>
+</span></span><span style="display:flex;"><span>        layers<span style="color:#f92672">.</span>extend([
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>Conv2d(hidden_dim, out_channels, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>BatchNorm2d(out_channels)
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># Note: NO ReLU here! This is the linear bottleneck</span>
+</span></span><span style="display:flex;"><span>        ])
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>blk <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(<span style="color:#f92672">*</span>layers)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> self<span style="color:#f92672">.</span>use_residual:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> x <span style="color:#f92672">+</span> self<span style="color:#f92672">.</span>blk(x)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>blk(x)
+</span></span></code></pre></div><p>Linear in MobileNet V2 design means no activation at the end of the block. It is important to remove non-linearity in the narrow layers in order to maintain representational power [10].</p>
+<p>Skip connnection is only applied when dimensions match and there is no resolution reduction. The layer structure looks like a post-activation design. However, since there is no activation at the end, it&rsquo;s also like pre-activation. So, people don&rsquo;t say these two terms when discussing MobileNet.</p>
+<h2 id="senet">SENet<a hidden class="anchor" aria-hidden="true" href="#senet">#</a></h2>
+<p>Squeeze and Excitation Network (SENet) [11] introduces an ingenuine channel weighting mechanism into existing CNN architectures. People call SE structure a lightweight attention mechanism.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SEBlock</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;  Squeeze-and-Excitation Block  &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, in_channels, reduction_ratio<span style="color:#f92672">=</span><span style="color:#ae81ff">16</span>):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        n_dim <span style="color:#f92672">=</span> in_channels <span style="color:#f92672">//</span> reduction_ratio
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>seblk <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>AdaptiveAvgPool2d(<span style="color:#ae81ff">1</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>Conv2d(in_channels, n_dim, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU(inplace<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>Conv2d(n_dim, in_channels, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>Sigmoid()
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x <span style="color:#f92672">*</span> self<span style="color:#f92672">.</span>seblk(x)
+</span></span></code></pre></div><p>SE block is inserted just before shortcut connection in ResNet, after activation layer (post-act) or conv layer (pre-act). The general ideology of placement of SE block is that where do you want the &ldquo;attention&rdquo; happens! If Group Norm (GN) is employed, try to not make the bottleneck dimension smaller than the number of channel groups.</p>
+<blockquote>
+<p>If changing ReLU in SE block to GELU (standard activation in transformer architectures), you might get a bit performance boost without introducing any learnable parameters. MBConv block uses lightweight SiLU which needs less computation than GELU. Both SiLU and GELU are smooth functions.</p></blockquote>
+<h2 id="efficientnet-mbconv">EfficientNet (MBConv)<a hidden class="anchor" aria-hidden="true" href="#efficientnet-mbconv">#</a></h2>
+<p>The core idea of EfficientNet [12] is called <strong>Compound Scaling</strong>, which is a principled and balanced way to scale convolutional neural networks across three dimensions, depth (number of layers), width (number of channels), and resolution (input image size), by using a single compound coefficient. Previous scaling methods typically focused on one or two dimensions arbitrarily (e.g., deeper networks like ResNet, wider like Wide ResNet, or higher resolution inputs). These approaches often led to diminishing returns because the dimensions interact: increasing depth alone helps with feature complexity but wastes capacity if width or resolution are too small, and vice versa.</p>
+<p>The building block in EfficientNet is called MBConv block, which is actually the same design of MobileNetV2 inverted residual and linear bottleneck block, but with two enhancements:</p>
+<ul>
+<li>employ SE block after depthwise conv layer (best place proved by [14])</li>
+<li>employ SiLU (Sigmoid Linear Unit, Swish) activation exclusively in the whole network</li>
+</ul>
+<h2 id="efficientnet-v2">EfficientNet (V2)<a hidden class="anchor" aria-hidden="true" href="#efficientnet-v2">#</a></h2>
+<h2 id="shufflenet">ShuffleNet<a hidden class="anchor" aria-hidden="true" href="#shufflenet">#</a></h2>
+<h2 id="regnet">RegNet<a hidden class="anchor" aria-hidden="true" href="#regnet">#</a></h2>
+<h2 id="convmixer">ConvMixer<a hidden class="anchor" aria-hidden="true" href="#convmixer">#</a></h2>
+<h2 id="nlnet--gcnet">NLNet &amp; GCNet<a hidden class="anchor" aria-hidden="true" href="#nlnet--gcnet">#</a></h2>
+<p>Non-Local neural Network (NLNet) [17] is the pioneer in attention mechanism design. It tries to solve the issue caused by conv layers by which only a small receptive field could be seen. We can stack lots of conv layers to enlarge the receptive field. However, this is not cheap way. NLNet block is like SENet block, which is also a plugin design and could be used in any CNN architecture. The basic idea is that each pixel computes with all other pixels to get an attention map, and finally add this attention map back to input.</p>
+<p>However, researchers found that each pixel&rsquo;s attention map is almost identical in NLNet. This is resonable. For a single image, important areas should be the same for each pixel. Based on this observation, Global Context neural Network (GCNet) [18] was design to replace NLNet as a lightweight global attention mechanism in CNN architecture.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LazyGC</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, ratio<span style="color:#f92672">=</span><span style="color:#ae81ff">16</span>):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>ratio <span style="color:#f92672">=</span> ratio
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>conv_mask <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>LazyConv2d(<span style="color:#ae81ff">1</span>, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>softmax <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Softmax(dim<span style="color:#f92672">=-</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>transform <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        batch, channels, _, _ <span style="color:#f92672">=</span> x<span style="color:#f92672">.</span>size()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># --- 1. Context Modeling (Global Attention) ---</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># [B, C, H, W] -&gt; [B, C, H*W]</span>
+</span></span><span style="display:flex;"><span>        input_x <span style="color:#f92672">=</span> x<span style="color:#f92672">.</span>view(batch, channels, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)       <span style="color:#75715e"># [B, C, N]</span>
+</span></span><span style="display:flex;"><span>        input_x <span style="color:#f92672">=</span> input_x<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>)              <span style="color:#75715e"># [B, 1, C, N]</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># shared attention mask</span>
+</span></span><span style="display:flex;"><span>        mask <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>conv_mask(x)<span style="color:#f92672">.</span>view(batch, <span style="color:#ae81ff">1</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) <span style="color:#75715e"># [B, 1, N]</span>
+</span></span><span style="display:flex;"><span>        mask <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>softmax(mask)<span style="color:#f92672">.</span>unsqueeze(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)     <span style="color:#75715e"># [B, 1, N, 1]</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># weighted global average:   [B, 1, C, 1] --&gt; [B, C, 1, 1]</span>
+</span></span><span style="display:flex;"><span>        context <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>matmul(input_x, mask)<span style="color:#f92672">.</span>view(batch, channels, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># --- 2. Transform (Bottleneck with LayerNorm) ---</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> self<span style="color:#f92672">.</span>transform <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>            n_dim <span style="color:#f92672">=</span> max(channels <span style="color:#f92672">//</span> self<span style="color:#f92672">.</span>ratio, <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>transform <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>Conv2d(channels, n_dim, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>GroupNorm(<span style="color:#ae81ff">1</span>, n_dim), <span style="color:#75715e">#nn.LayerNorm((n_dim,1,1)),</span>
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>SiLU(inplace<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>Conv2d(n_dim, channels, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>transform<span style="color:#f92672">.</span>to(x<span style="color:#f92672">.</span>device)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># --- 3. Fusion (Addition) ---</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Each channel adds a single value by broadcast, which is the</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># global context for that channel. It&#39;s calculated by weighted</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># sum of each channel and the Shared Attention Mask.</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x <span style="color:#f92672">+</span> self<span style="color:#f92672">.</span>transform(context)
+</span></span></code></pre></div><p>Researchers found that GC block consistently outperforms SE block becaseu GC block does two things together: scale channel and add global context information to each channel.</p>
+<h2 id="convnext">ConvNeXt<a hidden class="anchor" aria-hidden="true" href="#convnext">#</a></h2>
+<p>The researchers conducted a series of experiments started from ResNet with different designs borrowed from transformer architecture, especially Swin Transformer, and ended up with a pure ConvNet which outperforms transformers on some famous benchmark datasets. This is the &ldquo;ConvNet for the 2020s&rdquo;.</p>
+<ul>
+<li>Change stage compute ratio, and make the 3rd stage even more computationally expensive. E.g., from (3,4,6,3) of ResNet-50 to (3,3,9,3). (smaller channel width)</li>
+<li>Change stem to &ldquo;pathify&rdquo;. 4x4 conv with padding 4, non-overlapping.</li>
+<li>Depthwise and 1x1 conv.</li>
+<li>Inverted bottleneck with moving up depthwise conv layer.</li>
+<li>Large kernel size. 7x7 conv with padding 3.</li>
+<li>GELU and fewer activation layers. Only one GELU in each block, like transformer block.</li>
+<li>Position-wise layer normalization.</li>
+<li>Separate downsampling layers by 2x2 conv with stride 2 and increasing channel width. (Norm &ndash;&gt; Conv)</li>
+</ul>
+<blockquote>
+<p>The below implementation of postion-wise LN is from my blog post <a href="/posts/normalization-regularization/">normalization, regularization and learning rate scheduling</a>.</p></blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FastPositionwiseLN</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, n_channel):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>gamma <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Parameter(torch<span style="color:#f92672">.</span>ones(<span style="color:#ae81ff">1</span>, n_channel, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>))
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>beta  <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Parameter(torch<span style="color:#f92672">.</span>zeros(<span style="color:#ae81ff">1</span>, n_channel, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># calculate mean and variance across the channel dimension (dim=1)</span>
+</span></span><span style="display:flex;"><span>        mean <span style="color:#f92672">=</span> x<span style="color:#f92672">.</span>mean(<span style="color:#ae81ff">1</span>, keepdim<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>        var  <span style="color:#f92672">=</span> x<span style="color:#f92672">.</span>var(<span style="color:#ae81ff">1</span>,  keepdim<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, unbiased<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)  <span style="color:#75715e"># biased in original paper</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># standardization</span>
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> (x <span style="color:#f92672">-</span> mean) <span style="color:#f92672">/</span> torch<span style="color:#f92672">.</span>sqrt(var <span style="color:#f92672">+</span> <span style="color:#ae81ff">1e-8</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>gamma<span style="color:#f92672">*</span>x <span style="color:#f92672">+</span> self<span style="color:#f92672">.</span>beta
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ConvNeXtBlock</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34; ConvNeXt block without Layer Scale and Drop Path &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, n_channel):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>net <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># non-lazy conv is more safe due to the requirement of consistent channel width</span>
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>Conv2d(n_channel, n_channel, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">7</span>, padding<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>, groups<span style="color:#f92672">=</span>n_channel, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>            FastPositionwiseLN(n_channel),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(n_channel<span style="color:#f92672">*</span><span style="color:#ae81ff">4</span>, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>GELU(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(n_channel, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x <span style="color:#f92672">+</span> self<span style="color:#f92672">.</span>net(x)
+</span></span></code></pre></div><h2 id="reference">Reference<a hidden class="anchor" aria-hidden="true" href="#reference">#</a></h2>
+<ol>
+<li>Krizhevsky, A., Sutskever, I., &amp; Hinton, G. E. (2012). Imagenet classification with deep convolutional neural networks. Advances in neural information processing systems, 25.</li>
+<li>Simonyan, K., &amp; Zisserman, A. (2014). Very deep convolutional networks for large-scale image recognition. arXiv preprint arXiv:1409.1556.</li>
+<li>Lin, M., Chen, Q., &amp; Yan, S. (2013). Network in network. arXiv preprint arXiv:1312.4400.</li>
+<li>Szegedy, C., Liu, W., Jia, Y., Sermanet, P., Reed, S., Anguelov, D., &hellip; &amp; Rabinovich, A. (2015). Going deeper with convolutions. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 1-9).</li>
+<li>He, K., Zhang, X., Ren, S., &amp; Sun, J. (2016). Deep residual learning for image recognition. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 770-778).</li>
+<li>He, K., Zhang, X., Ren, S., &amp; Sun, J. (2016, September). Identity mappings in deep residual networks. In European conference on computer vision (pp. 630-645). Cham: Springer International Publishing.</li>
+<li>Huang, G., Liu, Z., Van Der Maaten, L., &amp; Weinberger, K. Q. (2017). Densely connected convolutional networks. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 4700-4708).</li>
+<li>Xie, S., Girshick, R., Dollár, P., Tu, Z., &amp; He, K. (2017). Aggregated residual transformations for deep neural networks. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 1492-1500).</li>
+<li>Howard, A. G., Zhu, M., Chen, B., Kalenichenko, D., Wang, W., Weyand, T., &hellip; &amp; Adam, H. (2017). Mobilenets: Efficient convolutional neural networks for mobile vision applications. arXiv preprint arXiv:1704.04861.</li>
+<li>Sandler, M., Howard, A., Zhu, M., Zhmoginov, A., &amp; Chen, L. C. (2018). Mobilenetv2: Inverted residuals and linear bottlenecks. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 4510-4520).</li>
+<li>Hu, J., Shen, L., &amp; Sun, G. (2018). Squeeze-and-excitation networks. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 7132-7141).</li>
+<li>Tan, M., &amp; Le, Q. (2019, May). Efficientnet: Rethinking model scaling for convolutional neural networks. In International conference on machine learning (pp. 6105-6114). PMLR.</li>
+<li>Szegedy, C., Vanhoucke, V., Ioffe, S., Shlens, J., &amp; Wojna, Z. (2016). Rethinking the inception architecture for computer vision. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 2818-2826).</li>
+<li>Hoang, V. T., &amp; Jo, K. H. (2021, July). Practical analysis on architecture of EfficientNet. In 2021 14th International Conference on Human System Interaction (HSI) (pp. 1-4). IEEE.</li>
+<li>Zeiler, M. D., &amp; Fergus, R. (2014, September). Visualizing and understanding convolutional networks. In European conference on computer vision (pp. 818-833). Cham: Springer International Publishing.</li>
+<li>Ioffe, S. (2015). Batch normalization: Accelerating deep network training by reducing internal covariate shift. arXiv preprint arXiv:1502.03167.</li>
+<li>Wang, X., Girshick, R., Gupta, A., &amp; He, K. (2018). Non-local neural networks. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 7794-7803).</li>
+<li>Cao, Y., Xu, J., Lin, S., Wei, F., &amp; Hu, H. (2019). Gcnet: Non-local networks meet squeeze-excitation networks and beyond. In Proceedings of the IEEE/CVF international conference on computer vision workshops (pp. 0-0).</li>
+</ol>
+<h2 id="appendix">Appendix<a hidden class="anchor" aria-hidden="true" href="#appendix">#</a></h2>
+<h3 id="relu6">ReLU6<a hidden class="anchor" aria-hidden="true" href="#relu6">#</a></h3>
+<p>$relu6=min(max(0,x),6)$</p>
+<p>MobileNet (introduced in 2017 by Google) is optimized for mobile and embedded vision applications, emphasizing low latency, small model size, and efficient inference on resource-constrained hardware. ReLU6 was chosen over CNN standard ReLU for several key reasons tied to these goals:</p>
+<ul>
+<li>Quantization Compatibility: MobileNets are designed for deployment with low-precision quantization (e.g., 8-bit integers) to speed up inference and reduce memory footprint. ReLU6&rsquo;s output range (0–6) maps efficiently to unsigned 8-bit values (0–255) (use 8 bits to represent float number from 0 to 6), minimizing quantization error and preserving accuracy during fixed-point arithmetic which is common on mobile CPUs/GPUs. The &ldquo;6&rdquo; is an empirical choice for this bit-width compression. Standard ReLU&rsquo;s unbounded positives can lead to overflow or higher error in such setups.</li>
+<li>Numerical Stability: By capping activations at 6, ReLU6 prevents extreme values from propagating through the network, reducing the risk of gradient explosions or instability during training, especially in deeper or wider models like MobileNet&rsquo;s depthwise separable convolutions. This &ldquo;keeps values small and within a manageable range.&rdquo;</li>
+<li>Mobile Hardware Efficiency: On edge devices (e.g., smartphones), where floating-point operations are expensive, ReLU6&rsquo;s bounded range simplifies optimizations in frameworks like TensorFlow Lite. It was a deliberate choice in the original MobileNet architecture to align with quantized training pipelines.</li>
+</ul>
+<h3 id="full-pre-activation-resnet-50-implementation">Full Pre-Activation ResNet-50 Implementation<a hidden class="anchor" aria-hidden="true" href="#full-pre-activation-resnet-50-implementation">#</a></h3>
+<p>Got 74.6% top-1 accuracy by training on 4xGPU with standard 90 epochs and other configurations.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LazyBatchNormAct2d</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>net <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyBatchNorm2d(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>ReLU(inplace<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>net(x)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">PreBotResBlock</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, n_channel, stride<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, factor<span style="color:#f92672">=</span><span style="color:#ae81ff">4</span>, use_1x1conv<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">assert</span> n_channel <span style="color:#f92672">%</span> factor <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">assert</span> stride <span style="color:#f92672">in</span> (<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>use_1x1conv <span style="color:#f92672">=</span> use_1x1conv
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>bna <span style="color:#f92672">=</span> LazyBatchNormAct2d()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> use_1x1conv:
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>shortcut <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>LazyConv2d(n_channel, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>                                                     stride<span style="color:#f92672">=</span>stride,
+</span></span><span style="display:flex;"><span>                                                     bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>shortcut <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Identity()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>seq <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(n_channel<span style="color:#f92672">//</span>factor, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>            LazyBatchNormAct2d(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(n_channel<span style="color:#f92672">//</span>factor, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>,
+</span></span><span style="display:flex;"><span>                                             stride<span style="color:#f92672">=</span>stride,
+</span></span><span style="display:flex;"><span>                                             padding<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>                                             bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>            LazyBatchNormAct2d(),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(n_channel, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        y <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>bna(x)
+</span></span><span style="display:flex;"><span>        z <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>shortcut(y) <span style="color:#66d9ef">if</span> self<span style="color:#f92672">.</span>use_1x1conv <span style="color:#66d9ef">else</span> self<span style="color:#f92672">.</span>shortcut(x)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>seq(y) <span style="color:#f92672">+</span> z
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">PreResNet50</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34; Full Pre-activation bottleneck ResNet-50 for ImageNet-1k
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        Implemented by Xinlin Zhang (https://xinlin-z.github.io)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        stages <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># stage 1, 3 blocks</span>
+</span></span><span style="display:flex;"><span>            PreBotResBlock(<span style="color:#ae81ff">256</span>, use_1x1conv<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>),
+</span></span><span style="display:flex;"><span>            PreBotResBlock(<span style="color:#ae81ff">256</span>),
+</span></span><span style="display:flex;"><span>            PreBotResBlock(<span style="color:#ae81ff">256</span>),
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># stage 2, 4 blocks</span>
+</span></span><span style="display:flex;"><span>            PreBotResBlock(<span style="color:#ae81ff">512</span>, stride<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>, use_1x1conv<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>),
+</span></span><span style="display:flex;"><span>            PreBotResBlock(<span style="color:#ae81ff">512</span>),
+</span></span><span style="display:flex;"><span>            PreBotResBlock(<span style="color:#ae81ff">512</span>),
+</span></span><span style="display:flex;"><span>            PreBotResBlock(<span style="color:#ae81ff">512</span>),
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># stage 3, 6 blocks</span>
+</span></span><span style="display:flex;"><span>            PreBotResBlock(<span style="color:#ae81ff">1024</span>, stride<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>, use_1x1conv<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>),
+</span></span><span style="display:flex;"><span>            PreBotResBlock(<span style="color:#ae81ff">1024</span>),
+</span></span><span style="display:flex;"><span>            PreBotResBlock(<span style="color:#ae81ff">1024</span>),
+</span></span><span style="display:flex;"><span>            PreBotResBlock(<span style="color:#ae81ff">1024</span>),
+</span></span><span style="display:flex;"><span>            PreBotResBlock(<span style="color:#ae81ff">1024</span>),
+</span></span><span style="display:flex;"><span>            PreBotResBlock(<span style="color:#ae81ff">1024</span>),
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># stage 4, 3 blocks</span>
+</span></span><span style="display:flex;"><span>            PreBotResBlock(<span style="color:#ae81ff">2048</span>, stride<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>, use_1x1conv<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>),
+</span></span><span style="display:flex;"><span>            PreBotResBlock(<span style="color:#ae81ff">2048</span>),
+</span></span><span style="display:flex;"><span>            PreBotResBlock(<span style="color:#ae81ff">2048</span>),
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>net <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Sequential(
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(<span style="color:#ae81ff">64</span>, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">7</span>, stride<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>, padding<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>MaxPool2d(kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>, stride<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>, padding<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>),  <span style="color:#75715e"># (64,56,56)</span>
+</span></span><span style="display:flex;"><span>            stages,
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>AdaptiveAvgPool2d(<span style="color:#ae81ff">1</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>LazyConv2d(<span style="color:#ae81ff">1000</span>, kernel_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>),
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>Flatten(start_dim<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>net(x)
+</span></span></code></pre></div><h3 id="deconv-vs-transposed-conv-vs-upsamplingconv">Deconv vs. Transposed Conv vs. Upsampling+Conv<a hidden class="anchor" aria-hidden="true" href="#deconv-vs-transposed-conv-vs-upsamplingconv">#</a></h3>
+<p><strong>Deconvolution</strong> is the reversed operation of standard convolution.</p>
+<p><strong>Transposed convolution</strong> is not Deconvolution. However, in some context, these two terms are used interchangably. They are only similar in the sense of the same output spatial dimensions. Transposed convolution doesn&rsquo;t reverse the standard convolution by values, rather by dimensions only. It does exactly what a standard convolutional layer does but on a modified input feature map.</p>
+<p>How is the input feature map modified?</p>
+<ul>
+<li>$s$ is stride, $p$ is padding, $k$ is kernel size, imagine that they are all applied on output to generate input.</li>
+<li>Between each row and column in the input, insert $z=s-1$ zeros.</li>
+<li>Pad the zero-inserting feature map with $p&rsquo;=p-k-1$ zeros.</li>
+<li>Carry out standard convolution on the padded feature map with hidden stride=1.</li>
+</ul>
+<p><strong>Upsampling+Conv</strong> is like transposed conv, but employing upsampling algorithm (bilinear, bicubic, or nearest neighbor) to resize the input feature maps, and then followed by standard 3x3 conv layer. Modern CNN architectures perfer this way because:</p>
+<ul>
+<li>output is more smooth and with natural boundaries (might blur sharp edges), no checkerboard artifacts (transposed conv often has)</li>
+<li>more efficient and stable</li>
+</ul>
+<h3 id="weights-init-for-cnns">Weights Init for CNNs<a hidden class="anchor" aria-hidden="true" href="#weights-init-for-cnns">#</a></h3>
+<p>Recommend using Kaiming initialization for more stable training and fast converging. There are a few other names for Kaiming initialization:</p>
+<ul>
+<li>Kaiming initialization</li>
+<li>MSRA initialization</li>
+<li>He initialization</li>
+<li>Kaiming normalization</li>
+</ul>
+<p>They are all the same thing!</p>
+<p>Code pattern:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">XXNet</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, <span style="color:#f92672">*</span>args, <span style="color:#f92672">**</span>kwargs):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">...</span>  <span style="color:#75715e"># code for building layers (non-lazy)</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>apply(self<span style="color:#f92672">.</span>init_conv_kaiming_normal_relu)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">init_conv_kaiming_normal_relu</span>(self, m):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> isinstance(m, nn<span style="color:#f92672">.</span>Conv2d):
+</span></span><span style="display:flex;"><span>            nn<span style="color:#f92672">.</span>init<span style="color:#f92672">.</span>kaiming_normal_(m<span style="color:#f92672">.</span>weight, mode<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;fan_out&#39;</span>, nonlinearity<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;relu&#39;</span>)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">...</span>
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://xinlin-z.github.io/tags/deep-learning/">Deep Learning</a></li>
+      <li><a href="https://xinlin-z.github.io/tags/cnn/">CNN</a></li>
+      <li><a href="https://xinlin-z.github.io/tags/pytorch/">PyTorch</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="https://xinlin-z.github.io/">Xinlin&#39;s Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
