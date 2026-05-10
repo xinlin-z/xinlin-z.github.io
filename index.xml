@@ -29,7 +29,7 @@
       <link>https://xinlin-z.github.io/posts/builtin-dsa-python/</link>
       <pubDate>Fri, 18 Jul 2025 12:51:03 +1200</pubDate>
       <guid>https://xinlin-z.github.io/posts/builtin-dsa-python/</guid>
-      <description>&lt;p&gt;It&amp;rsquo;s very important to choose the proper data structure and algorithm for various programming tasks. Even when we are using high-level programming language such as Python, it&amp;rsquo;s still crucial in terms of time and space complexity. In this post, I&amp;rsquo;ll try to summary all built-in data structures and algorithms in Python as a recap and reference. There are so many details which could be covered in this post, please refer to Python&amp;rsquo;s official documents.&lt;/p&gt;</description>
+      <description>&lt;p&gt;It&amp;rsquo;s very important to choose the proper data structure and algorithm for various programming tasks. Even when we are using high-level programming language such as Python, it&amp;rsquo;s still crucial in terms of time and space complexity. In this post, I&amp;rsquo;ll try to summary all built-in data structures and algorithms in Python as a recap and reference. There are so many details which couldn&amp;rsquo;t be covered in this post, please refer to Python&amp;rsquo;s official documents.&lt;/p&gt;</description>
     </item>
     <item>
       <title>About Me</title>
@@ -37,8 +37,12 @@
       <pubDate>Mon, 14 Jul 2025 12:57:00 +1200</pubDate>
       <guid>https://xinlin-z.github.io/pages/about/</guid>
       <description>&lt;p&gt;Hello, I&amp;rsquo;m Xinlin.&lt;/p&gt;
-&lt;p&gt;I am an &lt;strong&gt;AI and/or Software Engineer&lt;/strong&gt;.  I was a software engineer with many years&amp;rsquo; experience before I came to NZ. Now I&amp;rsquo;m a Master&amp;rsquo;s Degree student studying AI technologies in AUT, and working as a summer intern in Data Scientist team in TOMRA Food.&lt;/p&gt;
-&lt;p&gt;This is a little place where I organize my knowledge and skills, refresh my mind, and express my technical ideas as well. Thanks for stopping by! Feel free to contact me on &lt;a href=&#34;https://www.linkedin.com/in/xinlinz&#34;&gt;LinkedIn&lt;/a&gt; or &lt;a href=&#34;https://github.com/xinlin-z&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;</description>
+&lt;p&gt;I am an &lt;strong&gt;AI/Software Engineer&lt;/strong&gt;.  I was a software engineer with many years&amp;rsquo; experience before I came to NZ. Now I&amp;rsquo;m a Master&amp;rsquo;s Degree student studying AI technologies in AUT.&lt;/p&gt;
+&lt;p&gt;This is a little place where I organize my AI knowledge and programming skills, refresh my mind, and express my technical ideas as well. Thanks for stopping by! Feel free to contact me on &lt;a href=&#34;https://www.linkedin.com/in/xinlinz&#34;&gt;LinkedIn&lt;/a&gt; or &lt;a href=&#34;https://github.com/xinlin-z&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img loading=&#34;lazy&#34; src=&#34;notebook_nj.jpg&#34;
+         alt=&#34;The earliest notebook I used when I was in Nanjing as a software engineer.&#34;/&gt; &lt;figcaption&gt;
+            &lt;p&gt;The earliest notebook I used when I was in Nanjing as a software engineer.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Prompt Engineering Review</title>
@@ -58,6 +62,13 @@
 &lt;p&gt;Take Algorithm as Technology!&lt;/p&gt;&lt;/blockquote&gt;
 &lt;h2 id=&#34;what-is-backtracking-algorithm&#34;&gt;What is Backtracking Algorithm?&lt;/h2&gt;
 &lt;p&gt;I would like to think of backtracking algorithm as a search method. Imaging you are in a forest and you need find a way out. There are multiple choices at each intersection, and you have no idea about which direction or path is right. So, you pick out one direction randomly or in any order you like and keep on going. If it is a dead end, you go back and choose another direction, otherwise you find a way out. During the whole process, there might be lots of &amp;ldquo;going back and choosing again&amp;rdquo; moments which is actually the spirit of backtracking.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Shell Programming</title>
+      <link>https://xinlin-z.github.io/posts/shell-script/</link>
+      <pubDate>Sun, 01 Jun 2025 20:03:25 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/posts/shell-script/</guid>
+      <description>&lt;p&gt;Shell is a powerful Command Line Interface (CLI) in Linux. We type commands, and shell executes them in a beautiful and sophisticated way. Shell is also a super flexible programing language for Linux. It could bind commands together with conditions, loops and various expansions ($,~). Shell is actually a raw interpreting programming language. Raw interpreting means there is no compiled middle bytecode. In this post, I use &lt;strong&gt;&lt;code&gt;bash&lt;/code&gt;&lt;/strong&gt;, which is the most popular and widely deployed shell implementation.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
