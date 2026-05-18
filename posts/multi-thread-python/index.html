@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Multi-Thread Programming in Python | Xinlin&#39;s Blog</title>
+<meta name="keywords" content="Algorithm, Python">
+<meta name="description" content="Modern Python has come up to free-threaded version. We can achieve real multi-thread programming in Python. Programmers need to be more careful. Generally speaking, multi-thread is easier than multi-process since resource-sharing is straightforward because all threads are in one process. Python offers lots of thread synchronization and coordination primitives!
+Race Condition and Atomicity
+Race Condition is a result of uncontrolled access to shared resources. When the wrong access pattern happens, something unexpected occurs. Atomicity is the key to avoid race conditions. If an operation is atomic, no other thread can interrupt it mid-way. It either hasn&rsquo;t started, or it is completely finished.">
+<meta name="author" content="">
+<link rel="canonical" href="https://xinlin-z.github.io/posts/multi-thread-python/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.381f5ace0de1ab2efa08db7875cfe0360217fb9fce6341c41e7c271d15965494.css" integrity="sha256-OB9azg3hqy76CNt4dc/gNgIX&#43;5/OY0HEHnwnHRWWVJQ=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://xinlin-z.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://xinlin-z.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://xinlin-z.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://xinlin-z.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://xinlin-z.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://xinlin-z.github.io/posts/multi-thread-python/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:url" content="https://xinlin-z.github.io/posts/multi-thread-python/">
+  <meta property="og:site_name" content="Xinlin&#39;s Blog">
+  <meta property="og:title" content="Multi-Thread Programming in Python">
+  <meta property="og:description" content="Modern Python has come up to free-threaded version. We can achieve real multi-thread programming in Python. Programmers need to be more careful. Generally speaking, multi-thread is easier than multi-process since resource-sharing is straightforward because all threads are in one process. Python offers lots of thread synchronization and coordination primitives!
+Race Condition and Atomicity Race Condition is a result of uncontrolled access to shared resources. When the wrong access pattern happens, something unexpected occurs. Atomicity is the key to avoid race conditions. If an operation is atomic, no other thread can interrupt it mid-way. It either hasn’t started, or it is completely finished.">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-03-16T11:22:03+12:00">
+    <meta property="article:modified_time" content="2026-03-16T11:22:03+12:00">
+    <meta property="article:tag" content="Algorithm">
+    <meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Multi-Thread Programming in Python">
+<meta name="twitter:description" content="Modern Python has come up to free-threaded version. We can achieve real multi-thread programming in Python. Programmers need to be more careful. Generally speaking, multi-thread is easier than multi-process since resource-sharing is straightforward because all threads are in one process. Python offers lots of thread synchronization and coordination primitives!
+Race Condition and Atomicity
+Race Condition is a result of uncontrolled access to shared resources. When the wrong access pattern happens, something unexpected occurs. Atomicity is the key to avoid race conditions. If an operation is atomic, no other thread can interrupt it mid-way. It either hasn&rsquo;t started, or it is completely finished.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://xinlin-z.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Multi-Thread Programming in Python",
+      "item": "https://xinlin-z.github.io/posts/multi-thread-python/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Multi-Thread Programming in Python",
+  "name": "Multi-Thread Programming in Python",
+  "description": "Modern Python has come up to free-threaded version. We can achieve real multi-thread programming in Python. Programmers need to be more careful. Generally speaking, multi-thread is easier than multi-process since resource-sharing is straightforward because all threads are in one process. Python offers lots of thread synchronization and coordination primitives!\nRace Condition and Atomicity Race Condition is a result of uncontrolled access to shared resources. When the wrong access pattern happens, something unexpected occurs. Atomicity is the key to avoid race conditions. If an operation is atomic, no other thread can interrupt it mid-way. It either hasn\u0026rsquo;t started, or it is completely finished.\n",
+  "keywords": [
+    "Algorithm", "Python"
+  ],
+  "articleBody": "Modern Python has come up to free-threaded version. We can achieve real multi-thread programming in Python. Programmers need to be more careful. Generally speaking, multi-thread is easier than multi-process since resource-sharing is straightforward because all threads are in one process. Python offers lots of thread synchronization and coordination primitives!\nRace Condition and Atomicity Race Condition is a result of uncontrolled access to shared resources. When the wrong access pattern happens, something unexpected occurs. Atomicity is the key to avoid race conditions. If an operation is atomic, no other thread can interrupt it mid-way. It either hasn’t started, or it is completely finished.\nEven in machine code level, not every machine code is guaranteed to be atomic. E.g. in x86_64 Instruction Set Architecture (ISA), to make Read-Modify-Write instruction aotmic, we have to prefix it with LOCK instruction. Under each machine code, there might be multiple micro-operations as well.\nIn C/C++, we literally write high-level machine code. Therefore, we have to explicily avoid race condtions by making all critical sections atomic. However, in Python, the mental picture is a bit different and high-level. No matter how you write python code, you cannot break python interpreter! In other words, you cannot trigger a segmentation fault of CPython implementations no matter how you write you python script (except bugs in CPython)! Everything in Python is an object. CPython guarantees that all objects are always in a memory-safe state. E.g. one thread is accessing a list; another thread is updating it; no mutex applied; you get either new value or old value, but not anything in between. CPython protects its code so anytime a list is always a correct list structure in terms of low-level memory and C-level implementation.\nNo matter how you write you C/C++ code, you cannot break the machine! (No consider burn it.)\nEven CPython guarantees memory safety of all objects whenever accessing them, it doesn’t mean that the logic of your code is right. We still need consider race conditions and how to avoid them. That’s the mindset of multi-thread programming in Python.\nBytecode, GIL, Free Thread Python is not a raw interpreted language. It compiles script to middle bytecode and run them later on. In Global Interpreter Lock (GIL) protected Python, we can say that each bytecode is atomic. However, we still need to establish critical section for a simple updating.\n# Disassembler of Python byte code into mnemonics. \u003e\u003e\u003e import dis \u003e\u003e\u003e a = 1 # multi-bytecode for a simple updating \u003e\u003e\u003e dis.dis('a += 1') 1 0 LOAD_NAME 0 (a) 2 LOAD_CONST 0 (1) 4 INPLACE_ADD 6 STORE_NAME 0 (a) ... Start from 3.13, Python offers free-threaded version, and no bytecode instructions are atomic by default in free-threaded environment. If your code have race conditions, it will becomes more obvious and reproducible. However, for writing high quality mutl-threading script, the mindset keeps the same: When doubt, add a lock!\nDaemon Thread (only in Python) daemon: A boolean value indicating whether this thread is a daemon thread. This must be set before start() is called, otherwise RuntimeError is raised. Its initial value is inherited from the creating thread. Python main thread is not a daemon thread and therefore all threads created in the main thread default to daemon=False.\nThis is not daemon process, such as sshd, systemd or httpd, which is always running in the background rather than waiting for a user to launch them and interact with them. These processes are called daemons and the programs that run as daemons often end with a d to indicate so.\nPython daemon thread borrows this concept. Daemon threads are background threads used to help the main non-daemon thread. Therefore, when main thread dies, they are all abruptly stopped. Just like if linux system dies, all daemon processes cannot live anymore. So, the critical things is to remember that Python interpreter waits all non-daemon threads but kill daemon threads instantly when main thread dies. The consequence is that daemon thread cannot do any cleanup job.\nTudou\nMutex (threading.Lock) The most simple thread synchronization is to use a lock (mutex), which can be hold by only one thread!\nimport threading mutex = threading.Lock() if mutex.locked(): ... mutex.acquire(blocking=True, timeout=-1) # default parameter # critical section mutex.release() with mutex: ... # critical section if mutex.acquire(blocking=False): ... mutex.release() Avoid Deadlock When There Are More Than One Lock\nMake sure all threads acquire locks in the exactly the same sequence!\nReentrant Mutex (threading.RLock) rlock = threading.RLock() When the lock acquisition happens in a recursive function. Please make sure that the times of acquisition have to be the same of the times of release.\nSemaphore (threading.Semaphore) Semaphore is the oldest software synchronization mechanism in computer history. Unlike lock or rlock, which is used to control the access of one single shared resource, semaphore is perfect for control the access of multiple same shared resources. Therefore, when initializing semaphore, you should specify a number which represents the quantity of shared resources.\nsema = threading.Semaphore(4) # default is 1, just like a lock Acquiring a semaphore means to decrease the internal counter by 1 (P operation). Releasing a semaphore means to increase the internal counter by n (V operation). We can specify n value while releasing, and wake up n waiting threads simultaneously.\nBoundedSemaphore\nSemaphore could be released to surpass the original initialized resource number. BoundedSemaphore raises when this happens as a secure mechanism.\nEvent (threading.Event) Threads could wait an event. When the event is set, they continue to run.\nwait2go = threading.Event() # default status is unset, so can be wait wait2go.is_set() # True is set wait2go.set() # set the event, wake up waiting threads wait2go.clear() # make event to be unset wait2go.wait(timeout=None) # return True only if event is set Timer (threading.Timer) Threads could wait a time period before starting.\n# thread entry def job(a,b,c,*,d=9): print(\"hello\",a,b,c,d) # threading.Timer(interval, function, args=None, kwargs=None) t = threading.Timer(3, job, (1,2,3),{'d':4} ) t.start() # run job after 3 seconds t.cancel() # if job is running, cancel is useless! Condition (threading.Condition) Condition is a very efficient way to manage multi-thread scenario, such as complicated producer-consumer case. It could avoid busy-waiting, and save lots of CPU cycles by notification mechanism.\nIf using a simple lock, you might have this code snippet:\n# When this thread can always get the lock, # but queue is always empty, # it is a potential busy-waiting loop! while True: with lock: if not queue.empty(): ... # do something Condition solves this issue by introducing another waiting chance when job cannot be done in critical section.\n# a lock inside condition variable conditon = threading.Condition() # no busy-waiting with condition while True: with condition: # block if the lock is holding by other threads if queue.empty(): condition.wait() # block again in critical section, # release the lock, # wake up until it is notified. ... # do something contidiont.wait() can only be waken up by notification! (Python interpreter couldn’t run these waiting threads if there is no notification.) This avoids busy-waiting, repeatedly acquire, check and release loop. We have two notification interfaces:\nwith condition: # call notify interface with condition notify(n=1) # notify 1 to n waiting threads Randomly # no-op if no waiting threads # safe if n \u003e number of waiting threads notify_all() # notify all waiting threads Be careful, notification couldn’t wake up a specfic waiting thread, super random!\nBarrier (threading.Barrier) If there are fixed number threads which need to wait for each other. Each of the threads tries to pass the barrier by calling the wait() method and will block until all of the threads have made their wait() calls. At this point, the threads are released simultaneously.\n# A revsered thread barrier case, # one thread waits all others finish. barrier = threading.Barrier(101) mutex = threading.Lock() value = 0 def add(): global value with mutex: value += 1 barrier.wait() def show(): barrier.wait() print(value) th = threading.Thread(target=show, args=()) th.start() for i in range(100): th = threading.Thread(target=add, args=()) th.start() Thread-Local Data (threading.local) Thread-local data is also an object in which its properties are thread-local.\n# local object t_local = threading.local() def add(): for i in range(1000): t_local.x += 1 # no lock needed def go(): t_local.x = 0 add() print(t_local.x) # always 1000 for i in range(10): t = threading.Thread(target=go, args=()) t.start() Thread Pool from concurrent.future import ThreadPoolExecutor Read-Write Lock (RWLock) A RWLock is a specialized synchronization primitive designed to optimize performance in multi-threaded applications where data is read frequently but modified infrequently. Reading data doesn’t alter it. Therefore, multiple threads should be allowed to read the data simultaneously without blocking each other. However, modifying data requires absolute isolation. In Python, there is no standard RWLock implementation in threading module because GIL heavily mitigate its performance. We can implement one by leveraging condition.\nimport threading # write first means once there is a thread # want to write, read threads have to wait! class RWLock_WriteFirst(): def __init__(self): self._lock = threading.Lock() self._read = threading.Lock() self._write = threading.Lock() self._condition = threading.Condition() self.read_num = 0 self.write_num = 0 def read_acquire(self): while True: with self._write: if self.write_num != 0: is_writing = True else: is_writing = False with self._read: self.read_num += 1 if self.read_num == 1: self._lock.acquire() if is_writing: with self._condition: self._condition.wait() else: break def read_release(self): with self._read: self.read_num -= 1 if self.read_num == 0: self._lock.release() def write_acquire(self): with self._write: self.write_num += 1 self._lock.acquire() def write_release(self): self._lock.release() with self._write: self.write_num -= 1 if self.write_num == 0: with self._condition: self._condition.notify_all() When ^C is Not Working While waiting threads by thread.join() calls, sometimes the process doesn’t response to your ^C. This is because the C-level system call pthread_join is also waiting without a timeout. The bytecode processing of main thread who deals with SIGINT is stuck. We can fix it like this:\n# make ^C responsive for t in theads: while t.is_alive(): t.join(timeout=1) ",
+  "wordCount" : "1629",
+  "inLanguage": "en",
+  "datePublished": "2026-03-16T11:22:03+12:00",
+  "dateModified": "2026-03-16T11:22:03+12:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://xinlin-z.github.io/posts/multi-thread-python/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Xinlin's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://xinlin-z.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://xinlin-z.github.io/" accesskey="h" title="Xinlin&#39;s Blog (Alt + H)">Xinlin&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://xinlin-z.github.io/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/pages/about" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Multi-Thread Programming in Python
+    </h1>
+    <div class="post-meta"><span title='2026-03-16 11:22:03 +1200 +1200'>March 16, 2026</span>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#race-condition-and-atomicity" aria-label="Race Condition and Atomicity">Race Condition and Atomicity</a></li>
+                <li>
+                    <a href="#bytecode-gil-free-thread" aria-label="Bytecode, GIL, Free Thread">Bytecode, GIL, Free Thread</a></li>
+                <li>
+                    <a href="#daemon-thread-only-in-python" aria-label="Daemon Thread (only in Python)">Daemon Thread (only in Python)</a></li>
+                <li>
+                    <a href="#mutex-threadinglock" aria-label="Mutex (threading.Lock)">Mutex (threading.Lock)</a></li>
+                <li>
+                    <a href="#reentrant-mutex-threadingrlock" aria-label="Reentrant Mutex (threading.RLock)">Reentrant Mutex (threading.RLock)</a></li>
+                <li>
+                    <a href="#semaphore-threadingsemaphore" aria-label="Semaphore (threading.Semaphore)">Semaphore (threading.Semaphore)</a></li>
+                <li>
+                    <a href="#event-threadingevent" aria-label="Event (threading.Event)">Event (threading.Event)</a></li>
+                <li>
+                    <a href="#timer-threadingtimer" aria-label="Timer (threading.Timer)">Timer (threading.Timer)</a></li>
+                <li>
+                    <a href="#condition-threadingcondition" aria-label="Condition (threading.Condition)">Condition (threading.Condition)</a></li>
+                <li>
+                    <a href="#barrier-threadingbarrier" aria-label="Barrier (threading.Barrier)">Barrier (threading.Barrier)</a></li>
+                <li>
+                    <a href="#thread-local-data-threadinglocal" aria-label="Thread-Local Data (threading.local)">Thread-Local Data (threading.local)</a></li>
+                <li>
+                    <a href="#thread-pool" aria-label="Thread Pool">Thread Pool</a></li>
+                <li>
+                    <a href="#read-write-lock-rwlock" aria-label="Read-Write Lock (RWLock)">Read-Write Lock (RWLock)</a></li>
+                <li>
+                    <a href="#when-c-is-not-working" aria-label="When ^C is Not Working">When ^C is Not Working</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>Modern Python has come up to free-threaded version. We can achieve real multi-thread programming in Python. Programmers need to be more careful. Generally speaking, multi-thread is easier than multi-process since resource-sharing is straightforward because all threads are in one process. Python offers lots of thread synchronization and coordination primitives!</p>
+<h2 id="race-condition-and-atomicity">Race Condition and Atomicity<a hidden class="anchor" aria-hidden="true" href="#race-condition-and-atomicity">#</a></h2>
+<p>Race Condition is a result of uncontrolled access to shared resources. When the wrong access pattern happens, something unexpected occurs. Atomicity is the key to avoid race conditions. If an operation is atomic, no other thread can interrupt it mid-way. It either hasn&rsquo;t started, or it is completely finished.</p>
+<p>Even in machine code level, not every machine code is guaranteed to be atomic. E.g. in x86_64 Instruction Set Architecture (ISA), to make Read-Modify-Write instruction aotmic, we have to prefix it with LOCK instruction. Under each machine code, there might be multiple micro-operations as well.</p>
+<p>In C/C++, we literally write high-level machine code. Therefore, we have to explicily avoid race condtions by making all <strong>critical sections</strong> atomic. However, in Python, the mental picture is a bit different and high-level. No matter how you write python code, you cannot break python interpreter! In other words, you cannot trigger a segmentation fault of CPython implementations no matter how you write you python script (except bugs in CPython)! Everything in Python is an object. CPython guarantees that all objects are always in a memory-safe state. E.g. one thread is accessing a list; another thread is updating it; no mutex applied; you get either new value or old value, but not anything in between. CPython protects its code so anytime a list is always a correct list structure in terms of low-level memory and C-level implementation.</p>
+<blockquote>
+<p>No matter how you write you C/C++ code, you cannot break the machine! (No consider burn it.)</p></blockquote>
+<p>Even CPython guarantees memory safety of all objects whenever accessing them, it doesn&rsquo;t mean that the logic of your code is right. We still need consider race conditions and how to avoid them. That&rsquo;s the mindset of multi-thread programming in Python.</p>
+<h2 id="bytecode-gil-free-thread">Bytecode, GIL, Free Thread<a hidden class="anchor" aria-hidden="true" href="#bytecode-gil-free-thread">#</a></h2>
+<p>Python is not a raw interpreted language. It compiles script to middle bytecode and run them later on. In Global Interpreter Lock (GIL) protected Python, we can say that each bytecode is atomic. However, we still need to establish critical section for a simple updating.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Disassembler of Python byte code into mnemonics.</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> <span style="color:#f92672">import</span> dis
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> a <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># multi-bytecode for a simple updating</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> dis<span style="color:#f92672">.</span>dis(<span style="color:#e6db74">&#39;a += 1&#39;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">1</span>           <span style="color:#ae81ff">0</span> LOAD_NAME                <span style="color:#ae81ff">0</span> (a)
+</span></span><span style="display:flex;"><span>              <span style="color:#ae81ff">2</span> LOAD_CONST               <span style="color:#ae81ff">0</span> (<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>              <span style="color:#ae81ff">4</span> INPLACE_ADD
+</span></span><span style="display:flex;"><span>              <span style="color:#ae81ff">6</span> STORE_NAME               <span style="color:#ae81ff">0</span> (a)
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">...</span>
+</span></span></code></pre></div><p>Start from 3.13, Python offers free-threaded version, and no bytecode instructions are atomic by default in free-threaded environment. If your code have race conditions, it will becomes more obvious and reproducible. However, for writing high quality mutl-threading script, the mindset keeps the same: <strong>When doubt, add a lock!</strong></p>
+<h2 id="daemon-thread-only-in-python">Daemon Thread (only in Python)<a hidden class="anchor" aria-hidden="true" href="#daemon-thread-only-in-python">#</a></h2>
+<blockquote>
+<p>daemon: A boolean value indicating whether this thread is a daemon thread. This must be set before start() is called, otherwise RuntimeError is raised. Its initial value is inherited from the creating thread. Python main thread is not a daemon thread and therefore all threads created in the main thread default to <code>daemon=False</code>.</p></blockquote>
+<p>This is not <strong>daemon process</strong>, such as <code>sshd</code>, <code>systemd</code> or <code>httpd</code>, which is always running in the background rather than waiting for a user to launch them and interact with them. These processes are called daemons and the programs that run as daemons often end with a <strong><code>d</code></strong> to indicate so.</p>
+<p>Python daemon thread borrows this concept. Daemon threads are background threads used to help the main non-daemon thread. Therefore, when main thread dies, they are all abruptly stopped. Just like if linux system dies, all daemon processes cannot live anymore. So, the critical things is to remember that Python interpreter waits all non-daemon threads but kill daemon threads instantly when main thread dies. The consequence is that daemon thread cannot do any cleanup job.</p>
+<figure>
+    <img loading="lazy" src="tudou_pa2.png"
+         alt="Tudou"/> <figcaption>
+            <p>Tudou</p>
+        </figcaption>
+</figure>
+
+<h2 id="mutex-threadinglock">Mutex (threading.Lock)<a hidden class="anchor" aria-hidden="true" href="#mutex-threadinglock">#</a></h2>
+<p>The most simple thread synchronization is to use a lock (mutex), which can be hold by only one thread!</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> threading
+</span></span><span style="display:flex;"><span>mutex <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>Lock()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> mutex<span style="color:#f92672">.</span>locked():
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>mutex<span style="color:#f92672">.</span>acquire(blocking<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, timeout<span style="color:#f92672">=-</span><span style="color:#ae81ff">1</span>)  <span style="color:#75715e"># default parameter</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># critical section</span>
+</span></span><span style="display:flex;"><span>mutex<span style="color:#f92672">.</span>release()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">with</span> mutex:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">...</span> <span style="color:#75715e"># critical section</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> mutex<span style="color:#f92672">.</span>acquire(blocking<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>    mutex<span style="color:#f92672">.</span>release()
+</span></span></code></pre></div><p><strong>Avoid Deadlock When There Are More Than One Lock</strong></p>
+<p>Make sure all threads acquire locks in the exactly the same sequence!</p>
+<h2 id="reentrant-mutex-threadingrlock">Reentrant Mutex (threading.RLock)<a hidden class="anchor" aria-hidden="true" href="#reentrant-mutex-threadingrlock">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>rlock <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>RLock()
+</span></span></code></pre></div><p>When the lock acquisition happens in a recursive function. Please make sure that the times of acquisition have to be the same of the times of release.</p>
+<h2 id="semaphore-threadingsemaphore">Semaphore (threading.Semaphore)<a hidden class="anchor" aria-hidden="true" href="#semaphore-threadingsemaphore">#</a></h2>
+<p>Semaphore is the oldest software synchronization mechanism in computer history. Unlike lock or rlock, which is used to control the access of one single shared resource, semaphore is perfect for control the access of multiple same shared resources. Therefore, when initializing semaphore, you should specify a number which represents the quantity of shared resources.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sema <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>Semaphore(<span style="color:#ae81ff">4</span>)  <span style="color:#75715e"># default is 1, just like a lock</span>
+</span></span></code></pre></div><p>Acquiring a semaphore means to decrease the internal counter by 1 (P operation). Releasing a semaphore means to increase the internal counter by n (V operation). We can specify n value while releasing, and wake up n waiting threads simultaneously.</p>
+<p><strong>BoundedSemaphore</strong></p>
+<p>Semaphore could be released to surpass the original initialized resource number. <code>BoundedSemaphore</code> raises when this happens as a secure mechanism.</p>
+<h2 id="event-threadingevent">Event (threading.Event)<a hidden class="anchor" aria-hidden="true" href="#event-threadingevent">#</a></h2>
+<p>Threads could wait an event. When the event is set, they continue to run.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>wait2go <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>Event()  <span style="color:#75715e"># default status is unset, so can be wait</span>
+</span></span><span style="display:flex;"><span>wait2go<span style="color:#f92672">.</span>is_set()             <span style="color:#75715e"># True is set</span>
+</span></span><span style="display:flex;"><span>wait2go<span style="color:#f92672">.</span>set()                <span style="color:#75715e"># set the event, wake up waiting threads</span>
+</span></span><span style="display:flex;"><span>wait2go<span style="color:#f92672">.</span>clear()              <span style="color:#75715e"># make event to be unset</span>
+</span></span><span style="display:flex;"><span>wait2go<span style="color:#f92672">.</span>wait(timeout<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>)   <span style="color:#75715e"># return True only if event is set</span>
+</span></span></code></pre></div><h2 id="timer-threadingtimer">Timer (threading.Timer)<a hidden class="anchor" aria-hidden="true" href="#timer-threadingtimer">#</a></h2>
+<p>Threads could wait a time period before starting.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># thread entry</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">job</span>(a,b,c,<span style="color:#f92672">*</span>,d<span style="color:#f92672">=</span><span style="color:#ae81ff">9</span>):
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;hello&#34;</span>,a,b,c,d)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># threading.Timer(interval, function, args=None, kwargs=None)</span>
+</span></span><span style="display:flex;"><span>t <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>Timer(<span style="color:#ae81ff">3</span>, job, (<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span>),{<span style="color:#e6db74">&#39;d&#39;</span>:<span style="color:#ae81ff">4</span>} )
+</span></span><span style="display:flex;"><span>t<span style="color:#f92672">.</span>start()    <span style="color:#75715e"># run job after 3 seconds</span>
+</span></span><span style="display:flex;"><span>t<span style="color:#f92672">.</span>cancel()   <span style="color:#75715e"># if job is running, cancel is useless!</span>
+</span></span></code></pre></div><h2 id="condition-threadingcondition">Condition (threading.Condition)<a hidden class="anchor" aria-hidden="true" href="#condition-threadingcondition">#</a></h2>
+<p>Condition is a very efficient way to manage multi-thread scenario, such as complicated producer-consumer case. It could avoid busy-waiting, and save lots of CPU cycles by notification mechanism.</p>
+<p>If using a simple lock, you might have this code snippet:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># When this thread can always get the lock,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># but queue is always empty,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># it is a potential busy-waiting loop!</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> <span style="color:#66d9ef">True</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">with</span> lock:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> queue<span style="color:#f92672">.</span>empty():
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">...</span>  <span style="color:#75715e"># do something</span>
+</span></span></code></pre></div><p>Condition solves this issue by introducing another waiting chance when job cannot be done in critical section.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># a lock inside condition variable</span>
+</span></span><span style="display:flex;"><span>conditon <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>Condition()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># no busy-waiting with condition</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> <span style="color:#66d9ef">True</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">with</span> condition:  <span style="color:#75715e"># block if the lock is holding by other threads</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> queue<span style="color:#f92672">.</span>empty():
+</span></span><span style="display:flex;"><span>            condition<span style="color:#f92672">.</span>wait()  <span style="color:#75715e"># block again in critical section,</span>
+</span></span><span style="display:flex;"><span>                              <span style="color:#75715e"># release the lock,</span>
+</span></span><span style="display:flex;"><span>                              <span style="color:#75715e"># wake up until it is notified.</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">...</span> <span style="color:#75715e"># do something</span>
+</span></span></code></pre></div><p><code>contidiont.wait()</code> can only be waken up by notification! (Python interpreter couldn&rsquo;t run these waiting threads if there is no notification.) This avoids busy-waiting, repeatedly acquire, check and release loop. We have two notification interfaces:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">with</span> condition:   <span style="color:#75715e"># call notify interface with condition</span>
+</span></span><span style="display:flex;"><span>    notify(n<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)   <span style="color:#75715e"># notify 1 to n waiting threads Randomly</span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#75715e"># no-op if no waiting threads</span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#75715e"># safe if n &gt; number of waiting threads</span>
+</span></span><span style="display:flex;"><span>    notify_all()  <span style="color:#75715e"># notify all waiting threads</span>
+</span></span></code></pre></div><p>Be careful, notification couldn&rsquo;t wake up a specfic waiting thread, super random!</p>
+<h2 id="barrier-threadingbarrier">Barrier (threading.Barrier)<a hidden class="anchor" aria-hidden="true" href="#barrier-threadingbarrier">#</a></h2>
+<p>If there are fixed number threads which need to wait for each other. Each of the threads tries to pass the barrier by calling the <code>wait()</code> method and will block until all of the threads have made their wait() calls. At this point, the threads are released simultaneously.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># A revsered thread barrier case,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># one thread waits all others finish.</span>
+</span></span><span style="display:flex;"><span>barrier <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>Barrier(<span style="color:#ae81ff">101</span>)
+</span></span><span style="display:flex;"><span>mutex <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>Lock()
+</span></span><span style="display:flex;"><span>value <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">add</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">global</span> value
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">with</span> mutex:
+</span></span><span style="display:flex;"><span>        value <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    barrier<span style="color:#f92672">.</span>wait()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">show</span>():
+</span></span><span style="display:flex;"><span>    barrier<span style="color:#f92672">.</span>wait()
+</span></span><span style="display:flex;"><span>    print(value)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>th <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>Thread(target<span style="color:#f92672">=</span>show, args<span style="color:#f92672">=</span>())
+</span></span><span style="display:flex;"><span>th<span style="color:#f92672">.</span>start()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">100</span>):
+</span></span><span style="display:flex;"><span>    th <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>Thread(target<span style="color:#f92672">=</span>add, args<span style="color:#f92672">=</span>())
+</span></span><span style="display:flex;"><span>    th<span style="color:#f92672">.</span>start()
+</span></span></code></pre></div><h2 id="thread-local-data-threadinglocal">Thread-Local Data (threading.local)<a hidden class="anchor" aria-hidden="true" href="#thread-local-data-threadinglocal">#</a></h2>
+<p>Thread-local data is also an object in which its properties are thread-local.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># local object</span>
+</span></span><span style="display:flex;"><span>t_local <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>local()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">add</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">1000</span>):
+</span></span><span style="display:flex;"><span>        t_local<span style="color:#f92672">.</span>x <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>  <span style="color:#75715e"># no lock needed</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">go</span>():
+</span></span><span style="display:flex;"><span>    t_local<span style="color:#f92672">.</span>x <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    add()
+</span></span><span style="display:flex;"><span>    print(t_local<span style="color:#f92672">.</span>x)    <span style="color:#75715e"># always 1000</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">10</span>):
+</span></span><span style="display:flex;"><span>    t <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>Thread(target<span style="color:#f92672">=</span>go, args<span style="color:#f92672">=</span>())
+</span></span><span style="display:flex;"><span>    t<span style="color:#f92672">.</span>start()
+</span></span></code></pre></div><h2 id="thread-pool">Thread Pool<a hidden class="anchor" aria-hidden="true" href="#thread-pool">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> concurrent.future <span style="color:#f92672">import</span> ThreadPoolExecutor
+</span></span></code></pre></div><h2 id="read-write-lock-rwlock">Read-Write Lock (RWLock)<a hidden class="anchor" aria-hidden="true" href="#read-write-lock-rwlock">#</a></h2>
+<p>A RWLock is a specialized synchronization primitive designed to optimize performance in multi-threaded applications where data is read frequently but modified infrequently. Reading data doesn&rsquo;t alter it. Therefore, multiple threads should be allowed to read the data simultaneously without blocking each other. However, modifying data requires absolute isolation. In Python, there is no standard RWLock implementation in threading module because GIL heavily mitigate its performance. We can implement one by leveraging condition.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> threading
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># write first means once there is a thread</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># want to write, read threads have to wait!</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RWLock_WriteFirst</span>():
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_lock <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>Lock()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_read <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>Lock()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_write <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>Lock()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_condition <span style="color:#f92672">=</span> threading<span style="color:#f92672">.</span>Condition()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>read_num <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>write_num <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">read_acquire</span>(self):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> <span style="color:#66d9ef">True</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">with</span> self<span style="color:#f92672">.</span>_write:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> self<span style="color:#f92672">.</span>write_num <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>                    is_writing <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>                    is_writing <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">with</span> self<span style="color:#f92672">.</span>_read:
+</span></span><span style="display:flex;"><span>                        self<span style="color:#f92672">.</span>read_num <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">if</span> self<span style="color:#f92672">.</span>read_num <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>:
+</span></span><span style="display:flex;"><span>                            self<span style="color:#f92672">.</span>_lock<span style="color:#f92672">.</span>acquire()
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> is_writing:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">with</span> self<span style="color:#f92672">.</span>_condition:
+</span></span><span style="display:flex;"><span>                    self<span style="color:#f92672">.</span>_condition<span style="color:#f92672">.</span>wait()
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">read_release</span>(self):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">with</span> self<span style="color:#f92672">.</span>_read:
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>read_num <span style="color:#f92672">-=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> self<span style="color:#f92672">.</span>read_num <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>                self<span style="color:#f92672">.</span>_lock<span style="color:#f92672">.</span>release()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">write_acquire</span>(self):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">with</span> self<span style="color:#f92672">.</span>_write:
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>write_num <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_lock<span style="color:#f92672">.</span>acquire()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">write_release</span>(self):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_lock<span style="color:#f92672">.</span>release()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">with</span> self<span style="color:#f92672">.</span>_write:
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>write_num <span style="color:#f92672">-=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> self<span style="color:#f92672">.</span>write_num <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">with</span> self<span style="color:#f92672">.</span>_condition:
+</span></span><span style="display:flex;"><span>                    self<span style="color:#f92672">.</span>_condition<span style="color:#f92672">.</span>notify_all()
+</span></span></code></pre></div><h2 id="when-c-is-not-working">When ^C is Not Working<a hidden class="anchor" aria-hidden="true" href="#when-c-is-not-working">#</a></h2>
+<p>While waiting threads by <code>thread.join()</code> calls, sometimes the process doesn&rsquo;t response to your <code>^C</code>. This is because the C-level system call <code>pthread_join</code> is also waiting without a timeout. The bytecode processing of main thread who deals with SIGINT is stuck. We can fix it like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># make ^C responsive</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> t <span style="color:#f92672">in</span> theads:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> t<span style="color:#f92672">.</span>is_alive():
+</span></span><span style="display:flex;"><span>        t<span style="color:#f92672">.</span>join(timeout<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://xinlin-z.github.io/tags/algorithm/">Algorithm</a></li>
+      <li><a href="https://xinlin-z.github.io/tags/python/">Python</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="https://xinlin-z.github.io/">Xinlin&#39;s Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

@@ -6,14 +6,23 @@
     <description>Recent content in Algorithm on Xinlin&#39;s Blog</description>
     <generator>Hugo -- 0.147.8</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 18 Jul 2025 12:51:03 +1200</lastBuildDate>
+    <lastBuildDate>Mon, 16 Mar 2026 11:22:03 +1200</lastBuildDate>
     <atom:link href="https://xinlin-z.github.io/tags/algorithm/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Multi-Thread Programming in Python</title>
+      <link>https://xinlin-z.github.io/posts/multi-thread-python/</link>
+      <pubDate>Mon, 16 Mar 2026 11:22:03 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/posts/multi-thread-python/</guid>
+      <description>&lt;p&gt;Modern Python has come up to free-threaded version. We can achieve real multi-thread programming in Python. Programmers need to be more careful. Generally speaking, multi-thread is easier than multi-process since resource-sharing is straightforward because all threads are in one process. Python offers lots of thread synchronization and coordination primitives!&lt;/p&gt;
+&lt;h2 id=&#34;race-condition-and-atomicity&#34;&gt;Race Condition and Atomicity&lt;/h2&gt;
+&lt;p&gt;Race Condition is a result of uncontrolled access to shared resources. When the wrong access pattern happens, something unexpected occurs. Atomicity is the key to avoid race conditions. If an operation is atomic, no other thread can interrupt it mid-way. It either hasn&amp;rsquo;t started, or it is completely finished.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Built-in Data Structures and Algorithms in Python</title>
       <link>https://xinlin-z.github.io/posts/builtin-dsa-python/</link>
       <pubDate>Fri, 18 Jul 2025 12:51:03 +1200</pubDate>
       <guid>https://xinlin-z.github.io/posts/builtin-dsa-python/</guid>
-      <description>&lt;p&gt;It&amp;rsquo;s very important to choose the proper data structure and algorithm for various programming tasks. Even when we are using high-level programming language such as Python, it&amp;rsquo;s still crucial in terms of time and space complexity. In this post, I&amp;rsquo;ll try to summary all built-in data structures and algorithms in Python as a recap and reference. There are so many details which couldn&amp;rsquo;t be covered in this post, please refer to Python&amp;rsquo;s official documents.&lt;/p&gt;</description>
+      <description>&lt;p&gt;It&amp;rsquo;s very important to design or choose the proper data structure and algorithm for various programming tasks. Even when we are using high-level programming language such as Python, it&amp;rsquo;s still crucial in terms of time and space complexity. In this post, I&amp;rsquo;ll try to summary the built-in data structures and algorithms in Python as a recap and reference. There are so many details which couldn&amp;rsquo;t be covered in this post, please refer to Python&amp;rsquo;s official documents.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Backtracking Algorithm</title>
