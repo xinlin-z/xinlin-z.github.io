@@ -6,13 +6,22 @@
     <description>Recent content in CNN on Xinlin&#39;s Blog</description>
     <generator>Hugo -- 0.147.8</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 05 Dec 2025 20:03:25 +1200</lastBuildDate>
+    <lastBuildDate>Tue, 19 May 2026 12:29:25 +1200</lastBuildDate>
     <atom:link href="https://xinlin-z.github.io/tags/cnn/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Object Detection, From R-CNN family to YOLO series</title>
+      <link>https://xinlin-z.github.io/posts/rcnn-yolo/</link>
+      <pubDate>Tue, 19 May 2026 12:29:25 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/posts/rcnn-yolo/</guid>
+      <description>&lt;h2 id=&#34;r-cnn&#34;&gt;R-CNN&lt;/h2&gt;
+&lt;p&gt;Traditional Convolutional Neural Networks (CNNs) with fully connected layers often struggle with object detection tasks, especially when dealing with multiple objects of various sizes and positions within an image. A brute-force method like applying a &lt;strong&gt;Sliding Window&lt;/strong&gt; (Exhaustive Search) across the image to detect objects is highly computationally expensive, as it fails to scale efficiently when object frequency and variation increase.&lt;/p&gt;
+&lt;p&gt;Regions with CNN features (R-CNN) [1] was introduced in 2014 to overcome these challenges. R-CNN presents an approach by using a &lt;strong&gt;Selective Search&lt;/strong&gt; algorithm to generate around 2,000 region proposals from an image. These proposals are likely to contain objects and are individually processed to detect and localize objects more efficiently. R-CNN marked a significant advancement in the field of object detection and laid the foundation for faster and more accurate object detection models.&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>Convolutional Neuron Networks (CNN)</title>
-      <link>https://xinlin-z.github.io/posts/cnn/</link>
+      <link>https://xinlin-z.github.io/posts/convnet/</link>
       <pubDate>Fri, 05 Dec 2025 20:03:25 +1200</pubDate>
-      <guid>https://xinlin-z.github.io/posts/cnn/</guid>
+      <guid>https://xinlin-z.github.io/posts/convnet/</guid>
       <description>&lt;p&gt;Convolutional neuron networks (CNN) have been revolutionized image-related Artificial Intellegence (AI) tasks. This kind of neuron network architectures have been obtained huge success. Furthermore, CNNs are very interesting. They have many design elements and variants you could play with. Academic researches might pursue a beauty of purity and emphasize the unique feature they proposed. However, in industry application, it&amp;rsquo;s not necessary to build a network pure. It&amp;rsquo;s highly possible to combine all necessary design elements together. However, we should have a deep understand of all these design elements.&lt;/p&gt;</description>
     </item>
   </channel>

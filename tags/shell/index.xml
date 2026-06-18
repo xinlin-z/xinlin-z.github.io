@@ -13,7 +13,7 @@
       <link>https://xinlin-z.github.io/posts/shell-script/</link>
       <pubDate>Sun, 01 Jun 2025 20:03:25 +1200</pubDate>
       <guid>https://xinlin-z.github.io/posts/shell-script/</guid>
-      <description>&lt;p&gt;Shell is a powerful Command Line Interface (CLI) in Linux. We type commands, and shell executes them in a beautiful and sophisticated way. Shell is also a super flexible programing language for Linux. It could bind commands together with conditions, loops and various expansions ($,~). Shell is actually a raw interpreting programming language. Raw interpreting means there is no compiled middle bytecode. In this post, I use &lt;strong&gt;&lt;code&gt;bash&lt;/code&gt;&lt;/strong&gt;, which is the most popular and widely deployed shell implementation.&lt;/p&gt;</description>
+      <description>&lt;p&gt;Shell is a powerful Command Line Interface (CLI) in Linux. We type commands, and shell executes them in a beautiful and sophisticated way. Shell is also a super flexible programing language for Linux. It could bind commands together with conditions, loops and various expansions ($,~). Shell is actually a raw interpreting programming language in which there is no compiled middle bytecode. In this post, I use &lt;strong&gt;&lt;code&gt;bash&lt;/code&gt;&lt;/strong&gt;, which is the most popular and widely deployed shell implementation.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

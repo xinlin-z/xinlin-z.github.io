@@ -154,7 +154,21 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
-    <h2 class="entry-hint-parent">Multi-Thread Programming in Python
+    <h2 class="entry-hint-parent">Object Detection, From R-CNN family to YOLO series
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>R-CNN Traditional Convolutional Neural Networks (CNNs) with fully connected layers often struggle with object detection tasks, especially when dealing with multiple objects of various sizes and positions within an image. A brute-force method like applying a Sliding Window (Exhaustive Search) across the image to detect objects is highly computationally expensive, as it fails to scale efficiently when object frequency and variation increase.
+Regions with CNN features (R-CNN) [1] was introduced in 2014 to overcome these challenges. R-CNN presents an approach by using a Selective Search algorithm to generate around 2,000 region proposals from an image. These proposals are likely to contain objects and are individually processed to detect and localize objects more efficiently. R-CNN marked a significant advancement in the field of object detection and laid the foundation for faster and more accurate object detection models.
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-05-19 12:29:25 +1200 NZST'>May 19, 2026</span></footer>
+  <a class="entry-link" aria-label="post link to Object Detection, From R-CNN family to YOLO series" href="https://xinlin-z.github.io/posts/rcnn-yolo/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Concurrent Programming in Python
     </h2>
   </header>
   <div class="entry-content">
@@ -163,7 +177,21 @@ Race Condition and Atomicity Race Condition is a result of uncontrolled access t
 ...</p>
   </div>
   <footer class="entry-footer"><span title='2026-03-16 11:22:03 +1200 +1200'>March 16, 2026</span></footer>
-  <a class="entry-link" aria-label="post link to Multi-Thread Programming in Python" href="https://xinlin-z.github.io/posts/multi-thread-python/"></a>
+  <a class="entry-link" aria-label="post link to Concurrent Programming in Python" href="https://xinlin-z.github.io/posts/concurrent-python/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Mean Average Precision (mAP)
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Mean Aveage Precision (mAP) is actually not an easy-understanding metric.
+Confusing Matrix T\P A B C A 11 2 3 B 3 12 1 C 0 7 9 Normally people draw confusing matrix like this above. Left column is ground Truth (T), first row is the Prediction (P). In this confusing matrix, we have 3 classes, A, B, and C. Each class has 16 samples (sum of each row) which means data is balanced. If the model does a good job, its confusing matrix should have a very clear diagonal. In this example, the model is very confused about class C. Given class C, nearly half of the predictions are B (7/16).
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-19 12:29:25 +1200 +1200'>February 19, 2026</span></footer>
+  <a class="entry-link" aria-label="post link to Mean Average Precision (mAP)" href="https://xinlin-z.github.io/posts/mean-average-precision/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -176,7 +204,7 @@ Race Condition and Atomicity Race Condition is a result of uncontrolled access t
 ...</p>
   </div>
   <footer class="entry-footer"><span title='2025-12-05 20:03:25 +1200 +1200'>December 5, 2025</span></footer>
-  <a class="entry-link" aria-label="post link to Convolutional Neuron Networks (CNN)" href="https://xinlin-z.github.io/posts/cnn/"></a>
+  <a class="entry-link" aria-label="post link to Convolutional Neuron Networks (CNN)" href="https://xinlin-z.github.io/posts/convnet/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -241,7 +269,7 @@ What is Backtracking Algorithm? I would like to think of backtracking algorithm 
     </h2>
   </header>
   <div class="entry-content">
-    <p>Shell is a powerful Command Line Interface (CLI) in Linux. We type commands, and shell executes them in a beautiful and sophisticated way. Shell is also a super flexible programing language for Linux. It could bind commands together with conditions, loops and various expansions ($,~). Shell is actually a raw interpreting programming language. Raw interpreting means there is no compiled middle bytecode. In this post, I use bash, which is the most popular and widely deployed shell implementation.
+    <p>Shell is a powerful Command Line Interface (CLI) in Linux. We type commands, and shell executes them in a beautiful and sophisticated way. Shell is also a super flexible programing language for Linux. It could bind commands together with conditions, loops and various expansions ($,~). Shell is actually a raw interpreting programming language in which there is no compiled middle bytecode. In this post, I use bash, which is the most popular and widely deployed shell implementation.
 ...</p>
   </div>
   <footer class="entry-footer"><span title='2025-06-01 20:03:25 +1200 NZST'>June 1, 2025</span></footer>

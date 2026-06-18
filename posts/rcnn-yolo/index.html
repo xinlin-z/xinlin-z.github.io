@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Object Detection, From R-CNN family to YOLO series | Xinlin&#39;s Blog</title>
+<meta name="keywords" content="Deep Learning, CNN, PyTorch">
+<meta name="description" content="R-CNN
+Traditional Convolutional Neural Networks (CNNs) with fully connected layers often struggle with object detection tasks, especially when dealing with multiple objects of various sizes and positions within an image. A brute-force method like applying a Sliding Window (Exhaustive Search) across the image to detect objects is highly computationally expensive, as it fails to scale efficiently when object frequency and variation increase.
+Regions with CNN features (R-CNN) [1] was introduced in 2014 to overcome these challenges. R-CNN presents an approach by using a Selective Search algorithm to generate around 2,000 region proposals from an image. These proposals are likely to contain objects and are individually processed to detect and localize objects more efficiently. R-CNN marked a significant advancement in the field of object detection and laid the foundation for faster and more accurate object detection models.">
+<meta name="author" content="">
+<link rel="canonical" href="https://xinlin-z.github.io/posts/rcnn-yolo/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.381f5ace0de1ab2efa08db7875cfe0360217fb9fce6341c41e7c271d15965494.css" integrity="sha256-OB9azg3hqy76CNt4dc/gNgIX&#43;5/OY0HEHnwnHRWWVJQ=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://xinlin-z.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://xinlin-z.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://xinlin-z.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://xinlin-z.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://xinlin-z.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://xinlin-z.github.io/posts/rcnn-yolo/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '\\[', right: '\\]', display: true}
+      ],
+      throwOnError : false
+    });"></script>
+<meta property="og:url" content="https://xinlin-z.github.io/posts/rcnn-yolo/">
+  <meta property="og:site_name" content="Xinlin&#39;s Blog">
+  <meta property="og:title" content="Object Detection, From R-CNN family to YOLO series">
+  <meta property="og:description" content="R-CNN Traditional Convolutional Neural Networks (CNNs) with fully connected layers often struggle with object detection tasks, especially when dealing with multiple objects of various sizes and positions within an image. A brute-force method like applying a Sliding Window (Exhaustive Search) across the image to detect objects is highly computationally expensive, as it fails to scale efficiently when object frequency and variation increase.
+Regions with CNN features (R-CNN) [1] was introduced in 2014 to overcome these challenges. R-CNN presents an approach by using a Selective Search algorithm to generate around 2,000 region proposals from an image. These proposals are likely to contain objects and are individually processed to detect and localize objects more efficiently. R-CNN marked a significant advancement in the field of object detection and laid the foundation for faster and more accurate object detection models.">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-05-19T12:29:25+12:00">
+    <meta property="article:modified_time" content="2026-05-19T12:29:25+12:00">
+    <meta property="article:tag" content="Deep Learning">
+    <meta property="article:tag" content="CNN">
+    <meta property="article:tag" content="PyTorch">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Object Detection, From R-CNN family to YOLO series">
+<meta name="twitter:description" content="R-CNN
+Traditional Convolutional Neural Networks (CNNs) with fully connected layers often struggle with object detection tasks, especially when dealing with multiple objects of various sizes and positions within an image. A brute-force method like applying a Sliding Window (Exhaustive Search) across the image to detect objects is highly computationally expensive, as it fails to scale efficiently when object frequency and variation increase.
+Regions with CNN features (R-CNN) [1] was introduced in 2014 to overcome these challenges. R-CNN presents an approach by using a Selective Search algorithm to generate around 2,000 region proposals from an image. These proposals are likely to contain objects and are individually processed to detect and localize objects more efficiently. R-CNN marked a significant advancement in the field of object detection and laid the foundation for faster and more accurate object detection models.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://xinlin-z.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Object Detection, From R-CNN family to YOLO series",
+      "item": "https://xinlin-z.github.io/posts/rcnn-yolo/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Object Detection, From R-CNN family to YOLO series",
+  "name": "Object Detection, From R-CNN family to YOLO series",
+  "description": "R-CNN Traditional Convolutional Neural Networks (CNNs) with fully connected layers often struggle with object detection tasks, especially when dealing with multiple objects of various sizes and positions within an image. A brute-force method like applying a Sliding Window (Exhaustive Search) across the image to detect objects is highly computationally expensive, as it fails to scale efficiently when object frequency and variation increase.\nRegions with CNN features (R-CNN) [1] was introduced in 2014 to overcome these challenges. R-CNN presents an approach by using a Selective Search algorithm to generate around 2,000 region proposals from an image. These proposals are likely to contain objects and are individually processed to detect and localize objects more efficiently. R-CNN marked a significant advancement in the field of object detection and laid the foundation for faster and more accurate object detection models.\n",
+  "keywords": [
+    "Deep Learning", "CNN", "PyTorch"
+  ],
+  "articleBody": "R-CNN Traditional Convolutional Neural Networks (CNNs) with fully connected layers often struggle with object detection tasks, especially when dealing with multiple objects of various sizes and positions within an image. A brute-force method like applying a Sliding Window (Exhaustive Search) across the image to detect objects is highly computationally expensive, as it fails to scale efficiently when object frequency and variation increase.\nRegions with CNN features (R-CNN) [1] was introduced in 2014 to overcome these challenges. R-CNN presents an approach by using a Selective Search algorithm to generate around 2,000 region proposals from an image. These proposals are likely to contain objects and are individually processed to detect and localize objects more efficiently. R-CNN marked a significant advancement in the field of object detection and laid the foundation for faster and more accurate object detection models.\nR-CNN multi-stage pipeline [1]\nroughly 2,000 regions for each image proposed by selectvie search algorithm, other steps are all based on regions label these regions by IoU values with ground truth, some of them get ground truth, pile of them are background, some of them are confusing and thrown away (IoU between 0.3 to 0.5) resize (warp) these labeled regions and use them to fine-tune a pre-trained CNN model (N+1 classes, small learning rate, oversampling positive cases in each batch due to large number of background) feature extraction with the final CNN model train binary SVMs for each class based on feature vectors of regions, the outputs of SVM classifier is treated as confidence scores train bounding box regressor for each class Bounding Box Regressor\nSelective search algorithm gives us a very coarse bounding box, say $g_x,g_y,g_w,g_h$. To make it more accurate, R-CNN trains seperate bounding box regressor. This regressor predicts 4 correction values, $\\overline{t_x}, \\overline{t_y}, \\overline{t_w}, \\overline{t_h}$. With them, we could get predicted bounding box by scale-invariant transformation (the math works perfectly no matter how big or small the object is):\n$$\\begin{aligned} \\overline g_x \u0026= g_x + g_x \\cdot \\overline{t_x} \\\\ \\overline g_y \u0026= g_y + g_y \\cdot \\overline{t_y} \\\\ \\overline g_w \u0026= g_w \\cdot e^{\\overline{t_w}} \\\\ \\overline g_h \u0026= g_h \\cdot e^{\\overline{t_h}} \\\\ (t_x,t_y,t_w,t_h \u0026\\in [-\\infty,+\\infty]) \\end{aligned}$$\nGround true bounding box is represented by $G_x, G_y, G_w, G_h$. Therefore, the ground true 4 correction values are calculated:\n$$\\begin{aligned} t_x \u0026= (G_x-g_x)/g_x \\\\ t_y \u0026= (G_y-g_y)/g_y \\\\ t_w \u0026= \\ln{(G_w/g_w)} \\\\ t_h \u0026= \\ln{(G_h/g_h)} \\end{aligned}$$\nLoss function is Sum of Squared Error (SSE) with L2 regularization:\n$$L_{reg}=\\sum\\limits_{i\\in\\{x,y,w,h\\}}(t_i-\\overline{t_i})^2 + \\lambda ||w^2||$$\nEach region gets N+1 confidence scores and N distinct adjusted bounding boxes.\nNon-Maximum Suppression (NMS)\nWhen an object is detected multiple times with different bounding boxes, NMS keeps the best one and removes the rest. This helps us to make sure each object is counted only once, improving the accuracy and clarity of the results. NMS is running per class, and it is designed for detecting multiple objects in the same class.\nThe while process:\nfilter confidence scores, discard predictions whose confidence scores are below a baseline threshold (e.g. score \u003c 0.05) split predictions by class run NMS per class combine results NMS algorithm:\nsort by confidence socre pick the highest one as a confirmed predition compute IoU between the highest one in step 2 and the rest bounding boxes, suppress those IoU exceed a pre-defined NMS threshold, typically around 0.3 to 0.5, which means they are highly overlapping predictions for the exact same object move to the next highest-score box and repeat step 1 Issues of R-CNN\nslow and inefficient, not suitable for real-time application massive storage footprint complex multi-stage pipeline for training fixed region propasals by a hand-crafted algorithm Fast R-CNN The original R-CNN was revolutionary for its accuracy, but it was painfully slow and inefficient. Fast R-CNN [2] completely re-engineered the pipeline, making both training and inference much faster.\nEnd-to-End Fast R-CNN [2]\nRegion of Interest (RoI)\nFast R-CNN still employed selective search algorithm to propose regions. Instead of taking each region as input, which would run CNN so many times, Fast R-CNN takes the original image as input, and compute the mapping of each region on the final feature map. These mappings are called RoI. Both region and RoI are represented by coordination $(x,y,w,h)$. Spatial stride is the factor by which the original images are downsampled to final feature map. Fast R-CNN employed pre-trained CNN as well.\n$$\\text{RoI}=\\cfrac{\\text{region}}{\\text{spatial stride}}$$\nRoI Pooling Layer (RoIPool)\nThe purpose of RoI pooling layer is to map RoI of various sizes into a fixed target size so that the following FC layers can handle. Suppose $w\\times h$ is the size of RoI, and $W\\times H$ is the target size (typically $7\\times 7$). The mapping is simply done by\n$$\\text{sub-cell width}:\\overline w=\\cfrac{w}{W}$$\n$$\\text{sub-cell height}:\\overline h=\\cfrac{h}{H}$$\nand floor $\\left\\lfloor.\\right\\rfloor$ and ceiling $\\left\\lceil.\\right\\rceil$ rounding tricks.\nE.g. 5x5 RoI to 2x2 target\nThen, for each sub-cell, a standard max pooling operation is applied.\nWhen the size of RoI is smaller than the size of target, pixel replication or zero padding are used. This is a primary reason why original Fast R-CNN struggled heavily with detecting small objects. The features for small RoI become blurred, duplicated, and uninformative. (solve this issue in Mask R-CNN with RoIAlign)\nTwo Outputs\nsoftmax for classification, N+1 classes per-class bounding box regressor, N classes, $\\overline{t^n}=(\\overline{t_x^n},\\overline{t_y^n},\\overline{t_w^n},\\overline{t_h^n})$ Both outputs follows a single FC layer, which has an issue of conflict interest. Classification perfers FC layer, however, regressor prefers Conv layer which preserve spatial information. (solve this issue in Double-Head R-CNN)\nMulti-task Loss\n$u$ is the true class label, and $u\\in [0,1,2,…,n]$. When $u=0$, it’s catch-all background class, no ground truth bounding box.\n$$L=L_{cls}+\\lambda\\cdot I[u\\ge 1]\\cdot L_{box}$$\n$L_{cls}$ is a standard classification loss. $\\lambda=1$ in original paper.\n$$I[u\\ge 1] =\\begin{cases} 1, \u0026 \\text{if u \u003e= 1} \\\\ 0, \u0026 \\text{otherwise} \\end{cases}$$\n$L_{box}$ is a smooth L1 loss, which is robust and less sensitive to outliers than L2 loss used in R-CNN.\n$$L_{box}=\\sum\\limits_{i\\in\\{x,y,w,h\\}}\\text{smooth}_{L1}(t_i-\\overline{t_i})$$\n$$\\text{smooth}_{L1}(x) =\\begin{cases} 0.5\\cdot x^2, \u0026 \\text{if } |x| \\lt 1 \\\\ |x|-0.5, \u0026 \\text{otherwise} \\end{cases}$$\nWhile training, $L_{box}$ only computes the loss of ground truth class, and ignore all other predictions.\nHierarchical Mini-batch Sampling\nDuring training, Fast R-CNN optimizes how data is loaded into memory. Instead of picking random RoIs from different images, it groups them by image.\nThe Setup: A typical mini-batch size is $S = 2$ images. The RoI Pool: From each image, $R = 64$ RoIs were sampled, giving a total mini-batch size of $128$ RoIs. The Ratio: Out of the 64 RoIs per image, about 25% (16 RoIs) are chosen from region proposals that have an IoU $\\ge 0.5$. These are the foreground (positive) examples. The remaining 75% are background (negative) examples. End-to-End Training\nDuring the backward pass, gradients are computed for all RoIs in a batch simultaneously. When the gradients travel backward through the FC layers, they eventually converge at the RoI Pooling Layer. Here, the gradients from all separate RoIs are accumulated and summed up for each pixel they utilized on the shared feature map. Once the gradients are accumulated on the feature map, backpropagation continues normally through the base convolutional network. This allows the shared convolutional weights to be optimized based on the feedback of all 128 RoIs at once.\nFaster R-CNN Both R-CNN and Fast R-CNN employ selective search algorithm to propose regions. This hand-crafted algorithm becomes a bottleneck for real-time application. Faster R-CNN [3] introduces Region Proposal Network (RPN) to replace this algorithm.\nFaster R-CNN with RPN [3]\nStructure of RPN\nRPN is a mini-network working as a sliding window on shared feature map. It’s only purpose is to propose regions to Fast R-CNN. Each proposed region has an objectness score (object or background). Structure of RPN is simple:\nShared Feature Map (from Backbone) │ ▼ 3x3 Conv Layer (padding 1) │ ├─► 1x1 Conv (Cls Head) ─► Output: 2k channels for objectness scores per pixel │ └─► 1x1 Conv (Reg Head) ─► Output: 4k channels for coordinates per pixel $K$ is the number of anchors, typically $k=9$. RPN is a fully convolutional network, no fully connected layer.\nRPN [3]\nAnchors and Proposed Regions\nAnchors are fixed rectangles centered at each pixel. RPN predicts objectness score and 4 correction values for each anchor. Typically in original paper, each pixel has 9 anchors, and they are defined by 3 scales, $128^2, 256^2, 512^2$, and 3 aspect ratios, $1:1, 1:2, 2:1$. Anchors are not the proposed regions. Proposed regions are computed based on anchors and RPN’s outputs and filter by NMS and top N selection. Typically, $N=2000$ for training, and $N=300$ for testing.\nFaster R-CNN performs bounding box regression twice! RPN does the first regression based on fixed anchors, which served as region proposals for RPN. Regression is a correction of region proposal. (region-based object detection)\n4-Step Alternating Training\nuse a pre-trained CNN model to train RPN use a pre-trained CNN model and RPN to train a Fast R-CNN use the Fast R-CNN to train RPN, fix feature map, only fine-tune RPN fixed feature map, only fine-tune Fast R-CNN Mask R-CNN Mask R-CNN [4], extends Faster R-CNN [3] by adding a branch for predicting segmentation masks for each Region of Interest (RoI), in parallel with the existing branch for classification and bounding box regression. The mask branch is a small FCN applied to each RoI, predicting segmentation masks for each class in a pixel-to-pixel manner. Mask R-CNN is doing instance segmentation.\nMask R-CNN with three prediction branches: class, box, segmentation [4]\nRoIAlign\nThe Problem with RoIPool: Quantization\nRoIPool relies on forcing continuous geometric coordinates into strict integer pixel values. This happens in two separate steps, causing double quantization.\nImage to Feature Map Mapping: If an object in the original image has a bounding box of $290 \\times 290$ pixels, and your backbone network has a stride of 16, the box size on the feature map becomes $290 / 16 = 18.125$. RoIPool rounds this down to 18 pixels ($\\lfloor 18.125 \\rfloor$). Dividing into Bins: If your target output size is $7 \\times 7$, you divide that 18-pixel box into 7 bins. $18 / 7 = 2.57$ pixels per bin. RoIPool rounds this again, making some bins 2 pixels wide and others 3 pixels wide. Because of roundings, the features extracted by RoIPool are physically misaligned from the actual object in the original image. The spatial shift can be anywhere from a few pixels to over a dozen pixels. While a classification head doesn’t care if a car’s features are shifted by 5 pixels, a mask generation head will draw the edge of the car completely in the wrong place.\nRoIAlign completely removes integer rounding. It preserves the exact, floating-point geometry of the region proposal throughout the entire process. Instead of rounding, it uses Bilinear Interpolation to calculate what the feature values would be at exact fractional coordinates.\nRoIAlign [4]\nWith RoIAlign, the accuracy predictions of bounding boxes are increased as well!\nLoss Function\n$$L=L_{cls}+L_{box}+L_{mask},$$\nwhere $L_{cls}$ and $L_{box}$ are the same as Faster R-CNN.\nThe mask branch predicts N masks for each class, like bounding box predictions, in $m \\times m$ size ($28\\times 28$, fixed and not the same size as in the original input). To this a per-pixel sigmoid is applied, and define $L_{mask}$ as the average binary cross-entropy loss. For an RoI associated with ground-truth class k, $L_{mask}$ is only defined on the k-th mask (other mask outputs do not contribute to the loss).\n$$L_{mask}=-\\cfrac{1}{m^2}\\sum\\limits_{1\\le i,j \\le m}\\left(y_{ij}\\cdot\\log{\\overline{y_{ij}^k}}+(1-y_{ij})\\cdot\\log{(1-\\overline{y_{ij}^k}})\\right)$$\nTwo-stage Object Detection: R-CNN Family R-CNN family is also called region-based object detection models because the final predictions are all based on proposed regions generated by selective search algorithm or RPN network. Therefore, people say this is two-stage object detection, from input image to regions, and then from regions to final classes, boxes and masks.\nThe other approach skips the region proposal stage and runs object detection directly. This is how one-stage object detection algorithm works.\nYOLO (You Only Look Once) The key to understand YOLOv1 [5] is its big tensor output. Images go through a pre-trained CNN and predict a big tensor following a few FC layers, which offer global context. YOLO treats object detection as a regression task with raw output (linear activation function for output layer).\n$$\\text{output}=S\\times S\\times(5B+N)$$\nPre-trained CNN was trained on 224x224 input. YOLOv1 adopted it to receive 448x448 input by adding a few more conv layers. Train object detection and large resolution at the same time. Image is split into $S\\times S$ cells. (e.g. $7\\times 7$) Each cell is responsible for detecting objects whose center falls into it. Each cell predicts $B$ bounding boxes. (e.g. $B=2$. Predicting only one bounding box per cell would limit the model. It couldn’t easily handle objects of very different shapes, such as tall or thin like people or wide like cars.) This leads to specialization between the bounding box predictors. Each predictor gets better at predicting certain sizes, aspect ratios, or classes of object, improving overall recall.\nEach bounding box is represented by $(x,y,w,h)$. $(x,y)$ is the center of bounding box, which is relative to the cell. $(w,h)$ is relative to the image. Therefore, ground truths of these 4 values are all between 0 and 1. Each bounding box has a confidence score. While training, ground truth is defined as $P(object)\\times IoU$. When there is an object, $P(object)=1$, otherwise $P(object)=0$. The model predicts a confidence value, which is also called objectness score. The confidence score is changing (moving target) while training! If the target was always a fixed 1.0, the network would be forced to be wildly overconfident even if the box was totally misaligned.\nThe bounding box with highest IoU is responsible for predciting object. (responsible bounding box) Each cell predicts a conditional probability for each object classes. That’s the $N$. YOLO V1 [5]\nSince each cell only predicts one object, YOLOv1 is struggling with dense object prediction.\nLoss Function\nAll loss components are Sum of Squared Error (SSE):\n$$L=L_{box}+L_{conf}+L_{cls}$$\n$$L_{box}=\\lambda_{box}\\cdot \\sum\\limits_{i=1}^{S^2}\\sum\\limits_{j=1}^{B}I_{ij}^{obj}\\left[(x_{ij}-\\overline x_{ij})^2+(y_{ij}-\\overline y_{ij})^2+(\\sqrt{w_{ij}}-\\sqrt{\\overline w_{ij}})^2+(\\sqrt{h_{ij}}-\\sqrt{\\overline h_{ij}})^2\\right]$$\n$$L_{conf}=\\sum\\limits_{i=1}^{S^2}\\sum\\limits_{j=1}^{B}I_{ij}^{obj}(C_{ij}-\\overline C_{ij})^2+\\lambda_{noobj}\\cdot\\sum\\limits_{i=1}^{S^2}\\sum\\limits_{j=1}^{B}I_{ij}^{noobj}(C_{ij}-\\overline C_{ij})^2$$\n$$L_{cls}=\\sum\\limits_{i=1}^{S^2}\\sum\\limits_{c\\in C}I_{i}^{obj}\\bigg(p_i(c)-\\overline p_i(c)\\bigg)^2$$\n$I$ is indicator function. $L_{box}$ only penalizes responsible bounding box by $I_{ij}^{obj}$. In paper, $\\lambda_{box}=5, \\lambda_{noobj}=0.5$. Increase the loss from bounding box coordinate predictions and decrease the loss from confidence predictions for boxes that don’t contain objects.\nWhy square roots ($\\sqrt{w}, \\sqrt{h}$)? The authors used square roots because a small error in a large box (like a bus) matters much less than the same small error in a small box (like a teacup). Taking the square root reflects this, penalizing size errors in small boxes more heavily.\nYOLOv2 YOLO suffers from a variety of shortcomings relative to state-of-the-art detection systems. Error analysis of YOLO compared to Fast R-CNN shows that YOLO makes a significant number of localization errors. Furthermore, YOLO has relatively low recall compared to region proposal-based methods. Thus we focus mainly on improving recall and localization while maintaining classification accuracy. [6]\nImprovements:\nBatchNorm. High Resolution Classifier. Fine tune the pre-trained classification network at the full 448×448 resolution for 10 epochs on ImageNet. This high resolution classification network gives us an increase of almost 4% mAP. Fully Convolutional Network with 416x416 input. YOLOv2 removes the final fully connected layers and becomes a fully convolutional network, which is mathematically flexible and can accept different input sizes quite easily. YOLOv2 downsamples images by a factor of 32. This creates a final grid feature map of 13x13. Because 13 is an odd number, the grid has a single, definitive center cell. Objects, especially large objects, tend to occupy the center of the image so it’s good to have a single location right at the center to predict these objects instead of four locations that are all nearby.\nYOLOv2 adopts to anchor boxes. The model predicts correction values (adjustments) of each anchor box, like RPN in Faster R-CNN. $B=5$ is the number of anchor boxes used in YOLOv2. But, $N$ is shared by these 5 boxes as well. In YOLOv2, each of the 13×13 grid cells is assigned 5 different anchor boxes of varying aspect ratios and scales. When an object center lands in a grid cell, the network chooses the anchor box that matches the object’s shape the closest and calculates minor offsets to fit it. Bounded Prediction. In R-CNN, the 4 correction values are unbounded, which could introduce instability while training. YOLOv2 applies a sigmoid operation to get the bounded center and confidence prediction. $c_x,c_y$ are the top left corner of each cell. $p_w,p_h$ are the prior width and height of anchor boxes. $$\\begin{aligned} b_x \u0026=\\sigma(t_x) + c_x \\\\ b_y \u0026=\\sigma(t_y) + c_y \\\\ b_w \u0026=p_w\\cdot e^{t_w} \\\\ b_h \u0026=p_h\\cdot e^{t_h} \\\\ P(object)\\cdot \\text{IoU} \u0026= \\sigma(t_o) \\end{aligned}$$\nIn Faster R-CNN, the anchor box dimensions were chosen manually. In YOLOv2, they ran a K-Means Clustering algorithm on their entire training dataset’s ground-truth bounding boxes to discover the 5 most common bounding box shapes. In this case, centroids are bounding boxes themselves but only have $(w,h)$. The key point is that the positions don’t matter, and we only care the shapes of bounding box, do not care where are they while running k-mean. Imagine all boxes are stack together with top left $0,0$. Clustering happens on the 3rd axis. Therefore, the distance is defined as below. $$dist(box,centroid)=1-IoU(box,centroid)$$\nFine-Grained Features by Passthrough Layer. Localization information is lost gradually as CNN goes deeper and resolution becomes smaller. 13x13 grid is good for large objects. For small ones, YOLOv2 has a passthrough layer. It’s like channel concatenation, but the feature map is double folded. Somewhere in the network, 512x26x26 is reshaped to 2048x13x13 and concatenate. Multi-Scale Training. Because YOLOv2 is a fully convolutional network, it can accept any image size as long as the dimensions are multiples of 32 (since the backbone downsamples the image by a factor of 32). Typically sizes are ranging from 320×320 up to 608×608. During training, YOLOv2 implements a simple rule: Every 10 batches, the network randomly selects a new image dimension. The catch is that different input has different final output grid size. It doesn’t really matter. By choosing different input size, YOLOv2 model could run with different accuracy and speed. $L_{box}$ becomes standard SSE/MSE, no square root trick. YOLOv3 Improvements of YOLOv3 [7]:\nUpdated Base Classifier. Heavily utilize skip connection from ResNet. Deeper network. Replace max pooling with stride 2 convolution. Inspired and Leverage Feature Pyramid Network (FPN) [8], but modified. Multi-Scale Predictions. By utilizing modified FPN, YOLOv3 outputs predictions at 3 different scales. For standard input size 416x416, they are 13x13 (large), 26x26 (medium), and 52x52 (small). Per-Box Classification. In YOLO and YOLOv2, the model predicts the object class for each grid (shared $N$). But, in YOLOv3, the model predicts class for each bounding box. The model predicts $3$ bounding boxes (prior anchors are computed by k-mean algorithm the same as YOLOv2). For each grid, there are coordinations, objectness score and class predictions. The output tensor becomes $S \\times S \\times (3 \\times (5 + N))$. 3 boxes for each grid, and 3 prediction scales. There are total 10,647 boxes predicted for standard input size. Feature Pyramid Network (FPN)\nFPN Building Block [8]\nSimilar to U-Net, which employs channel concatenation instead. FPN utilizes 1x1 conv and addition. However, YOLOv3 didn’t employ addition. It utilizes channel concatenation. Therefore, it’s more like U-Net and DenseNet, feature reuse!\nIndependent Logistic Regression for supporting Multi-Label Classification. Logistic Regression for Confidencee Score. The ground truth is fixed while training. YOLOv3 completely unlinked the confidence target from the accuracy of the predicted coordinates. BCE loss for logistic regression (confidence and classification). Multi-Scale Training is still there, which makes YOLOv3 even more robust! Spatial Pyramid Pooling (SPP): SPP block is inserted just before the first 13x13 output layer. Instead of passing the feature map through a single path, SPP splits the feature map into four parallel paths: Path 1 (identity): The original feature map passes through completely untouched. Path 2 (5×5 max pooling with padding 2): Captures small, localized features. Path 3 (9×9 max pooling with padding 4): Captures medium-scale contextual features. Path 4 (13×13 max pooling with padding 6): Captures large-scale, near-global features. All four paths output the same 13x13 size, and then concatenated together. On the MS COCO dataset, adding the SPP block increased YOLOv3’s Object Detection AP (Average Precision) by nearly 3% to 4%.\nYOLOv4 There are a huge number of features which are said to improve Convolutional Neural Network (CNN) accuracy. Practical testing of combinations of such features on large datasets, and theoretical justification of the result, is required. Some features operate on certain models exclusively and for certain problems exclusively, or only for small-scale datasets; while some features, such as batch-normalization and residual-connections, are applicable to the majority of models, tasks, and datasets.\nImprovements in YOLOv4 [4]:\nStem –\u003e Backbone –\u003e Neck –\u003e Head. Neck component, such as SPP, is explicitly stated in YOLOv4. Sometimes, people put stem into backbone. Backbone is usually pre-trained. Bag of Freebies, such as Data Augmentation and Loss Functions. Usually, a conventional object detector is trained off-line. Therefore, researchers always like to take this advantage and develop better training methods which can make the object detector receive better accuracy without increasing the inference cost. We call these methods that only change the training strategy or only increase the training cost as “bag of freebies.”\nMosaic Data Augmentation. This is YOLOv4’s flagship augmentation trick. It takes four different training images and crops, scales, and stitches them together into a single training image layout. This introduces a massive amount of contextual variety and exposes the model to many small objects simultaneously. It also allows you to effectively train with a large batch size on just a single consumer GPU, because a single pass of a Mosaic image is equivalent to looking at 4 different images. CutMix Data Augmentation. Self-Adversarial Training (SAT). It represents a new data augmentation technique that operates in 2 forward backward stages. In the 1st stage the neural network alters the original image instead of the network weights. In this way the neural network executes an adversarial attack on itself, altering the original image to create the deception that there is no desired object on the image. In the 2nd stage, the neural network is trained to detect an object on this modified image in the normal way. In the first backward stage, weights are fixed. It takes input as trainable parameters. Instead of reducing loss, the updating is to increase the loss. The math is below.\n$$x_{adv}=\\text{clip}_{\\epsilon}\\big(x+\\alpha\\cdot\\text{sign}(\\nabla x)\\big)$$\nThe $\\text{sign}$ function. It strips away the magnitude of the gradient and leaves only the direction. If a gradient is positive, it becomes +1. If it’s negative, it becomes −1. This prevents a few hyper-sensitive pixels from dominating the changes. This is from Fast Gradient Sign Method (FGSM). $\\alpha$ is an incredibly small multiplier. This ensures the pixel adjustments are tiny, often changing a pixel’s RGB value by just 1 or 2 steps out of 255. $+$ makes sure that the updating increase the loss. $\\text{clip}_{\\epsilon}$ is the clip function which make sure the absolute change of each pixel cannot be large the $\\epsilon$.\ntraining images –\u003e mosaic/cutmix –\u003e sat\nComplete IoU (CIoU) Loss. Label Smoothing. DropBlock. CmBN. Bag of Specials, such as SPP. For those plugin modules and post-processing methods that only increase the inference cost by a small amount but can significantly improve the accuracy of object detection, we call them “bag of specials”.\nReference Girshick, R., Donahue, J., Darrell, T., \u0026 Malik, J. (2014). Rich feature hierarchies for accurate object detection and semantic segmentation. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 580-587). Girshick, R. (2015). Fast r-cnn. In Proceedings of the IEEE international conference on computer vision (pp. 1440-1448). Ren, S., He, K., Girshick, R., \u0026 Sun, J. (2016). Faster R-CNN: Towards real-time object detection with region proposal networks. IEEE transactions on pattern analysis and machine intelligence, 39(6), 1137-1149. He, K., Gkioxari, G., Dollár, P., \u0026 Girshick, R. (2017). Mask r-cnn. In Proceedings of the IEEE international conference on computer vision (pp. 2961-2969). Redmon, J., Divvala, S., Girshick, R., \u0026 Farhadi, A. (2016). You only look once: Unified, real-time object detection. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 779-788). Redmon, J., \u0026 Farhadi, A. (2017). YOLO9000: better, faster, stronger. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 7263-7271). Redmon, J., \u0026 Farhadi, A. (2018). Yolov3: An incremental improvement. arXiv preprint arXiv:1804.02767. Lin, T. Y., Dollár, P., Girshick, R., He, K., Hariharan, B., \u0026 Belongie, S. (2017). Feature pyramid networks for object detection. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 2117-2125). Bochkovskiy, A., Wang, C. Y., \u0026 Liao, H. Y. M. (2020). Yolov4: Optimal speed and accuracy of object detection. arXiv preprint arXiv:2004.10934. ",
+  "wordCount" : "4110",
+  "inLanguage": "en",
+  "datePublished": "2026-05-19T12:29:25+12:00",
+  "dateModified": "2026-05-19T12:29:25+12:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://xinlin-z.github.io/posts/rcnn-yolo/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Xinlin's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://xinlin-z.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://xinlin-z.github.io/" accesskey="h" title="Xinlin&#39;s Blog (Alt + H)">Xinlin&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://xinlin-z.github.io/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/pages/about" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Object Detection, From R-CNN family to YOLO series
+    </h1>
+    <div class="post-meta"><span title='2026-05-19 12:29:25 +1200 NZST'>May 19, 2026</span>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#r-cnn" aria-label="R-CNN">R-CNN</a></li>
+                <li>
+                    <a href="#fast-r-cnn" aria-label="Fast R-CNN">Fast R-CNN</a></li>
+                <li>
+                    <a href="#faster-r-cnn" aria-label="Faster R-CNN">Faster R-CNN</a></li>
+                <li>
+                    <a href="#mask-r-cnn" aria-label="Mask R-CNN">Mask R-CNN</a></li>
+                <li>
+                    <a href="#two-stage-object-detection-r-cnn-family" aria-label="Two-stage Object Detection: R-CNN Family">Two-stage Object Detection: R-CNN Family</a></li>
+                <li>
+                    <a href="#yolo-you-only-look-once" aria-label="YOLO (You Only Look Once)">YOLO (You Only Look Once)</a></li>
+                <li>
+                    <a href="#yolov2" aria-label="YOLOv2">YOLOv2</a></li>
+                <li>
+                    <a href="#yolov3" aria-label="YOLOv3">YOLOv3</a></li>
+                <li>
+                    <a href="#yolov4" aria-label="YOLOv4">YOLOv4</a></li>
+                <li>
+                    <a href="#reference" aria-label="Reference">Reference</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="r-cnn">R-CNN<a hidden class="anchor" aria-hidden="true" href="#r-cnn">#</a></h2>
+<p>Traditional Convolutional Neural Networks (CNNs) with fully connected layers often struggle with object detection tasks, especially when dealing with multiple objects of various sizes and positions within an image. A brute-force method like applying a <strong>Sliding Window</strong> (Exhaustive Search) across the image to detect objects is highly computationally expensive, as it fails to scale efficiently when object frequency and variation increase.</p>
+<p>Regions with CNN features (R-CNN) [1] was introduced in 2014 to overcome these challenges. R-CNN presents an approach by using a <strong>Selective Search</strong> algorithm to generate around 2,000 region proposals from an image. These proposals are likely to contain objects and are individually processed to detect and localize objects more efficiently. R-CNN marked a significant advancement in the field of object detection and laid the foundation for faster and more accurate object detection models.</p>
+<figure>
+    <img loading="lazy" src="rcnn.png"
+         alt="R-CNN multi-stage pipeline"/> <figcaption>
+            <p>R-CNN multi-stage pipeline [1]</p>
+        </figcaption>
+</figure>
+
+<ul>
+<li>roughly 2,000 regions for each image proposed by selectvie search algorithm, other steps are all based on regions</li>
+<li>label these regions by IoU values with ground truth, some of them get ground truth, pile of them are background, some of them are confusing and thrown away (IoU between 0.3 to 0.5)</li>
+<li>resize (warp) these labeled regions and use them to fine-tune a pre-trained CNN model (N+1 classes, small learning rate, oversampling positive cases in each batch due to large number of background)</li>
+<li>feature extraction with the final CNN model</li>
+<li>train binary SVMs for each class based on feature vectors of regions, the outputs of SVM classifier is treated as confidence scores</li>
+<li>train bounding box regressor for each class</li>
+</ul>
+<p><strong>Bounding Box Regressor</strong></p>
+<p>Selective search algorithm gives us a very coarse bounding box, say $g_x,g_y,g_w,g_h$. To make it more accurate, R-CNN trains seperate bounding box regressor. This regressor predicts 4 correction values, $\overline{t_x}, \overline{t_y}, \overline{t_w}, \overline{t_h}$. With them, we could get predicted bounding box by scale-invariant transformation (the math works perfectly no matter how big or small the object is):</p>
+<p>$$\begin{aligned}
+\overline g_x &amp;= g_x + g_x \cdot \overline{t_x} \\
+\overline g_y &amp;= g_y + g_y \cdot \overline{t_y} \\
+\overline g_w &amp;= g_w \cdot e^{\overline{t_w}} \\
+\overline g_h &amp;= g_h \cdot e^{\overline{t_h}} \\
+(t_x,t_y,t_w,t_h &amp;\in [-\infty,+\infty])
+\end{aligned}$$</p>
+<p>Ground true bounding box is represented by $G_x, G_y, G_w, G_h$. Therefore, the ground true 4 correction values are calculated:</p>
+<p>$$\begin{aligned}
+t_x &amp;= (G_x-g_x)/g_x \\
+t_y &amp;= (G_y-g_y)/g_y \\
+t_w &amp;= \ln{(G_w/g_w)} \\
+t_h &amp;= \ln{(G_h/g_h)}
+\end{aligned}$$</p>
+<p>Loss function is Sum of Squared Error (SSE) with L2 regularization:</p>
+<p>$$L_{reg}=\sum\limits_{i\in\{x,y,w,h\}}(t_i-\overline{t_i})^2 + \lambda ||w^2||$$</p>
+<blockquote>
+<p>Each region gets N+1 confidence scores and N distinct adjusted bounding boxes.</p></blockquote>
+<p><strong>Non-Maximum Suppression (NMS)</strong></p>
+<p>When an object is detected multiple times with different bounding boxes, NMS keeps the best one and removes the rest. This helps us to make sure each object is counted only once, improving the accuracy and clarity of the results. NMS is running per class, and it is designed for detecting multiple objects in the same class.</p>
+<p>The while process:</p>
+<ul>
+<li>filter confidence scores, discard predictions whose confidence scores are below a baseline threshold (e.g. score &lt; 0.05)</li>
+<li>split predictions by class</li>
+<li>run NMS per class</li>
+<li>combine results</li>
+</ul>
+<p>NMS algorithm:</p>
+<ol>
+<li>sort by confidence socre</li>
+<li>pick the highest one as a confirmed predition</li>
+<li>compute IoU between the highest one in step 2 and the rest bounding boxes, suppress those IoU exceed a pre-defined NMS threshold, typically around 0.3 to 0.5, which means they are highly overlapping predictions for the exact same object</li>
+<li>move to the next highest-score box and repeat step 1</li>
+</ol>
+<p><strong>Issues of R-CNN</strong></p>
+<ul>
+<li>slow and inefficient, not suitable for real-time application</li>
+<li>massive storage footprint</li>
+<li>complex multi-stage pipeline for training</li>
+<li>fixed region propasals by a hand-crafted algorithm</li>
+</ul>
+<h2 id="fast-r-cnn">Fast R-CNN<a hidden class="anchor" aria-hidden="true" href="#fast-r-cnn">#</a></h2>
+<p>The original R-CNN was revolutionary for its accuracy, but it was painfully slow and inefficient. Fast R-CNN [2] completely re-engineered the pipeline, making both training and inference much faster.</p>
+<figure>
+    <img loading="lazy" src="fast_rcnn.png"
+         alt="End-to-End Fast R-CNN"/> <figcaption>
+            <p>End-to-End Fast R-CNN [2]</p>
+        </figcaption>
+</figure>
+
+<p><strong>Region of Interest (RoI)</strong></p>
+<p>Fast R-CNN still employed selective search algorithm to propose regions. Instead of taking each region as input, which would run CNN so many times, Fast R-CNN takes the original image as input, and compute the mapping of each region on the final feature map. These mappings are called RoI. Both region and RoI are represented by coordination $(x,y,w,h)$. Spatial stride is the factor by which the original images are downsampled to final feature map. Fast R-CNN employed pre-trained CNN as well.</p>
+<p>$$\text{RoI}=\cfrac{\text{region}}{\text{spatial stride}}$$</p>
+<p><strong>RoI Pooling Layer (RoIPool)</strong></p>
+<p>The purpose of RoI pooling layer is to map RoI of various sizes into a fixed target size so that the following FC layers can handle. Suppose $w\times h$ is the size of RoI, and $W\times H$ is the target size (typically $7\times 7$). The mapping is simply done by</p>
+<p>$$\text{sub-cell width}:\overline w=\cfrac{w}{W}$$</p>
+<p>$$\text{sub-cell height}:\overline h=\cfrac{h}{H}$$</p>
+<p>and floor $\left\lfloor.\right\rfloor$ and ceiling $\left\lceil.\right\rceil$ rounding tricks.</p>
+<figure>
+    <img loading="lazy" src="5x5_2x2.png"
+         alt="5x5 RoI to 2x2 target"/> <figcaption>
+            <p>E.g. 5x5 RoI to 2x2 target</p>
+        </figcaption>
+</figure>
+
+<p>Then, for each sub-cell, a standard max pooling operation is applied.</p>
+<p>When the size of RoI is smaller than the size of target, pixel replication or zero padding are used. This is a primary reason why original Fast R-CNN struggled heavily with detecting small objects. The features for small RoI become blurred, duplicated, and uninformative. (solve this issue in Mask R-CNN with RoIAlign)</p>
+<p><strong>Two Outputs</strong></p>
+<ul>
+<li>softmax for classification, N+1 classes</li>
+<li>per-class bounding box regressor, N classes, $\overline{t^n}=(\overline{t_x^n},\overline{t_y^n},\overline{t_w^n},\overline{t_h^n})$</li>
+</ul>
+<p>Both outputs follows a single FC layer, which has an issue of conflict interest. Classification perfers FC layer, however, regressor prefers Conv layer which preserve spatial information. (solve this issue in Double-Head R-CNN)</p>
+<p><strong>Multi-task Loss</strong></p>
+<p>$u$ is the true class label, and $u\in [0,1,2,&hellip;,n]$. When $u=0$, it&rsquo;s catch-all background class, no ground truth bounding box.</p>
+<p>$$L=L_{cls}+\lambda\cdot I[u\ge 1]\cdot L_{box}$$</p>
+<p>$L_{cls}$ is a standard classification loss. $\lambda=1$ in original paper.</p>
+<p>$$I[u\ge 1] =\begin{cases}
+1, &amp; \text{if u &gt;= 1} \\
+0, &amp; \text{otherwise} \end{cases}$$</p>
+<p>$L_{box}$ is a <a href="https://github.com/rbgirshick/py-faster-rcnn/files/764206/SmoothL1Loss.1.pdf">smooth L1 loss</a>, which is robust and less sensitive  to outliers than L2 loss used in R-CNN.</p>
+<p>$$L_{box}=\sum\limits_{i\in\{x,y,w,h\}}\text{smooth}_{L1}(t_i-\overline{t_i})$$</p>
+<p>$$\text{smooth}_{L1}(x) =\begin{cases}
+0.5\cdot x^2, &amp; \text{if } |x| \lt 1 \\
+|x|-0.5, &amp; \text{otherwise} \end{cases}$$</p>
+<p>While training, $L_{box}$ only computes the loss of ground truth class, and ignore all other predictions.</p>
+<p><strong>Hierarchical Mini-batch Sampling</strong></p>
+<p>During training, Fast R-CNN optimizes how data is loaded into memory. Instead of picking random RoIs from different images, it groups them by image.</p>
+<ul>
+<li>The Setup: A typical mini-batch size is $S = 2$ images.</li>
+<li>The RoI Pool: From each image, $R = 64$ RoIs were sampled, giving a total mini-batch size of $128$ RoIs.</li>
+<li>The Ratio: Out of the 64 RoIs per image, about 25% (16 RoIs) are chosen from region proposals that have an IoU $\ge 0.5$. These are the foreground (positive) examples. The remaining 75% are background (negative) examples.</li>
+</ul>
+<p><strong>End-to-End Training</strong></p>
+<p>During the backward pass, gradients are computed for all RoIs in a batch simultaneously. When the gradients travel backward through the FC layers, they eventually converge at the RoI Pooling Layer. Here, the gradients from all separate RoIs are accumulated and summed up for each pixel they utilized on the shared feature map. Once the gradients are accumulated on the feature map, backpropagation continues normally through the base convolutional network. This allows the shared convolutional weights to be optimized based on the feedback of all 128 RoIs at once.</p>
+<h2 id="faster-r-cnn">Faster R-CNN<a hidden class="anchor" aria-hidden="true" href="#faster-r-cnn">#</a></h2>
+<p>Both R-CNN and Fast R-CNN employ selective search algorithm to propose regions. This hand-crafted algorithm becomes a bottleneck for real-time application. Faster R-CNN [3] introduces Region Proposal Network (RPN) to replace this algorithm.</p>
+<figure>
+    <img loading="lazy" src="faster_rcnn_rpn.png"
+         alt="Faster R-CNN with RPN"/> <figcaption>
+            <p>Faster R-CNN with RPN [3]</p>
+        </figcaption>
+</figure>
+
+<p><strong>Structure of RPN</strong></p>
+<p>RPN is a mini-network working as a <strong>sliding window</strong> on shared feature map. It&rsquo;s only purpose is to propose regions to Fast R-CNN. Each proposed region has an objectness score (object or background). Structure of RPN is simple:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Shared Feature Map (from Backbone)
+</span></span><span style="display:flex;"><span>         │
+</span></span><span style="display:flex;"><span>         ▼
+</span></span><span style="display:flex;"><span>   3x3 Conv Layer (padding 1)
+</span></span><span style="display:flex;"><span>         │
+</span></span><span style="display:flex;"><span>         ├─► 1x1 Conv (Cls Head) ─► Output: 2k channels for objectness scores per pixel
+</span></span><span style="display:flex;"><span>         │
+</span></span><span style="display:flex;"><span>         └─► 1x1 Conv (Reg Head) ─► Output: 4k channels for coordinates per pixel
+</span></span></code></pre></div><p>$K$ is the number of anchors, typically $k=9$. RPN is a fully convolutional network, no fully connected layer.</p>
+<figure>
+    <img loading="lazy" src="rpn.png"
+         alt="RPN"/> <figcaption>
+            <p>RPN [3]</p>
+        </figcaption>
+</figure>
+
+<p><strong>Anchors and Proposed Regions</strong></p>
+<p>Anchors are fixed rectangles centered at each pixel. RPN predicts objectness score and 4 correction values for each anchor. Typically in original paper, each pixel has 9 anchors, and they are defined by 3 scales, $128^2, 256^2, 512^2$, and 3 aspect ratios, $1:1, 1:2, 2:1$. Anchors are not the proposed regions. Proposed regions are computed based on anchors and RPN&rsquo;s outputs and filter by NMS and top N selection. Typically, $N=2000$ for training, and $N=300$ for testing.</p>
+<blockquote>
+<p>Faster R-CNN performs bounding box regression twice! RPN does the first regression based on fixed anchors, which served as region proposals for RPN. Regression is a correction of region proposal. (region-based object detection)</p></blockquote>
+<p><strong>4-Step Alternating Training</strong></p>
+<ul>
+<li>use a pre-trained CNN model to train RPN</li>
+<li>use a pre-trained CNN model and RPN to train a Fast R-CNN</li>
+<li>use the Fast R-CNN to train RPN, fix feature map, only fine-tune RPN</li>
+<li>fixed feature map, only fine-tune Fast R-CNN</li>
+</ul>
+<h2 id="mask-r-cnn">Mask R-CNN<a hidden class="anchor" aria-hidden="true" href="#mask-r-cnn">#</a></h2>
+<p>Mask R-CNN [4], extends Faster R-CNN [3] by adding a branch for predicting segmentation masks for each Region of Interest (RoI), in parallel with the existing branch for classification and bounding box regression. The mask branch is a small FCN applied to each RoI, predicting segmentation masks for each class in a pixel-to-pixel manner. Mask R-CNN is doing <strong>instance segmentation</strong>.</p>
+<figure>
+    <img loading="lazy" src="mask_rcnn.png"
+         alt="Mask R-CNN"/> <figcaption>
+            <p>Mask R-CNN with three prediction branches: class, box, segmentation [4]</p>
+        </figcaption>
+</figure>
+
+<p><strong>RoIAlign</strong></p>
+<p>The Problem with RoIPool: Quantization</p>
+<p>RoIPool relies on forcing continuous geometric coordinates into strict integer pixel values. This happens in two separate steps, causing double quantization.</p>
+<ul>
+<li>Image to Feature Map Mapping: If an object in the original image has a bounding box of $290 \times 290$ pixels, and your backbone network has a stride of 16, the box size on the feature map becomes $290 / 16 = 18.125$. RoIPool rounds this down to 18 pixels ($\lfloor 18.125 \rfloor$).</li>
+<li>Dividing into Bins: If your target output size is $7 \times 7$, you divide that 18-pixel box into 7 bins. $18 / 7 = 2.57$ pixels per bin. RoIPool rounds this again, making some bins 2 pixels wide and others 3 pixels wide.</li>
+</ul>
+<p>Because of roundings, the features extracted by RoIPool are physically misaligned from the actual object in the original image. The spatial shift can be anywhere from a few pixels to over a dozen pixels. While a classification head doesn&rsquo;t care if a car&rsquo;s features are shifted by 5 pixels, a mask generation head will draw the edge of the car completely in the wrong place.</p>
+<p>RoIAlign completely removes integer rounding. It preserves the exact, floating-point geometry of the region proposal throughout the entire process. Instead of rounding, it uses Bilinear Interpolation to calculate what the feature values would be at exact fractional coordinates.</p>
+<figure>
+    <img loading="lazy" src="roialign.png"
+         alt="RoIAlign"/> <figcaption>
+            <p>RoIAlign [4]</p>
+        </figcaption>
+</figure>
+
+<blockquote>
+<p>With RoIAlign, the accuracy predictions of bounding boxes are increased as well!</p></blockquote>
+<p><strong>Loss Function</strong></p>
+<p>$$L=L_{cls}+L_{box}+L_{mask},$$</p>
+<p>where $L_{cls}$ and $L_{box}$ are the same as Faster R-CNN.</p>
+<p>The mask branch predicts N masks for each class, like bounding box predictions, in $m \times m$ size ($28\times 28$, fixed and not the same size as in the original input). To this a per-pixel sigmoid is applied, and define $L_{mask}$ as the average binary cross-entropy loss. For an RoI associated with ground-truth class k, $L_{mask}$ is only defined on the k-th
+mask (other mask outputs do not contribute to the loss).</p>
+<p>$$L_{mask}=-\cfrac{1}{m^2}\sum\limits_{1\le i,j \le m}\left(y_{ij}\cdot\log{\overline{y_{ij}^k}}+(1-y_{ij})\cdot\log{(1-\overline{y_{ij}^k}})\right)$$</p>
+<h2 id="two-stage-object-detection-r-cnn-family">Two-stage Object Detection: R-CNN Family<a hidden class="anchor" aria-hidden="true" href="#two-stage-object-detection-r-cnn-family">#</a></h2>
+<p>R-CNN family is also called region-based object detection models because the final predictions are all based on proposed regions generated by selective search algorithm or RPN network. Therefore, people say this is two-stage object detection, from input image to regions, and then from regions to final classes, boxes and masks.</p>
+<p>The other approach skips the region proposal stage and runs object detection directly. This is how one-stage object detection algorithm works.</p>
+<h2 id="yolo-you-only-look-once">YOLO (You Only Look Once)<a hidden class="anchor" aria-hidden="true" href="#yolo-you-only-look-once">#</a></h2>
+<p>The key to understand YOLOv1 [5] is its big tensor output. Images go through a pre-trained CNN and predict a big tensor following a few FC layers, which offer global context. YOLO treats object detection as a regression task with raw output (linear activation function for output layer).</p>
+<p>$$\text{output}=S\times S\times(5B+N)$$</p>
+<ul>
+<li>Pre-trained CNN was trained on 224x224 input. YOLOv1 adopted it to receive 448x448 input by adding a few more conv layers. Train object detection and large resolution at the same time.</li>
+<li>Image is split into $S\times S$ cells. (e.g. $7\times 7$)</li>
+<li>Each cell is responsible for detecting objects whose center falls into it.</li>
+<li>Each cell predicts $B$ bounding boxes. (e.g. $B=2$. Predicting only one bounding box per cell would limit the model. It couldn&rsquo;t easily handle objects of very different shapes, such as tall or thin like people or wide like cars.)</li>
+</ul>
+<blockquote>
+<p>This leads to specialization between the bounding box predictors. Each predictor gets better at predicting certain sizes, aspect ratios, or classes of object, improving overall recall.</p></blockquote>
+<ul>
+<li>Each bounding box is represented by $(x,y,w,h)$. $(x,y)$ is the center of bounding box, which is relative to the cell. $(w,h)$ is relative to the image. Therefore, ground truths of these 4 values are all between 0 and 1.</li>
+<li>Each bounding box has a confidence score. While training, ground truth is defined as $P(object)\times IoU$. When there is an object, $P(object)=1$, otherwise $P(object)=0$. The model predicts a confidence value, which is also called objectness score.</li>
+</ul>
+<blockquote>
+<p><strong>The confidence score is changing (moving target) while training!</strong> If the target was always a fixed 1.0, the network would be forced to be wildly overconfident even if the box was totally misaligned.</p></blockquote>
+<ul>
+<li>The bounding box with highest IoU is responsible for predciting object. (responsible bounding box)</li>
+<li>Each cell predicts a conditional probability for each object classes. That&rsquo;s the $N$.</li>
+</ul>
+<figure>
+    <img loading="lazy" src="yolo_v1.png"
+         alt="YOLO V1"/> <figcaption>
+            <p>YOLO V1 [5]</p>
+        </figcaption>
+</figure>
+
+<p>Since each cell only predicts one object, YOLOv1 is struggling with dense object prediction.</p>
+<p><strong>Loss Function</strong></p>
+<p>All loss components are Sum of Squared Error (SSE):</p>
+<p>$$L=L_{box}+L_{conf}+L_{cls}$$</p>
+<p>$$L_{box}=\lambda_{box}\cdot \sum\limits_{i=1}^{S^2}\sum\limits_{j=1}^{B}I_{ij}^{obj}\left[(x_{ij}-\overline x_{ij})^2+(y_{ij}-\overline y_{ij})^2+(\sqrt{w_{ij}}-\sqrt{\overline w_{ij}})^2+(\sqrt{h_{ij}}-\sqrt{\overline h_{ij}})^2\right]$$</p>
+<p>$$L_{conf}=\sum\limits_{i=1}^{S^2}\sum\limits_{j=1}^{B}I_{ij}^{obj}(C_{ij}-\overline C_{ij})^2+\lambda_{noobj}\cdot\sum\limits_{i=1}^{S^2}\sum\limits_{j=1}^{B}I_{ij}^{noobj}(C_{ij}-\overline C_{ij})^2$$</p>
+<p>$$L_{cls}=\sum\limits_{i=1}^{S^2}\sum\limits_{c\in C}I_{i}^{obj}\bigg(p_i(c)-\overline p_i(c)\bigg)^2$$</p>
+<p>$I$ is indicator function. $L_{box}$ only penalizes responsible bounding box by $I_{ij}^{obj}$. In paper, $\lambda_{box}=5, \lambda_{noobj}=0.5$. Increase the loss from bounding box coordinate predictions and decrease the loss from confidence predictions for boxes that don’t contain objects.</p>
+<p>Why square roots ($\sqrt{w}, \sqrt{h}$)? The authors used square roots because a small error in a large box (like a bus) matters much less than the same small error in a small box (like a teacup). Taking the square root reflects this, penalizing size errors in small boxes more heavily.</p>
+<h2 id="yolov2">YOLOv2<a hidden class="anchor" aria-hidden="true" href="#yolov2">#</a></h2>
+<blockquote>
+<p>YOLO suffers from a variety of shortcomings relative to state-of-the-art detection systems. Error analysis of YOLO compared to Fast R-CNN shows that YOLO makes a significant number of localization errors. Furthermore, YOLO has relatively low recall compared to region proposal-based methods. Thus we focus mainly on improving recall and localization while maintaining classification accuracy. [6]</p></blockquote>
+<p>Improvements:</p>
+<ul>
+<li>BatchNorm.</li>
+<li>High Resolution Classifier. Fine tune the pre-trained classification network at the full 448×448 resolution for 10 epochs on ImageNet. This high resolution classification network gives us an increase of almost 4% mAP.</li>
+<li>Fully Convolutional Network with 416x416 input. YOLOv2 removes the final fully connected layers and becomes a fully convolutional network, which is mathematically flexible and can accept different input sizes quite easily.</li>
+<li>YOLOv2 downsamples images by a factor of 32. This creates a final grid feature map of 13x13. Because 13 is an odd number, the grid has a single, definitive center cell.</li>
+</ul>
+<blockquote>
+<p>Objects, especially large objects, tend to occupy the center of the image so it’s good to have a single location right at the center to predict these objects instead of four locations that are all nearby.</p></blockquote>
+<ul>
+<li>YOLOv2 adopts to anchor boxes. The model predicts correction values (adjustments) of each anchor box, like RPN in Faster R-CNN. $B=5$ is the number of anchor boxes used in YOLOv2. But, $N$ is shared by these 5 boxes as well. In YOLOv2, each of the 13×13 grid cells is assigned 5 different anchor boxes of varying aspect ratios and scales. When an object center lands in a grid cell, the network chooses the anchor box that matches the object&rsquo;s shape the closest and calculates minor offsets to fit it.</li>
+<li>Bounded Prediction. In R-CNN, the 4 correction values are unbounded, which could introduce instability while training. YOLOv2 applies a sigmoid operation to get the bounded center and confidence prediction. $c_x,c_y$ are the top left corner of each cell. $p_w,p_h$ are the prior width and height of anchor boxes.</li>
+</ul>
+<p>$$\begin{aligned}
+b_x &amp;=\sigma(t_x) + c_x \\
+b_y &amp;=\sigma(t_y) + c_y \\
+b_w &amp;=p_w\cdot e^{t_w} \\
+b_h &amp;=p_h\cdot e^{t_h} \\
+P(object)\cdot \text{IoU} &amp;= \sigma(t_o)
+\end{aligned}$$</p>
+<ul>
+<li>In Faster R-CNN, the anchor box dimensions were chosen manually. In YOLOv2, they ran a K-Means Clustering algorithm on their entire training dataset&rsquo;s ground-truth bounding boxes to discover the 5 most common bounding box shapes. In this case, centroids are bounding boxes themselves but only have $(w,h)$. The key point is that the positions don&rsquo;t matter, and we only care the shapes of bounding box, do not care where are they while running k-mean. Imagine all boxes are stack together with top left $0,0$. Clustering happens on the 3rd axis. Therefore, the distance is defined as below.</li>
+</ul>
+<p>$$dist(box,centroid)=1-IoU(box,centroid)$$</p>
+<ul>
+<li>Fine-Grained Features by Passthrough Layer. Localization information is lost gradually as CNN goes deeper and resolution becomes smaller. 13x13 grid is good for large objects. For small ones, YOLOv2 has a passthrough layer. It&rsquo;s like channel concatenation, but the feature map is double folded. Somewhere in the network, 512x26x26 is reshaped to 2048x13x13 and concatenate.</li>
+<li>Multi-Scale Training. Because YOLOv2 is a fully convolutional network, it can accept any image size as long as the dimensions are multiples of 32 (since the backbone downsamples the image by a factor of 32). Typically sizes are ranging from 320×320 up to 608×608. During training, YOLOv2 implements a simple rule: Every 10 batches, the network randomly selects a new image dimension. The catch is that different input has different final output grid size. It doesn&rsquo;t really matter. By choosing different input size, YOLOv2 model could run with different accuracy and speed.</li>
+<li>$L_{box}$ becomes standard SSE/MSE, no square root trick.</li>
+</ul>
+<h2 id="yolov3">YOLOv3<a hidden class="anchor" aria-hidden="true" href="#yolov3">#</a></h2>
+<p>Improvements of YOLOv3 [7]:</p>
+<ul>
+<li>Updated Base Classifier. Heavily utilize skip connection from ResNet. Deeper network. Replace max pooling with stride 2 convolution. Inspired and Leverage Feature Pyramid Network (FPN) [8], but modified.</li>
+<li>Multi-Scale Predictions. By utilizing modified FPN, YOLOv3 outputs predictions at 3 different scales. For standard input size 416x416, they are 13x13 (large), 26x26 (medium), and 52x52 (small).</li>
+<li>Per-Box Classification. In YOLO and YOLOv2, the model predicts the object class for each grid (shared $N$). But, in YOLOv3, the model predicts class for each bounding box. The model predicts $3$ bounding boxes (prior anchors are computed by k-mean algorithm the same as YOLOv2). For each grid, there are coordinations, objectness score and class predictions. The output tensor becomes  $S \times S \times (3 \times (5 + N))$.</li>
+<li>3 boxes for each grid, and 3 prediction scales. There are total 10,647 boxes predicted for standard input size.</li>
+</ul>
+<p><strong>Feature Pyramid Network (FPN)</strong></p>
+<figure>
+    <img loading="lazy" src="fpn.png"
+         alt="FPN Building Block"/> <figcaption>
+            <p>FPN Building Block [8]</p>
+        </figcaption>
+</figure>
+
+<p>Similar to U-Net, which employs channel concatenation instead. FPN utilizes 1x1 conv and addition. However, YOLOv3 didn&rsquo;t employ addition. It utilizes channel concatenation. Therefore, it&rsquo;s more like U-Net and DenseNet, feature reuse!</p>
+<ul>
+<li>Independent Logistic Regression for supporting Multi-Label Classification.</li>
+<li>Logistic Regression for Confidencee Score. The ground truth is fixed while training. YOLOv3 completely unlinked the confidence target from the accuracy of the predicted coordinates.</li>
+<li>BCE loss for logistic regression (confidence and classification).</li>
+<li>Multi-Scale Training is still there, which makes YOLOv3 even more robust!</li>
+<li>Spatial Pyramid Pooling (SPP): SPP block is inserted just before the first 13x13 output layer. Instead of passing the feature map through a single path, SPP splits the feature map into four parallel paths:</li>
+</ul>
+<ol>
+<li>Path 1 (identity): The original feature map passes through completely untouched.</li>
+<li>Path 2 (5×5 max pooling with padding 2): Captures small, localized features.</li>
+<li>Path 3 (9×9 max pooling with padding 4): Captures medium-scale contextual features.</li>
+<li>Path 4 (13×13 max pooling with padding 6): Captures large-scale, near-global features.</li>
+</ol>
+<p>All four paths output the same 13x13 size, and then concatenated together. On the MS COCO dataset, adding the SPP block increased YOLOv3&rsquo;s Object Detection AP (Average Precision) by nearly 3% to 4%.</p>
+<h2 id="yolov4">YOLOv4<a hidden class="anchor" aria-hidden="true" href="#yolov4">#</a></h2>
+<blockquote>
+<p>There are a huge number of features which are said to improve Convolutional Neural Network (CNN) accuracy. Practical testing of combinations of such features on large datasets, and theoretical justification of the result, is required. Some features operate on certain models exclusively and for certain problems exclusively, or only for small-scale datasets; while some features, such as batch-normalization and residual-connections, are applicable to the majority of models, tasks, and datasets.</p></blockquote>
+<p>Improvements in YOLOv4 [4]:</p>
+<ul>
+<li><strong>Stem &ndash;&gt; Backbone &ndash;&gt; Neck &ndash;&gt; Head</strong>. Neck component, such as SPP, is explicitly stated in YOLOv4. Sometimes, people put stem into backbone. Backbone is usually pre-trained.</li>
+<li><strong>Bag of Freebies</strong>, such as Data Augmentation and Loss Functions.</li>
+</ul>
+<blockquote>
+<p>Usually, a conventional object detector is trained off-line. Therefore, researchers always like to take this advantage and develop better training methods which can make the object detector receive better accuracy without increasing the inference cost. We call these methods that only change the training strategy or only increase the training cost as “bag of freebies.”</p></blockquote>
+<ol>
+<li>Mosaic Data Augmentation. This is YOLOv4&rsquo;s flagship augmentation trick. It takes four different training images and crops, scales, and stitches them together into a single training image layout. This introduces a massive amount of contextual variety and exposes the model to many small objects simultaneously. It also allows you to effectively train with a large batch size on just a single consumer GPU, because a single pass of a Mosaic image is equivalent to looking at 4 different images.</li>
+<li>CutMix Data Augmentation.</li>
+<li>Self-Adversarial Training (SAT). It represents a new data augmentation technique that operates in 2 forward backward stages. In the 1st stage the neural network alters the original image instead of the network weights. In this way the neural network executes an adversarial attack on itself, altering the original image to create the deception that there is no desired object on the image. In the 2nd stage, the neural network is trained to detect an object on this modified image in the normal way.</li>
+</ol>
+<p>In the first backward stage, weights are fixed. It takes input as trainable parameters. Instead of reducing loss, the updating is to increase the loss. The math is below.</p>
+<p>$$x_{adv}=\text{clip}_{\epsilon}\big(x+\alpha\cdot\text{sign}(\nabla x)\big)$$</p>
+<p>The $\text{sign}$ function. It strips away the magnitude of the gradient and leaves only the direction. If a gradient is positive, it becomes +1. If it&rsquo;s negative, it becomes −1. This prevents a few hyper-sensitive pixels from dominating the changes. This is from Fast Gradient Sign Method (FGSM). $\alpha$ is an incredibly small multiplier. This ensures the pixel adjustments are tiny, often changing a pixel&rsquo;s RGB value by just 1 or 2 steps out of 255. $+$ makes sure that the updating increase the loss. $\text{clip}_{\epsilon}$ is the clip function which make sure the absolute change of each pixel cannot be large the $\epsilon$.</p>
+<blockquote>
+<p>training images &ndash;&gt; mosaic/cutmix &ndash;&gt; sat</p></blockquote>
+<ol start="4">
+<li>Complete IoU (CIoU) Loss.</li>
+<li>Label Smoothing.</li>
+<li>DropBlock.</li>
+<li>CmBN.</li>
+</ol>
+<ul>
+<li><strong>Bag of Specials</strong>, such as SPP.</li>
+</ul>
+<blockquote>
+<p>For those plugin modules and post-processing methods that only increase the inference cost by a small amount but can significantly improve the accuracy of object detection, we call them “bag of specials”.</p></blockquote>
+<h2 id="reference">Reference<a hidden class="anchor" aria-hidden="true" href="#reference">#</a></h2>
+<ol>
+<li>Girshick, R., Donahue, J., Darrell, T., &amp; Malik, J. (2014). Rich feature hierarchies for accurate object detection and semantic segmentation. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 580-587).</li>
+<li>Girshick, R. (2015). Fast r-cnn. In Proceedings of the IEEE international conference on computer vision (pp. 1440-1448).</li>
+<li>Ren, S., He, K., Girshick, R., &amp; Sun, J. (2016). Faster R-CNN: Towards real-time object detection with region proposal networks. IEEE transactions on pattern analysis and machine intelligence, 39(6), 1137-1149.</li>
+<li>He, K., Gkioxari, G., Dollár, P., &amp; Girshick, R. (2017). Mask r-cnn. In Proceedings of the IEEE international conference on computer vision (pp. 2961-2969).</li>
+<li>Redmon, J., Divvala, S., Girshick, R., &amp; Farhadi, A. (2016). You only look once: Unified, real-time object detection. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 779-788).</li>
+<li>Redmon, J., &amp; Farhadi, A. (2017). YOLO9000: better, faster, stronger. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 7263-7271).</li>
+<li>Redmon, J., &amp; Farhadi, A. (2018). Yolov3: An incremental improvement. arXiv preprint arXiv:1804.02767.</li>
+<li>Lin, T. Y., Dollár, P., Girshick, R., He, K., Hariharan, B., &amp; Belongie, S. (2017). Feature pyramid networks for object detection. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 2117-2125).</li>
+<li>Bochkovskiy, A., Wang, C. Y., &amp; Liao, H. Y. M. (2020). Yolov4: Optimal speed and accuracy of object detection. arXiv preprint arXiv:2004.10934.</li>
+</ol>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://xinlin-z.github.io/tags/deep-learning/">Deep Learning</a></li>
+      <li><a href="https://xinlin-z.github.io/tags/cnn/">CNN</a></li>
+      <li><a href="https://xinlin-z.github.io/tags/pytorch/">PyTorch</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="https://xinlin-z.github.io/">Xinlin&#39;s Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

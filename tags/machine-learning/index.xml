@@ -6,8 +6,47 @@
     <description>Recent content in Machine Learning on Xinlin&#39;s Blog</description>
     <generator>Hugo -- 0.147.8</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 12 Oct 2025 15:23:25 +1200</lastBuildDate>
+    <lastBuildDate>Thu, 19 Feb 2026 12:29:25 +1200</lastBuildDate>
     <atom:link href="https://xinlin-z.github.io/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Mean Average Precision (mAP)</title>
+      <link>https://xinlin-z.github.io/posts/mean-average-precision/</link>
+      <pubDate>Thu, 19 Feb 2026 12:29:25 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/posts/mean-average-precision/</guid>
+      <description>&lt;p&gt;Mean Aveage Precision (mAP) is actually not an easy-understanding metric.&lt;/p&gt;
+&lt;h2 id=&#34;confusing-matrix&#34;&gt;Confusing Matrix&lt;/h2&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;T\P&lt;/th&gt;
+          &lt;th&gt;A&lt;/th&gt;
+          &lt;th&gt;B&lt;/th&gt;
+          &lt;th&gt;C&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;A&lt;/td&gt;
+          &lt;td&gt;11&lt;/td&gt;
+          &lt;td&gt;2&lt;/td&gt;
+          &lt;td&gt;3&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;B&lt;/td&gt;
+          &lt;td&gt;3&lt;/td&gt;
+          &lt;td&gt;12&lt;/td&gt;
+          &lt;td&gt;1&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;C&lt;/td&gt;
+          &lt;td&gt;0&lt;/td&gt;
+          &lt;td&gt;7&lt;/td&gt;
+          &lt;td&gt;9&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Normally people draw confusing matrix like this above. Left column is ground Truth (T), first row is the Prediction (P). In this confusing matrix, we have 3 classes, A, B, and C. Each class has 16 samples (sum of each row) which means data is balanced. If the model does a good job, its confusing matrix should have a very clear diagonal. In this example, the model is very confused about class C. Given class C, nearly half of the predictions are B (7/16).&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Normalization, Regularization and Learning Rate Scheduling</title>
       <link>https://xinlin-z.github.io/posts/normalization-regularization/</link>

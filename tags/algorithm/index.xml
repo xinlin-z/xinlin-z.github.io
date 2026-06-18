@@ -9,10 +9,10 @@
     <lastBuildDate>Mon, 16 Mar 2026 11:22:03 +1200</lastBuildDate>
     <atom:link href="https://xinlin-z.github.io/tags/algorithm/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Multi-Thread Programming in Python</title>
-      <link>https://xinlin-z.github.io/posts/multi-thread-python/</link>
+      <title>Concurrent Programming in Python</title>
+      <link>https://xinlin-z.github.io/posts/concurrent-python/</link>
       <pubDate>Mon, 16 Mar 2026 11:22:03 +1200</pubDate>
-      <guid>https://xinlin-z.github.io/posts/multi-thread-python/</guid>
+      <guid>https://xinlin-z.github.io/posts/concurrent-python/</guid>
       <description>&lt;p&gt;Modern Python has come up to free-threaded version. We can achieve real multi-thread programming in Python. Programmers need to be more careful. Generally speaking, multi-thread is easier than multi-process since resource-sharing is straightforward because all threads are in one process. Python offers lots of thread synchronization and coordination primitives!&lt;/p&gt;
 &lt;h2 id=&#34;race-condition-and-atomicity&#34;&gt;Race Condition and Atomicity&lt;/h2&gt;
 &lt;p&gt;Race Condition is a result of uncontrolled access to shared resources. When the wrong access pattern happens, something unexpected occurs. Atomicity is the key to avoid race conditions. If an operation is atomic, no other thread can interrupt it mid-way. It either hasn&amp;rsquo;t started, or it is completely finished.&lt;/p&gt;</description>

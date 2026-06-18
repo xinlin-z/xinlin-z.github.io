@@ -6,22 +6,70 @@
     <description>Recent content in Posts on Xinlin&#39;s Blog</description>
     <generator>Hugo -- 0.147.8</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 16 Mar 2026 11:22:03 +1200</lastBuildDate>
+    <lastBuildDate>Tue, 19 May 2026 12:29:25 +1200</lastBuildDate>
     <atom:link href="https://xinlin-z.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Multi-Thread Programming in Python</title>
-      <link>https://xinlin-z.github.io/posts/multi-thread-python/</link>
+      <title>Object Detection, From R-CNN family to YOLO series</title>
+      <link>https://xinlin-z.github.io/posts/rcnn-yolo/</link>
+      <pubDate>Tue, 19 May 2026 12:29:25 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/posts/rcnn-yolo/</guid>
+      <description>&lt;h2 id=&#34;r-cnn&#34;&gt;R-CNN&lt;/h2&gt;
+&lt;p&gt;Traditional Convolutional Neural Networks (CNNs) with fully connected layers often struggle with object detection tasks, especially when dealing with multiple objects of various sizes and positions within an image. A brute-force method like applying a &lt;strong&gt;Sliding Window&lt;/strong&gt; (Exhaustive Search) across the image to detect objects is highly computationally expensive, as it fails to scale efficiently when object frequency and variation increase.&lt;/p&gt;
+&lt;p&gt;Regions with CNN features (R-CNN) [1] was introduced in 2014 to overcome these challenges. R-CNN presents an approach by using a &lt;strong&gt;Selective Search&lt;/strong&gt; algorithm to generate around 2,000 region proposals from an image. These proposals are likely to contain objects and are individually processed to detect and localize objects more efficiently. R-CNN marked a significant advancement in the field of object detection and laid the foundation for faster and more accurate object detection models.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Concurrent Programming in Python</title>
+      <link>https://xinlin-z.github.io/posts/concurrent-python/</link>
       <pubDate>Mon, 16 Mar 2026 11:22:03 +1200</pubDate>
-      <guid>https://xinlin-z.github.io/posts/multi-thread-python/</guid>
+      <guid>https://xinlin-z.github.io/posts/concurrent-python/</guid>
       <description>&lt;p&gt;Modern Python has come up to free-threaded version. We can achieve real multi-thread programming in Python. Programmers need to be more careful. Generally speaking, multi-thread is easier than multi-process since resource-sharing is straightforward because all threads are in one process. Python offers lots of thread synchronization and coordination primitives!&lt;/p&gt;
 &lt;h2 id=&#34;race-condition-and-atomicity&#34;&gt;Race Condition and Atomicity&lt;/h2&gt;
 &lt;p&gt;Race Condition is a result of uncontrolled access to shared resources. When the wrong access pattern happens, something unexpected occurs. Atomicity is the key to avoid race conditions. If an operation is atomic, no other thread can interrupt it mid-way. It either hasn&amp;rsquo;t started, or it is completely finished.&lt;/p&gt;</description>
     </item>
     <item>
+      <title>Mean Average Precision (mAP)</title>
+      <link>https://xinlin-z.github.io/posts/mean-average-precision/</link>
+      <pubDate>Thu, 19 Feb 2026 12:29:25 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/posts/mean-average-precision/</guid>
+      <description>&lt;p&gt;Mean Aveage Precision (mAP) is actually not an easy-understanding metric.&lt;/p&gt;
+&lt;h2 id=&#34;confusing-matrix&#34;&gt;Confusing Matrix&lt;/h2&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;T\P&lt;/th&gt;
+          &lt;th&gt;A&lt;/th&gt;
+          &lt;th&gt;B&lt;/th&gt;
+          &lt;th&gt;C&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;A&lt;/td&gt;
+          &lt;td&gt;11&lt;/td&gt;
+          &lt;td&gt;2&lt;/td&gt;
+          &lt;td&gt;3&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;B&lt;/td&gt;
+          &lt;td&gt;3&lt;/td&gt;
+          &lt;td&gt;12&lt;/td&gt;
+          &lt;td&gt;1&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;C&lt;/td&gt;
+          &lt;td&gt;0&lt;/td&gt;
+          &lt;td&gt;7&lt;/td&gt;
+          &lt;td&gt;9&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Normally people draw confusing matrix like this above. Left column is ground Truth (T), first row is the Prediction (P). In this confusing matrix, we have 3 classes, A, B, and C. Each class has 16 samples (sum of each row) which means data is balanced. If the model does a good job, its confusing matrix should have a very clear diagonal. In this example, the model is very confused about class C. Given class C, nearly half of the predictions are B (7/16).&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>Convolutional Neuron Networks (CNN)</title>
-      <link>https://xinlin-z.github.io/posts/cnn/</link>
+      <link>https://xinlin-z.github.io/posts/convnet/</link>
       <pubDate>Fri, 05 Dec 2025 20:03:25 +1200</pubDate>
-      <guid>https://xinlin-z.github.io/posts/cnn/</guid>
+      <guid>https://xinlin-z.github.io/posts/convnet/</guid>
       <description>&lt;p&gt;Convolutional neuron networks (CNN) have been revolutionized image-related Artificial Intellegence (AI) tasks. This kind of neuron network architectures have been obtained huge success. Furthermore, CNNs are very interesting. They have many design elements and variants you could play with. Academic researches might pursue a beauty of purity and emphasize the unique feature they proposed. However, in industry application, it&amp;rsquo;s not necessary to build a network pure. It&amp;rsquo;s highly possible to combine all necessary design elements together. However, we should have a deep understand of all these design elements.&lt;/p&gt;</description>
     </item>
     <item>
@@ -64,7 +112,7 @@
       <link>https://xinlin-z.github.io/posts/shell-script/</link>
       <pubDate>Sun, 01 Jun 2025 20:03:25 +1200</pubDate>
       <guid>https://xinlin-z.github.io/posts/shell-script/</guid>
-      <description>&lt;p&gt;Shell is a powerful Command Line Interface (CLI) in Linux. We type commands, and shell executes them in a beautiful and sophisticated way. Shell is also a super flexible programing language for Linux. It could bind commands together with conditions, loops and various expansions ($,~). Shell is actually a raw interpreting programming language. Raw interpreting means there is no compiled middle bytecode. In this post, I use &lt;strong&gt;&lt;code&gt;bash&lt;/code&gt;&lt;/strong&gt;, which is the most popular and widely deployed shell implementation.&lt;/p&gt;</description>
+      <description>&lt;p&gt;Shell is a powerful Command Line Interface (CLI) in Linux. We type commands, and shell executes them in a beautiful and sophisticated way. Shell is also a super flexible programing language for Linux. It could bind commands together with conditions, loops and various expansions ($,~). Shell is actually a raw interpreting programming language in which there is no compiled middle bytecode. In this post, I use &lt;strong&gt;&lt;code&gt;bash&lt;/code&gt;&lt;/strong&gt;, which is the most popular and widely deployed shell implementation.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
