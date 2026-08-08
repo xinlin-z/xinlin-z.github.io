@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Database Practice: SQLite and PostgreSQL | Xinlin&#39;s Blog</title>
+<meta name="keywords" content="Database, SQL, Python">
+<meta name="description" content="Database Design
+Database is a system to manage data, which is built on file system offered by OS. Broadly speaking, there are two cases in which database is utilized:
+
+OLTP, OnLine Transaction Process, for supporting daily business
+OLAP, OnLine Analysis Process, for supporting data analysis in Data Warehouse
+
+Database design is actually the design of data tables (entities) and their relationships. The design purposes are:
+
+store information without unnecessary redundancy
+retrieve information easily and fast
+
+Normal Form (NF)
+NFs are used to eliminate information redundancy. The higher NF, the less redundancy.">
+<meta name="author" content="">
+<link rel="canonical" href="https://xinlin-z.github.io/posts/dbms/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.381f5ace0de1ab2efa08db7875cfe0360217fb9fce6341c41e7c271d15965494.css" integrity="sha256-OB9azg3hqy76CNt4dc/gNgIX&#43;5/OY0HEHnwnHRWWVJQ=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://xinlin-z.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://xinlin-z.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://xinlin-z.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://xinlin-z.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://xinlin-z.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://xinlin-z.github.io/posts/dbms/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '\\[', right: '\\]', display: true}
+      ],
+      throwOnError : false
+    });"></script>
+<meta property="og:url" content="https://xinlin-z.github.io/posts/dbms/">
+  <meta property="og:site_name" content="Xinlin&#39;s Blog">
+  <meta property="og:title" content="Database Practice: SQLite and PostgreSQL">
+  <meta property="og:description" content="Database Design Database is a system to manage data, which is built on file system offered by OS. Broadly speaking, there are two cases in which database is utilized:
+OLTP, OnLine Transaction Process, for supporting daily business OLAP, OnLine Analysis Process, for supporting data analysis in Data Warehouse Database design is actually the design of data tables (entities) and their relationships. The design purposes are:
+store information without unnecessary redundancy retrieve information easily and fast Normal Form (NF) NFs are used to eliminate information redundancy. The higher NF, the less redundancy.">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-07-19T12:29:25+12:00">
+    <meta property="article:modified_time" content="2026-07-19T12:29:25+12:00">
+    <meta property="article:tag" content="Database">
+    <meta property="article:tag" content="SQL">
+    <meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Database Practice: SQLite and PostgreSQL">
+<meta name="twitter:description" content="Database Design
+Database is a system to manage data, which is built on file system offered by OS. Broadly speaking, there are two cases in which database is utilized:
+
+OLTP, OnLine Transaction Process, for supporting daily business
+OLAP, OnLine Analysis Process, for supporting data analysis in Data Warehouse
+
+Database design is actually the design of data tables (entities) and their relationships. The design purposes are:
+
+store information without unnecessary redundancy
+retrieve information easily and fast
+
+Normal Form (NF)
+NFs are used to eliminate information redundancy. The higher NF, the less redundancy.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://xinlin-z.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Database Practice: SQLite and PostgreSQL",
+      "item": "https://xinlin-z.github.io/posts/dbms/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Database Practice: SQLite and PostgreSQL",
+  "name": "Database Practice: SQLite and PostgreSQL",
+  "description": "Database Design Database is a system to manage data, which is built on file system offered by OS. Broadly speaking, there are two cases in which database is utilized:\nOLTP, OnLine Transaction Process, for supporting daily business OLAP, OnLine Analysis Process, for supporting data analysis in Data Warehouse Database design is actually the design of data tables (entities) and their relationships. The design purposes are:\nstore information without unnecessary redundancy retrieve information easily and fast Normal Form (NF) NFs are used to eliminate information redundancy. The higher NF, the less redundancy.\n",
+  "keywords": [
+    "Database", "SQL", "Python"
+  ],
+  "articleBody": "Database Design Database is a system to manage data, which is built on file system offered by OS. Broadly speaking, there are two cases in which database is utilized:\nOLTP, OnLine Transaction Process, for supporting daily business OLAP, OnLine Analysis Process, for supporting data analysis in Data Warehouse Database design is actually the design of data tables (entities) and their relationships. The design purposes are:\nstore information without unnecessary redundancy retrieve information easily and fast Normal Form (NF) NFs are used to eliminate information redundancy. The higher NF, the less redundancy.\n1NF: No Multi-value Cell. Each cell only contains one value. No multi-value cells. Null value is allowed. Primary key might has more than one columns (composite key). 2NF (Whole Key): No Partial Dependency. If primary key only contains one column, it’s 2NF satisfied. All non-key attributes must be fully dependent on the entire primary key. 3NF (Nothing but the Key): No Transitive Dependency. Every non-key attribute in a table must directly depend on the key, the whole key, and nothing but the key. For practice, 3NF is good enough! Higher NFs are more academic! BCNF: Boyce-Codd NF. No Reverse Dependency. 4NF: No Multi-value Dependency. Table Decomposition Example\nExample of Multi-value Dependency: A --\u003e BC A -\u003e\u003e B # multi-value dependency B and C are indenpendent with each other Decompose: A --\u003e C AB --\u003e ∅ # only A and B in table Due to speed requirement, the design for OLAP system migth be denormalized.\nPrimary Key (PK) Every table needs a PK. Non-null and Unique, for all columns in PK Immutability (practically, not just in theory): a PK value should never need to change once assigned. If it changes, every foreign key referencing it must cascade. Stability (optional): new keys are strictly greater than previous keys. In most engines, the primary key determines physical row order or is the most heavily used index, so its shape affects performance system-wide. That is why PK design matters so much more than picking any unique column as PK. Natural Key vs. Surrogate Key\nNatural Key: A column (or set of columns) that already exists in the real-world data and is inherently unique — e.g., email, SSN, ISBN, (country_code, license_plate).\nPros: No extra column needed; the key means something. Prevents accidental duplicate entities (two rows can’t exist for the same email). Cons: Real-world “unique” things change more often than you’d think (emails change, company names change, government IDs get reissued in some countries). Often wide (a string, or a composite of several columns) — bigger, slower indexes, and every foreign key referencing it repeats that width. Business rules change: “surely two people can’t have the same SSN” turns out to have edge cases (shared family SSNs in some legacy systems, contractors without SSNs, etc.). Surrogate Key: A system-generated identifier with no business meaning — typically an auto-incrementing integer or a UUID.\nPros: Never needs to change, regardless of what happens to the business data. Small (if integer) and fast to index and join on. Decouples identity from data — you can fix a typo’d email without touching foreign key relationships everywhere. Cons: Meaningless on its own — you always need a separate unique constraint on the natural key anyway (e.g., unique index on email) to prevent duplicate entities. One more column, one more index. Better Practice\nUse a surrogate key as the PK, but also put a unique constraint on the natural keys (UK, unique key). You get stability for joins and foreign keys, and you still get duplicate-prevention on the real-world identities. It might worth considering how to design surrogate key: incremental int or UUID, and depends on your external stability requirement. Entity Relationship Diagram (ERD) ERD is the broad category — any diagram showing entities (tables) and their relationships. It’s a concept, not a specific notation.\nCrow’s Foot Notation is the most common specific notation style used to draw ERDs — it’s how you draw the relationship lines and cardinality (one-to-many, many-to-many, optional/mandatory) between entities. So the real choice isn’t “ERD or Crow’s Foot” — it’s “which notation do I use to draw my ERD,” and Crow’s Foot is by far the most practical, widely-used answer for real database schema work (as opposed to, say, Chen Notation, which is more academic/theoretical and rarely used in practice for actual schema documentation).\nCrow's Foot Notation in Mermaid: * Entities are tables * --: represent identifying relationship * ..: represent non-identifying relationship * o: zero * |: one * { or }: many * o,|,{,} could be bind with each other accordingly An example, column types are in SQLite flexible typing style:\n# Mermaid ERD # type name PK|FK|UK \"comments\" erDiagram PRODUCT { IPK id PK TEXT barcode UK \"unique\" TEXT name TEXT price TEXT cost TEXT create_time } PURCHASE_TIME { IPK id PK TEXT datetime } SALE_ITEM { IPK id PK INT purchase FK INT product FK TEXT price TEXT cost INT quantity } SALE_ITEM }o--|| PRODUCT : contain SALE_ITEM }|--|| PURCHASE_TIME: happen ERD in Crow’s Foot Notation by Mermaid\nIPK equals INTEGER PRIMARY KEY, which defines an alias of ROWID. Price and cost are in TEXT type to support decimal computation! Price and cost are repeated in SALE_ITEM table represent the values at that purchase moment. Each sale item contains one products. Each product could be included in zero or many sale items. Each purchase time contains one or many sale items. Each sale item happens at one purchase time. Design for OLTP and OLAP OLTP (supports fast, frequent, small read/write operations) cares about correctness and speed of individual transactions. OLAP (support complex queries over large volumes of historical data) cares about speed of aggregation/join across huge datasets.\nOLTP needs 3NF design. The goal is to avoid data duplication and anomalies. Every piece of data lives in exactly one place. OLAP sometimes needs denormalized design for speed. The goal is to minimize joins and make aggregation fast, even if it means repeating data.\nIn real systems, OLAP schemas are usually derived from OLTP schemas via ETL (Extract Transform Load) pipelines: raw normalized transactional data gets transformed, aggregated, and reshaped into a star/snowflake schema for reporting.\nOLTP tables are named after what they are (a customer, an order). OLAP tables are named after what they do in a query (a fact gets aggregated, a dimension is what you group or filter by). It’s really a difference in modeling philosophy driven by the difference in workload.\nStar, Snowflake and Constellation Schema\nStar schema: one fact table in the center, surrounded by dimension tables directly connected to it. Snowflake schema: like a star schema, but dimension tables are further normalized into sub-dimensions (so it “snowflakes” outward). Constellation (galaxy) schema: takes it a step further — multiple fact tables coexist and share some of the same dimension tables. Visually it looks like a galaxy of stars, hence the name. Transaction A database transaction symbolizes a unit of works, sometimes made up of multiple operations, performed within a database management system against a database, that is treated in a coherent and reliable way independent of other transactions. This is for keeping Data Integrity! A database transaction, by definition, must be:\nAtomic (no half change, all or nothing) Consistent (the change can only happen if the new state is valid, any attempt to commit an invalid change will fail, leaving the system at its previous valid state, from one valid state to another) Isolated (nobody sees any part of the transaction until it’s commited) Durable (it must get written to persistent storage, no need to flush) Database practitioners often refer to these properties of database transactions using the acronym ACID.\nConnection and Cursor Before issuing SQL statements to database system, we need to connect it first. That’s database connection. Connection holds transactions and lock state.\nA database cursor is a mechanism that enables traversal over the records from a database. It’s similar to the programming language concept of iterator. Cursors are used by programmers to process individual rows returned by database queries. Cursors enable manipulation of whole result sets at once. In this scenario, a cursor enables the sequential processing of rows in a result set. A cursor can be viewed as a pointer to one row in a set of rows. The cursor can only refer to one row at a time, but can move to other rows of the result set as needed.\nWe can have multi-cursor for one connection. But they share transactions and lock state. They would never be real paralleled. We can use multi-cursor in safe nested queries in one thread, but not recommend for multi-thread cases. Each thread should have its own connection. That’s the standard pattern for both SQLite and PostgreSQL. Concurrent transactions are realized by multi-connection.\nSQL Structure Query Language, ISO standard Case-Insensitive (key words, table and column names) Turning Complete since SQL:1999 SQL does not guarantee the order of rows in a table in any way. The results are always a table or empty (zero row), even there is only one row and one column. Three-Valued Logic (TVL or 3VL) True, False and Null which means Unknown.\n# NOT not true = false not false = true not null = null -- not unknown is unknonwn # AND true \u0026 true = true true \u0026 false = false false \u0026 false = false true \u0026 null = null false \u0026 null = false # OR true | true = true true | false = true false | false = false true | null = true false | null = null In WHERE clause, null (unknown) is treated as false. Comparison with null (unknown) result in null (unknown). Arithmetic operation with null (unknown) result is null (unknown). null = null, false, this is comparison null != null, true, therefore unique could be null null is null, true, this is judgement null [not] like, false null [not] in, false t1 = t2, false (unknown) when one of them is null (unknown) SELECT DISTINCT treats null as a fixed value. GROUP BY treats null as a fixed value. ORDER BY treats null as the biggest value by default. CHECK constraint treats null as true. In general, aggregation functions would ignore null value. Execution Order of SQL FROM – identify source table(s), change table names JOIN – merge tables WHERE – filter individual rows GROUP BY – group rows, reduce group into one row HAVING – filter groups SELECT – pick/compute columns, window functions DISTINCT – remove duplicate rows ORDER BY – sort the result LIMIT/OFFSET – restrict row count JOIN [INNER] JOIN LEFT [OUTER] JOIN RIGHT [OUTER] JOIN FULL [OUTER] JOIN CROSS JOIN, Cartesian Product -- other way to do cross join FROM t1 CROSS JOIN t2 FROM t1, t2 -- comma join FROM t1 join t2 ON TRUE ON conditions USING (column,[...]) specifys matching columns as condition NATURAL JOIN finds all matching columns as condition, fragile, not recommend SELECT Normally, when their is no row, select return empty. We can use SELECT to evalue scalar values, and change the name of columns w/o AS.\nsqlite\u003e select 123; 123 --- 123 sqlite\u003e select 123 [as] abc; abc --- 123 sqlite\u003e select 123 abc, 234 bcd, 345 cde; abc bcd cde --- --- --- 123 234 345 sqlite\u003e select 1+2; -- literal column name and evalue it 1+2 --- 3 SELECT (...) is called Scalar Subquery.\nSubquery can only return one column. Select the first row (one column). If subquery returns empty (zero row), select return null. SELECT DISTINCT is applied on multiple columns and treats the combination of those columns as the unit of uniqueness — not each column separately. GROUP BY is alternative.\n-- DISTINCT applies to the whole SELECT list, not just the column right after it SELECT DISTINCT department, job_title, salary FROM employees; -- distinct combinations of all three columns 5 Aggregation Functions count,sum,avg,max,and min.\ncount(*), count all row count(a), count column a, ignore null count(DISTINCT a), count distinct non-null of column a (may not support multi-column) count never return null, return 0 when no row sum,avg,max and min would ignore null and return null if no input CASE WHEN … THEN … ELSE … END Could be used to modify column value just before it is shown up.\nCASE WHEN N \u003c 1 OR N IS NULL THEN NULL WHEN N \u003e 100 THEN 100 ELSE N END CASE department WHEN 'Sales' THEN 'S' WHEN 'IT' THEN 'I' ELSE 'X' END GROUP BY … HAVING … GROUP BY reduces many rows into one row per group (you lose the individual rows). GROUP BY answers: “For each distinct value (or combination) of these columns, give me one summary row.”\n-- groups all employees by department, aggregate on each group SELECT department, COUNT(*) AS employee_count, AVG(salary) AS avg_salary FROM Employees GROUP BY department; -- find customers who spend more than 1000 SELECT customer_id, SUM(amount) AS total_spent FROM Orders GROUP BY customer_id HAVING SUM(amount) \u003e 1000; -- group by combination of more than one column SELECT department, YEAR(hire_date) AS hire_year, COUNT(*) AS num_hired FROM Employees GROUP BY department, hire_year; 11 Window Functions A window function performs a calculation across a set of rows that are related to the current row — but without collapsing them into a single row, the way GROUP BY would. Each row keeps its identity, and gets an extra computed value attached to it based on a “window” of related rows.\n-- syntax function_name(...) OVER ( PARTITION BY column_a -- optional: split rows into groups ORDER BY column_b -- optional: order rows within each group ) /* PARTITION BY — divides the rows into groups (like GROUP BY, but doesn't merge them). The function resets/restarts for each partition. ORDER BY (inside the OVER()) — defines the order in which rows are processed for ranking/running calculations within each partition. If you omit PARTITION BY, the whole table is treated as one big partition. */ Ranking Function\nrow_number(): unique sequential number, no ties rank(): ties share rank, leaves gaps dense_rank(): ties share rank, no gaps ntile(n): split rows into n roughly equal buckets, (row_number+n-1)/n percent_rank(): [0,1], (row_number-1)/(max_row_number-1) cume_dist(): cumulative distribution Offset Function\nlag(): looks at the value from a previous row in the ordered window. lead(): looks at the value from a following row. first_value(): returns the first value in the window frame. last_value(): returns the last value in the window frame. nth_value(): returns the value from the Nth row of the window frame. Aggregation Function as Window Function\nAggregate without collapsing rows.\nRunning Total and Moving Average\nAdding ORDER BY inside OVER() changes the frame from “whole partition” to “up through current row” — this is what gives you a running total.\nSELECT name, department, salary, SUM(salary) OVER (PARTITION BY department ORDER BY salary DESC) AS running_total FROM Employees; /* By default, tied rows get the running total including all tied rows! This is RANGE framing. If you want a strict row-by-row running total even with ties, use ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW instead. */ Frame Clause\nPARTITION BY picks the group. ORDER BY picks the order. The frame clause picks exactly which rows within that ordered group get fed into the function for the current row.\n/* This means: \"start from the first row of the partition, and go all the way down to the current row — nothing after it.\" */ ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW /* Keyword\tMeaning UNBOUNDED PRECEDING\tStart of the partition N PRECEDING\tN rows before current CURRENT ROW\tThe current row N FOLLOWING\tN rows after current UNBOUNDED FOLLOWING\tEnd of the partition*/ INSERT INTO -- insert default value for every column INSERT INTO purchase_time DEFAULT VALUES; UPDATE UPDATE table_name SET column1 = value1, column2 = value2 WHERE condition; DELETE FROM DELETE FROM table_name WHERE condition; WHERE … \u003c, \u003e, =, \u003c=, \u003e=, \u003c\u003e, !=\nAND, OR, NOT\nIS [NOT] NULL\n[NOT] LIKE\n%: zero or more characters _: single character In SQLite, LIKE is case-insensitive In PostgreSQL, LIKE is case-sensitive, so we have a non-standard ILIKE which is case-insensitive. [NOT] BETWEEN … AND … (inclusive)\n-- between text alphabetically SELECT * FROM Products WHERE ProductName BETWEEN 'Geitost' AND 'Louisiana Hot Spiced Okra' ORDER BY ProductName; [NOT] IN\nSELECT * FROM employees WHERE department IN ('Sales', 'Marketing'); -- IN (SELECT ...), single column SELECT name FROM employees WHERE dept_id IN ( SELECT dept_id FROM departments WHERE budget \u003e 150000 ); /* x IN (1,2,NULL) behaves exactly like x IN (1,2) from the WHERE clause's perspective — matches get included, everything else gets excluded. The NULL is harmless here. x NOT IN (1,2,NULL) is always FALSE!!! ≡ NOT (x = 1 OR x = 2 OR x = NULL) (FALSE or FALSE or UNKNOWN) = UNKNOWN NOT UNKNOWN = UNKNOWN = FALSE*/ [NOT] EXISTS\nInstead of comparing values, EXISTS just checks whether the subquery returns any rows.\nSELECT name FROM employees e WHERE EXISTS ( SELECT 1 FROM departments d WHERE d.dept_id = e.dept_id AND d.budget \u003e 150000 ); Correlated Subsquery\n/* For each employee e1, the subquery computes the average salary of just that employee's department, then compares. */ SELECT e1.name, e1.salary, e1.dept_id FROM employees e1 WHERE e1.salary \u003e ( SELECT AVG(e2.salary) FROM employees e2 WHERE e2.dept_id = e1.dept_id ); ANY\nSELECT ProductName FROM Products WHERE ProductID = ANY ( SELECT ProductID FROM OrderDetails WHERE Quantity = 10 ); ALL\nSOME\nCommon Table Expression (CTE) WITH AS (...) create a named, temporary result set that only exists for the duration of the query that follows it.\n-- basic syntax -- more readable than subquery WITH cte_name AS ( SELECT ... ) SELECT ... FROM cte_name -- CTE can be chained WITH cte1 AS ( SELECT ... ), cte2 AS ( SELECT ... FROM cte1 ... ) SELECT * FROM cte2; -- recursive CTE WITH RECURSIVE cte_name AS ( -- 1. Anchor member (base case) SELECT ... UNION ALL -- alwways union all -- 2. Recursive member (references cte_name) SELECT ... FROM cte_name WHERE ... -- stopping condition ) SELECT * FROM cte_name; -- recursive CTE example (SQL loop) WITH RECURSIVE cte AS ( SELECT 1 AS n -- anchor: start at 1 UNION ALL SELECT n + 1 FROM cte -- recursive: add 1 each time WHERE n \u003c 5 -- stop condition ) SELECT * FROM cte; -- It's more like a loop, not recursive function! -- recursive here means refering to the same table (itself). -- In the loop, everytime only deal with new rows. Set Operations The queries being combined must have the same number of columns, in the same order, with compatible data types. Column names in the result come from the first query.\nUNION [ALL], all means keep duplications INTERSECT [ALL], all means min(a,b) EXCEPT [ALL], all means max(a-b,0) {1,2,3,4,1,3} except {1,2,3,4} --\u003e {} except all {1,2,3,4} --\u003e {1,3} -- ORDER BY must be at last SELECT name, department FROM current_employees UNION SELECT name, department FROM former_employees ORDER BY name; Others coalesce(a,b,...): return the first non-null value CURRENT_TIMESTAMP: current UTC datetime SQLite https://www.sqlite.org/ Disk file database, not client-server architecture. Lightweight, Fast, Embedded, Zero configuration, Severless. Concurrency SQLite uses OS-level file locks on the database file itself to coordinate access between processes and threads. This is fundamentally different from client-server databases (Postgres, MySQL) where a single server process arbitrates access. With SQLite, every process that opens the file is a peer, and they negotiate access through the filesystem’s locking primitives (fcntl in Linux).\nBecause locking depends on OS-level file locks, the database file must live on a filesystem that correctly implements locking. Network filesystems (NFS, SMB, some cloud-synced folders like Dropbox) often have buggy or incomplete lock implementations, which is why SQLite documentation explicitly warns against using it there for concurrent access.\nRollback Journal Mode (default)\nUnder the default rollback journal mode, the database file locking is just like a classic Read-Write Lock (RW-Lock). SQLite databases move through five lock states:\nUNLOCKED – no lock held, process hasn’t touched the file yet SHARED – process wants to read; multiple processes can hold SHARED simultaneously RESERVED – process intends to write soon (e.g., began a write transaction); one process at a time, but readers with SHARED can continue read PENDING – transitional state; writer is waiting for existing readers to finish, and no new SHARED locks are allowed to start EXCLUSIVE – writer has sole access; needed to actually commit changes to the file Key rule: only one writer at a time, and a writer must wait for all readers to release their SHARED locks before it can escalate to EXCLUSIVE and commit. This is why concurrent writes from multiple processes will block or fail with SQLITE_BUSY if not handled properly.\nWrite-Ahead Logging (WAL) Mode\nUnder WAL mode, you could get better concurrent performance.\nWriters append changes to a separate -wal file rather than modifying the main database file directly Readers read from a consistent snapshot (main db + relevant WAL frames) and are not blocked by writers Only one writer at a time is allowed as well, but readers no longer block writers, and writers no longer block readers Periodically, a checkpoint operation copies WAL contents back into the main database file WAL mode requires a filesystem that supports shared memory (mmap), which is another reason network filesystems are problematic /* enable WAL mode */ PRAGMA journal_mode=WAL; /* go back to rollback mode */ PRAGMA journal_mode=DELETE; Multi-Version Concurrency Control (MVCC)\nWAL is one of the implementation of MVCC idea. Instead of making readers and writers fight over the same copy of data, MVCC keeps multiple versions of data around so readers can see a consistent snapshot from a point in time, while writers create new versions without disturbing that snapshot.\nWhen a read transaction starts, SQLite records the current end of the WAL file — this defines that reader’s snapshot boundary The reader reads pages by checking: “is there a newer version of this page in the WAL, at or before my snapshot boundary? If yes, use that. If no, use the main .db file.” Writers append new page versions to the end of the WAL — past the boundary any existing reader is using — so they never collide with what a reader is looking at Multiple readers can each have different snapshot boundaries simultaneously, all reading consistent (if slightly different-in-time) views Because old page versions in the WAL can’t be discarded until the last reader referencing them finishes, long-running read transactions directly block WAL reclamation — this is the mechanism behind the “WAL keeps growing” problem PostgreSQL utilizes the same MVCC idea to improve concurrency!\nThere’s still Only One Writer at a time in SQLite. MVCC in SQLite solves reader/writer contention, not writer/writer contention. That’s still a plain mutex (the WAL-file write lock).\nHow Checkpoint Operation Works\nIn WAL mode, writes don’t touch the main .db file — they’re appended as frames to the -wal file. Checkpointing is the process of taking those WAL frames and writing them back into the main database file, then (potentially) resetting the WAL.\nThe basic algorithm:\nWalk through the WAL file frame by frame For each page that was modified, copy the latest version of that page from the WAL into the corresponding position in the main .db file If a page was written multiple times across different transactions in the WAL, only the last version needs to be copied (checkpointing coalesces this automatically) Once all frames are copied, if no readers are still using older WAL frames, the WAL can be reset (truncated or overwritten from the start) When Checkpoints Happen\nBy default, SQLite triggers an automatic checkpointing (PASSIVE mode) when the WAL file grows past 1000 pages (roughly 4MB at the default 4KB page size). This happens as part of a regular write transaction commit, on whichever connection happens to trigger the threshold.\n/* change the page number threshold, 0 disables automatic checkpointing entirely, useful if you want to control checkpointing manually, e.g., during low-traffic windows */ PRAGMA wal_autocheckpoint = N; There are 4 checkpoint operation modes:\nPASSIVE Checkpoints as many frames as possible without blocking anyone Does not wait for readers to finish, does not block new readers or writers from starting If a reader is holding a snapshot that references old WAL frames, PASSIVE simply stops at the boundary it can’t cross and returns — partial progress is fine, no error Safest, least disruptive, but may leave the WAL file large if there’s a slow/stuck reader This is what runs automatically at the 1000-page threshold FULL Blocks new writers from starting (but doesn’t block readers) Waits for all in-progress writers to finish (there’s at most one anyway) Checkpoints all frames up to the point where no active reader still needs them Will still stop short if a reader is holding an old snapshot — it just waits longer / tries harder than PASSIVE, but doesn’t forcibly kick readers out Does not guarantee the WAL is reset back to the beginning afterward RESTART Does everything FULL does, plus: once the checkpoint completes, it ensures that the next write will start writing the WAL from the beginning again (logically resets the WAL sequence) Blocks new readers from starting partway through, briefly, to safely perform this reset Still doesn’t shrink the file on disk — the WAL file’s size stays the same, just its logical content resets TRUNCATE Does everything RESTART does, plus: actually truncates the -wal file on disk back to 0 bytes The strongest mode — most likely to briefly block concurrent connections to complete Best for reclaiming disk space, e.g., after a bulk import or during a maintenance window /* manually trigger checkpoint operation, you may need to check return values. */ PRAGMA wal_checkpoint(TRUNCATE); Better Practice\nset WAL as default. Don’t mix journal modes. set Busy Timeout. PRAGMA busy_timeout = 5000;, so that when a process hits a lock conflict, it retries for up to N milliseconds instead of immediately erroring with SQLITE_BUSY. (could be set by connect API in Python sqlite3 module) Short Transaction. Keep write transactions as short as possible to minimize the window where other writers are blocked. Keep read transaction short could help WAL checkpointing and avoid “WAL keeps growing” issue. Threading Modes SQLite could be compiled into 3 different threading modes:\nSingle-thread: no mutexes at all, using it from more than one thread is undefined behavior. Multi-thread: safe to use different connections from different threads simultaneously, but a single connection must not be used by more than one thread at a time. Serialized (the default in most builds, including Python’s sqlite3 module): SQLite wraps connection-level operations in an internal mutex, so sharing one connection across threads won’t corrupt data. But it means threads are queued/serialized the moment they touch that connection, and transaction’s might be interleaved with each other. Serialization is in SQL statement level, or low C API call level. \u003e\u003e\u003e import sqlite3 # 3 means serialized threading mode in Python \u003e\u003e\u003e sqlite3.threadsafety 3 Transaction Modes Transactions can be DEFERRED, IMMEDIATE, or EXCLUSIVE. The default transaction behavior is DEFERRED.\nDEFERRED means that the transaction does not actually start until the database is first accessed. Internally, the BEGIN DEFERRED statement merely sets a flag on the database connection that turns off the automatic commit that would normally occur when the last statement finishes. This causes the transaction that is automatically started to persist until an explicit COMMIT or ROLLBACK or until a rollback is provoked by an error or an ON CONFLICT ROLLBACK clause. If the first statement after BEGIN DEFERRED is a SELECT, then a read transaction is started. Subsequent write statements will upgrade the transaction to a write transaction if possible, or return SQLITE_BUSY. If the first statement after BEGIN DEFERRED is a write statement, then a write transaction is started.\nIMMEDIATE causes the database connection to start a new write immediately, without waiting for a write statement. The BEGIN IMMEDIATE might fail with SQLITE_BUSY if another write transaction is already active on another database connection.\nEXCLUSIVE is similar to IMMEDIATE in that a write transaction is started immediately. EXCLUSIVE and IMMEDIATE are the same in WAL mode, but in other journaling modes, EXCLUSIVE prevents other database connections from reading the database while the transaction is underway.\nFlexible Typing Unlike most SQL databases, SQLite doesn’t enforce that a column can only holds one data type — any column can store any value of any Storage Class: NULL, INTEGER, REAL, TEXT, or BLOB, regardless of the declared type in CREATE TABLE. Tpye affinity is SQLite’s middle ground: it’s a recommendation for what type of data a column prefers to store, and SQLite will try to coerce inserted values toward that preference, but it won’t refuse to store a mismatched type.\nDatatype names on column definitions are optional. A column definition can consist of just the column name and nothing else. SQLite began as a TCL extension that later escaped into the wild. TCL is a dynamic typing language in the sense that the programmer does not need to be aware of datatypes. When datatype names are provided, they can be just about Any Text. SQLite attempts to deduce the preferred datatype for the column based on the datatype name in the column definition, but that preferred datatype is advisory, not mandatory. The preferred datatype is known as the Column Affinity. An attempt is made to transform incoming data into the preferred datatype of the column. (All SQL database engines do this, not just SQLite.) If this transformation is successful, all is well. But if unsuccessful, instead of raising an error, SQLite just stores the content using its original datatype. SQLite is less restrictive!\nFive Affinities\nEvery column gets assigned exactly one of affinities based on its declared type:\nTEXT NUMERIC INTEGER REAL BLOB (also called “no affinity” — no coercion attempted at all) If the declared type contains the substring “INT” → INTEGER affinity Else if it contains “CHAR”, “CLOB”, or “TEXT” → TEXT affinity Else if it contains “BLOB”, or no type is specified at all → BLOB affinity Else if it contains “REAL”, “FLOA”, or “DOUB” → REAL affinity Else → NUMERIC affinity (the catch-all default) NUMERIC affinity: attempts to convert text to INTEGER or REAL if the text looks losslessly convertible (e.g., ‘123’ → integer, ‘3.5’ → real). If conversion would lose information (like ‘123abc’), the value is stored as-is in its original TEXT form. NULL and BLOB pass through unchanged.\nsqlite\u003e CREATE TABLE demo ( a INTEGER, -- INTEGER affinity b TEXT, -- TEXT affinity c BLOB, -- BLOB affinity (none) d NUMERIC, -- NUMERIC affinity e REAL -- REAL affinity ); sqlite\u003e INSERT INTO demo VALUES ('5', '5', '5', '5', '5'); sqlite\u003e SELECT typeof(a), typeof(b), typeof(c), typeof(d), typeof(e) FROM demo; integer|text|text|integer|real sqlite\u003e INSERT INTO demo VALUES ('5', '5', '5', null, '5'); sqlite\u003e SELECT typeof(a), typeof(b), typeof(c), typeof(d), typeof(e) FROM demo WHERE rowid=2; integer|text|text|null|real Max-Length for TEXT and BLOB\nThe real ceiling on how much you can store in a single TEXT or BLOB value is a compile-time setting:\nDefault: 1,000,000,000 bytes (1 billion bytes, ~954 MiB) This is a compile-time constant (SQLITE_MAX_LENGTH), configurable up to a hard ceiling of 2^31 - 1 (about 2.1 GB) — it cannot be raised beyond that even by recompiling, since the internal length field is a signed 32-bit integer It can also be lowered at runtime (but never raised beyond the compiled-in max) via sqlite3_limit(db, SQLITE_LIMIT_LENGTH, newValue), or PRAGMA isn’t used for this one — it’s purely a C API call, not exposed as a PRAGMA Unless whoever built your SQLite binary changed the default, you can store up to ~1GB in a single TEXT or BLOB column value, per row, per column. If you really need length constraint, use CHECK on table definition.\nStrict Table Introduced in SQLite 3.37.0 (2021), STRICT is an opt-in table-level modifier that turns off SQLite’s normally-flexible type system for that table and enforces actual type checking on insert/update. With STRICT, an insert that can’t be sensibly converted to the declared type is rejected with an error instead of silently stored as an affinity type. There are 6 types in strict table:\nINT INTEGER (for ROWID column) REAL TEXT BLOB ANY (dynamic type column in strict table) CREATE TABLE t (a INTEGER, b TEXT, c REAL) STRICT; ROWID (Default PK) Every row in an ordinary SQLite table has a 64-bit signed integer key called the rowid, which uniquely identifies that row within the table. This exists whether or not you ever reference it explicitly — it’s the physical key SQLite’s underlying B-tree structure uses to store and look up rows. Unless a table is declared WITHOUT ROWID, this key is always there.\nsqlite\u003e CREATE TABLE aa (name TEXT); sqlite\u003e INSERT INTO aa(name) VALUES('tom'); sqlite\u003e INSERT INTO aa(name) VALUES('jacky'); sqlite\u003e SELECT * FROM aa; tom jacky sqlite\u003e SELECT rowid,* FROM aa; /* show rowid column */ 1|tom 2|jacky Create ROWID’s Alias\nsqlite\u003e CREATE TABLE bb (id INTEGER PRIMARY KEY, name TEXT); sqlite\u003e INSERT INTO bb(name) VALUES('tom'),('jacky'); sqlite\u003e SELECT * FROM bb; 1|tom 2|jacky sqlite\u003e INSERT INTO bb(id,name) VALUES(5,'xinlin'); sqlite\u003e SELECT rowid,* FROM bb; 1|1|tom 2|2|jacky 5|5|xinlin Only literal INTEGER PRIMARY KEY works.\nROWID Allocation\nIf you insert a row without specifying the rowid column (or explicitly insert NULL into it), SQLite auto-assigns one:\nDefault algorithm: current max rowid in the table + 1 If the table is empty, it starts at 1 If the max rowid is already 9223372036854775807 (the largest signed 64-bit int), SQLite instead searches for an unused value at random — this is a fallback edge case you’ll essentially never hit in practice, but it’s documented behavior, not an error Important consequence: rowids get reused after deletion under this default scheme. If your table has rows with rowids 1, 2, 3 and you delete row 3, the next insert gets rowid 3 again (since max+1 logic just looks at current max, which is now 2). This is fine for most uses but dangerous if your application logic assumes rowids are permanently unique across the lifetime of the table (e.g., using them as external references, foreign keys held outside the transaction, or cache keys).\nAUTOINCREMENT — Preventing Reuse\nCREATE TABLE t (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT); Keyword AUTOINCREMENT changes the allocation algorithm: instead of max(rowid)+1 at insert time, SQLite tracks the highest rowid ever used in a hidden system table called sqlite_sequence, and always allocates strictly higher than that historical high-water mark — even if rows with high rowids were later deleted. This guarantees monotonically increasing, never-reused rowids for the lifetime of the table.\nTrade-offs of AUTOINCREMENT:\nExtra overhead: every insert now needs to check/update the sqlite_sequence table, so it’s measurably slower than plain INTEGER PRIMARY KEY — the SQLite docs explicitly recommend avoiding it unless you actually need the no-reuse guarantee Can fail with SQLITE_FULL once the sequence is exhausted at the 64-bit max, since it won’t fall back to the random-search behavior plain rowid tables use Only valid combined with INTEGER PRIMARY KEY — you cannot apply AUTOINCREMENT to a rowid alias declared any other way When to actually use it: if externally-visible IDs need to never repeat, even across deletes (e.g., you’re handing out these IDs in URLs, API tokens, references stored in other systems) — otherwise, skip it.\nExplicit ROWID Assignment\nYou can specify any rowid value yourself:\nINSERT INTO t (id, name) VALUES (100, 'x'); -- negative rowids are legal -- rowid literal name could be directly used INSERT INTO aa (rowid, name) VALUES (-5, 'y'); Rowids can be negative — the auto-assignment algorithm never picks a negative value on its own, but nothing stops you from inserting one explicitly. Ordering, comparisons, and lookups all work correctly with negative rowids since it’s just a signed 64-bit integer.\nWithout ROWID Table\nCREATE TABLE t (id TEXT PRIMARY KEY, name TEXT) WITHOUT ROWID; This opts a table out of the rowid mechanism entirely. Instead, the table’s declared PRIMARY KEY becomes the actual B-tree key directly — there’s no hidden 64-bit integer sitting underneath.\nROWID and INSERT … RETURNING\n-- return the most recent auto-assigned rowid INSERT INTO t (name) VALUES ('x') RETURNING id; Foreign Key -- have to explicitly turn on PRAGMA foreign_keys=on; Memory SQLite :memory: Creates a database that exists entirely in RAM, with no backing file on disk at all. It behaves like a fully-featured SQLite database — same SQL support, same transaction semantics — except nothing is ever persisted, and it disappears the moment the connection closes.\nAn in-memory database’s lifetime is exactly the lifetime of the database connection that created it. The moment that connection is closed, the entire database is gone, irrecoverably. There is no implicit “attach to an existing in-memory db by name” the way you might expect from a shared resource. Therefore, each :memory: connection is independent and private. Opening :memory: twice — even in the same process — gives you two completely separate, unrelated databases, not two handles to the same one. And WAL mode doesn’t apply to in-memory databases.\nconn1 = sqlite3.connect(\":memory:\") conn2 = sqlite3.connect(\":memory:\") conn1.execute(\"CREATE TABLE t (x)\") conn2.execute(\"SELECT * FROM t\") # ERROR: no such table — conn2 has its own empty db Use cases:\nfor test caching for SQL queries ETL staging step, query and transform data entirely in RAM before writing final results elsewhere sqlite3 Module in Python connect\nIf connect a non-existed database file, SQLite would create it. This interface has a few important parameters:\ncheck_same_thread=True, prevent the connection sharing among multiple threads in Python level timeout=5.0, equals PRAGMA busy_timeout = 5000;, 5 seconds autocommit, should be set to False, and use commit() and rollback() to close transaction explicitly. If it is True, commit() and rollback() callings have no effect. (\u003e=3.12) # compatible style if sys.version_info \u003e= (3, 12): # implicit BEGIN, explicit commit and rollback self.conn = sqlite3.connect('items.db', autocommit=False) else: # default isolation level: DEFERRED # no implicit BEGIN for SELECT, commit is harmless! self.conn = sqlite3.connect('items.db') # turn on foreing key self.conn.execute(\"PRAGMA foreign_keys = ON;\") execute\nexecute could be called on both connection and cursor. Under the hood, they are the same. If it is called on connection, a brand-new cursor would be returned. You can throw it away, or chain it with fetchall(). It can only issue one single SQL statement, and support ? placeholders for parameter binding. Control transaction by commit() and rollback().\nexecutemany\nRepeatedly execute the single SQL statement with an iterable parameter.\nexecutescript\nTake a SQL string to execute. If autocommit=False, no implicit transaction control.\nPostgreSQL https://www.postgresql.org/ Client-server Architecture. PL/pgSQL PL: Procedure Language\nPlain SQL is declarative — great for querying, but it has no loops, no variables, no branching logic. PL/pgSQL adds procedural programming capability inside the database, so you can write complex logic that runs server-side (faster — no round trips to the app) instead of pulling data out, processing it in application code, and pushing it back. (SQLite doesn’t have it since it is serverless and it is binded with app.)\n-- no transaction can be inside Function CREATE OR REPLACE FUNCTION function_name(param1 TYPE, param2 TYPE) RETURNS return_type AS $$ DECLARE -- variable declarations my_var INT; BEGIN -- procedural logic here RETURN some_value; END; $$ LANGUAGE plpgsql; ",
+  "wordCount" : "6528",
+  "inLanguage": "en",
+  "datePublished": "2026-07-19T12:29:25+12:00",
+  "dateModified": "2026-07-19T12:29:25+12:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://xinlin-z.github.io/posts/dbms/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Xinlin's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://xinlin-z.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://xinlin-z.github.io/" accesskey="h" title="Xinlin&#39;s Blog (Alt + H)">Xinlin&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://xinlin-z.github.io/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://xinlin-z.github.io/pages/about" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Database Practice: SQLite and PostgreSQL
+    </h1>
+    <div class="post-meta"><span title='2026-07-19 12:29:25 +1200 NZST'>July 19, 2026</span>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#database-design" aria-label="Database Design">Database Design</a><ul>
+                        
+                <li>
+                    <a href="#normal-form-nf" aria-label="Normal Form (NF)">Normal Form (NF)</a></li>
+                <li>
+                    <a href="#primary-key-pk" aria-label="Primary Key (PK)">Primary Key (PK)</a></li>
+                <li>
+                    <a href="#entity-relationship-diagram-erd" aria-label="Entity Relationship Diagram (ERD)">Entity Relationship Diagram (ERD)</a></li>
+                <li>
+                    <a href="#design-for-oltp-and-olap" aria-label="Design for OLTP and OLAP">Design for OLTP and OLAP</a></li></ul>
+                </li>
+                <li>
+                    <a href="#transaction" aria-label="Transaction">Transaction</a></li>
+                <li>
+                    <a href="#connection-and-cursor" aria-label="Connection and Cursor">Connection and Cursor</a></li>
+                <li>
+                    <a href="#sql" aria-label="SQL">SQL</a><ul>
+                        
+                <li>
+                    <a href="#three-valued-logic-tvl-or-3vl" aria-label="Three-Valued Logic (TVL or 3VL)">Three-Valued Logic (TVL or 3VL)</a></li>
+                <li>
+                    <a href="#execution-order-of-sql" aria-label="Execution Order of SQL">Execution Order of SQL</a></li>
+                <li>
+                    <a href="#join" aria-label="JOIN">JOIN</a></li>
+                <li>
+                    <a href="#select" aria-label="SELECT">SELECT</a></li>
+                <li>
+                    <a href="#5-aggregation-functions" aria-label="5 Aggregation Functions">5 Aggregation Functions</a></li>
+                <li>
+                    <a href="#case-when--then--else--end" aria-label="CASE WHEN &hellip; THEN &hellip; ELSE &hellip; END">CASE WHEN &hellip; THEN &hellip; ELSE &hellip; END</a></li>
+                <li>
+                    <a href="#group-by--having-" aria-label="GROUP BY &hellip; HAVING &hellip;">GROUP BY &hellip; HAVING &hellip;</a></li>
+                <li>
+                    <a href="#11-window-functions" aria-label="11 Window Functions">11 Window Functions</a></li>
+                <li>
+                    <a href="#insert-into" aria-label="INSERT INTO">INSERT INTO</a></li>
+                <li>
+                    <a href="#update" aria-label="UPDATE">UPDATE</a></li>
+                <li>
+                    <a href="#delete-from" aria-label="DELETE FROM">DELETE FROM</a></li>
+                <li>
+                    <a href="#where-" aria-label="WHERE &hellip;">WHERE &hellip;</a></li>
+                <li>
+                    <a href="#common-table-expression-cte" aria-label="Common Table Expression (CTE)">Common Table Expression (CTE)</a></li>
+                <li>
+                    <a href="#set-operations" aria-label="Set Operations">Set Operations</a></li>
+                <li>
+                    <a href="#others" aria-label="Others">Others</a></li></ul>
+                </li>
+                <li>
+                    <a href="#sqlite" aria-label="SQLite">SQLite</a><ul>
+                        
+                <li>
+                    <a href="#concurrency" aria-label="Concurrency">Concurrency</a></li>
+                <li>
+                    <a href="#threading-modes" aria-label="Threading Modes">Threading Modes</a></li>
+                <li>
+                    <a href="#transaction-modes" aria-label="Transaction Modes">Transaction Modes</a></li>
+                <li>
+                    <a href="#flexible-typing" aria-label="Flexible Typing">Flexible Typing</a></li>
+                <li>
+                    <a href="#strict-table" aria-label="Strict Table">Strict Table</a></li>
+                <li>
+                    <a href="#rowid-default-pk" aria-label="ROWID (Default PK)">ROWID (Default PK)</a></li>
+                <li>
+                    <a href="#foreign-key" aria-label="Foreign Key">Foreign Key</a></li>
+                <li>
+                    <a href="#memory-sqlite-memory" aria-label="Memory SQLite :memory:">Memory SQLite :memory:</a></li>
+                <li>
+                    <a href="#sqlite3-module-in-python" aria-label="sqlite3 Module in Python">sqlite3 Module in Python</a></li></ul>
+                </li>
+                <li>
+                    <a href="#postgresql" aria-label="PostgreSQL">PostgreSQL</a><ul>
+                        
+                <li>
+                    <a href="#plpgsql" aria-label="PL/pgSQL">PL/pgSQL</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="database-design">Database Design<a hidden class="anchor" aria-hidden="true" href="#database-design">#</a></h2>
+<p>Database is a system to manage data, which is built on file system offered by OS. Broadly speaking, there are two cases in which database is utilized:</p>
+<ol>
+<li><strong>OLTP</strong>, OnLine Transaction Process, for supporting daily business</li>
+<li><strong>OLAP</strong>, OnLine Analysis Process, for supporting data analysis in <strong>Data Warehouse</strong></li>
+</ol>
+<p>Database design is actually the design of data tables (entities) and their relationships. The design purposes are:</p>
+<ol>
+<li>store information without unnecessary redundancy</li>
+<li>retrieve information easily and fast</li>
+</ol>
+<h3 id="normal-form-nf">Normal Form (NF)<a hidden class="anchor" aria-hidden="true" href="#normal-form-nf">#</a></h3>
+<p>NFs are used to eliminate information redundancy. The higher NF, the less redundancy.</p>
+<ul>
+<li>1NF: <strong>No Multi-value Cell</strong>. Each cell only contains one value. No multi-value cells. Null value is allowed. Primary key might has more than one columns (composite key).</li>
+<li>2NF (Whole Key): <strong>No Partial Dependency</strong>. If primary key only contains one column, it&rsquo;s 2NF satisfied. All non-key attributes must be fully dependent on the entire primary key.</li>
+<li>3NF (Nothing but the Key): <strong>No Transitive Dependency</strong>. Every non-key attribute in a table must directly depend on the key, the whole key, and nothing but the key. <strong>For practice, 3NF is good enough! Higher NFs are more academic!</strong></li>
+<li>BCNF: Boyce-Codd NF. <strong>No Reverse Dependency</strong>.</li>
+<li>4NF: <strong>No Multi-value Dependency</strong>.</li>
+</ul>
+<figure>
+    <img loading="lazy" src="3nf_bcnf.png"
+         alt="Table Decomposition Example"/> <figcaption>
+            <p>Table Decomposition Example</p>
+        </figcaption>
+</figure>
+
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Example of Multi-value Dependency:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>A --&gt; BC
+</span></span><span style="display:flex;"><span>A -&gt;&gt; B  # multi-value dependency
+</span></span><span style="display:flex;"><span>B and C are indenpendent with each other
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Decompose:
+</span></span><span style="display:flex;"><span>A --&gt; C
+</span></span><span style="display:flex;"><span>AB --&gt; ∅  # only A and B in table
+</span></span></code></pre></div><blockquote>
+<p>Due to speed requirement, the design for OLAP system migth be denormalized.</p></blockquote>
+<h3 id="primary-key-pk">Primary Key (PK)<a hidden class="anchor" aria-hidden="true" href="#primary-key-pk">#</a></h3>
+<ul>
+<li>Every table needs a PK.</li>
+<li>Non-null and Unique, for all columns in PK</li>
+<li>Immutability (practically, not just in theory): a PK value should never need to change once assigned. If it changes, every foreign key referencing it must cascade.</li>
+<li>Stability (optional): new keys are strictly greater than previous keys. In most engines, the primary key determines physical row order or is the most heavily used index, so its shape affects performance system-wide. That is why PK design matters so much more than picking any unique column as PK.</li>
+</ul>
+<p><strong>Natural Key vs. Surrogate Key</strong></p>
+<p><strong>Natural Key:</strong> A column (or set of columns) that already exists in the real-world data and is inherently unique — e.g., email, SSN, ISBN, (country_code, license_plate).</p>
+<ul>
+<li>Pros:
+<ul>
+<li>No extra column needed; the key means something.</li>
+<li>Prevents accidental duplicate entities (two rows can&rsquo;t exist for the same email).</li>
+</ul>
+</li>
+<li>Cons:
+<ul>
+<li>Real-world &ldquo;unique&rdquo; things change more often than you&rsquo;d think (emails change, company names change, government IDs get reissued in some countries).</li>
+<li>Often wide (a string, or a composite of several columns) — bigger, slower indexes, and every foreign key referencing it repeats that width.</li>
+<li>Business rules change: &ldquo;surely two people can&rsquo;t have the same SSN&rdquo; turns out to have edge cases (shared family SSNs in some legacy systems, contractors without SSNs, etc.).</li>
+</ul>
+</li>
+</ul>
+<p><strong>Surrogate Key:</strong> A system-generated identifier with no business meaning — typically an auto-incrementing integer or a UUID.</p>
+<ul>
+<li>Pros:
+<ul>
+<li>Never needs to change, regardless of what happens to the business data.</li>
+<li>Small (if integer) and fast to index and join on.</li>
+<li>Decouples identity from data — you can fix a typo&rsquo;d email without touching foreign key relationships everywhere.</li>
+</ul>
+</li>
+<li>Cons:
+<ul>
+<li>Meaningless on its own — you always need a separate unique constraint on the natural key anyway (e.g., unique index on email) to prevent duplicate entities.</li>
+<li>One more column, one more index.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Better Practice</strong></p>
+<ul>
+<li>Use a surrogate key as the PK, but also put a unique constraint on the natural keys (UK, unique key). You get stability for joins and foreign keys, and you still get duplicate-prevention on the real-world identities.</li>
+<li>It might worth considering how to design surrogate key: incremental int or UUID, and depends on your external stability requirement.</li>
+</ul>
+<h3 id="entity-relationship-diagram-erd">Entity Relationship Diagram (ERD)<a hidden class="anchor" aria-hidden="true" href="#entity-relationship-diagram-erd">#</a></h3>
+<p>ERD is the broad category — any diagram showing entities (tables) and their relationships. It&rsquo;s a concept, not a specific notation.</p>
+<p><strong>Crow&rsquo;s Foot Notation</strong> is the most common specific notation style used to draw ERDs — it&rsquo;s how you draw the relationship lines and cardinality (one-to-many, many-to-many, optional/mandatory) between entities. So the real choice isn&rsquo;t &ldquo;ERD or Crow&rsquo;s Foot&rdquo; — it&rsquo;s &ldquo;which notation do I use to draw my ERD,&rdquo; and Crow&rsquo;s Foot is by far the most practical, widely-used answer for real database schema work (as opposed to, say, <strong>Chen Notation</strong>, which is more academic/theoretical and rarely used in practice for actual schema documentation).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Crow&#39;s Foot Notation in Mermaid:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>* Entities are tables
+</span></span><span style="display:flex;"><span>* --: represent identifying relationship
+</span></span><span style="display:flex;"><span>* ..: represent non-identifying relationship
+</span></span><span style="display:flex;"><span>* o: zero
+</span></span><span style="display:flex;"><span>* |: one
+</span></span><span style="display:flex;"><span>* { or }: many
+</span></span><span style="display:flex;"><span>* o,|,{,} could be bind with each other accordingly
+</span></span></code></pre></div><p>An example, column types are in SQLite flexible typing style:</p>
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid"># Mermaid ERD
+# type name PK|FK|UK &#34;comments&#34;
+erDiagram
+    PRODUCT {
+        IPK id PK
+        TEXT barcode UK &#34;unique&#34;
+        TEXT name
+        TEXT price
+        TEXT cost
+        TEXT create_time
+    }
+    PURCHASE_TIME {
+        IPK id PK
+        TEXT datetime
+    }
+    SALE_ITEM {
+        IPK id PK
+        INT purchase FK
+        INT product FK
+        TEXT price
+        TEXT cost
+        INT quantity
+    }
+
+    SALE_ITEM }o--|| PRODUCT : contain
+    SALE_ITEM }|--|| PURCHASE_TIME: happen
+</code></pre><figure>
+    <img loading="lazy" src="erd_mermaid_crow_foot.png"
+         alt="ERD in Crow&#39;s Foot Notation by Mermaid"/> <figcaption>
+            <p>ERD in Crow&rsquo;s Foot Notation by Mermaid</p>
+        </figcaption>
+</figure>
+
+<ul>
+<li>IPK equals INTEGER PRIMARY KEY, which defines an alias of ROWID.</li>
+<li>Price and cost are in TEXT type to support decimal computation!</li>
+<li>Price and cost are repeated in SALE_ITEM table represent the values at that purchase moment.</li>
+<li>Each sale item contains one products. Each product could be included in zero or many sale items.</li>
+<li>Each purchase time contains one or many sale items. Each sale item happens at one purchase time.</li>
+</ul>
+<h3 id="design-for-oltp-and-olap">Design for OLTP and OLAP<a hidden class="anchor" aria-hidden="true" href="#design-for-oltp-and-olap">#</a></h3>
+<p>OLTP (supports fast, frequent, small read/write operations) cares about correctness and speed of individual transactions. OLAP (support complex queries over large volumes of historical data) cares about speed of aggregation/join across huge datasets.</p>
+<p>OLTP needs 3NF design. The goal is to avoid data duplication and anomalies. Every piece of data lives in exactly one place. OLAP sometimes needs denormalized design for speed. The goal is to minimize joins and make aggregation fast, even if it means repeating data.</p>
+<p>In real systems, OLAP schemas are usually derived from OLTP schemas via ETL (Extract Transform Load) pipelines: raw normalized transactional data gets transformed, aggregated, and reshaped into a star/snowflake schema for reporting.</p>
+<blockquote>
+<p>OLTP tables are named after what they are (a customer, an order). OLAP tables are named after what they do in a query (a fact gets aggregated, a dimension is what you group or filter by). It&rsquo;s really a difference in modeling philosophy driven by the difference in workload.</p></blockquote>
+<p><strong>Star, Snowflake and Constellation Schema</strong></p>
+<ul>
+<li>Star schema: one fact table in the center, surrounded by dimension tables directly connected to it.</li>
+<li>Snowflake schema: like a star schema, but dimension tables are further normalized into sub-dimensions (so it &ldquo;snowflakes&rdquo; outward).</li>
+<li>Constellation (galaxy) schema: takes it a step further — multiple fact tables coexist and share some of the same dimension tables. Visually it looks like a galaxy of stars, hence the name.</li>
+</ul>
+<h2 id="transaction">Transaction<a hidden class="anchor" aria-hidden="true" href="#transaction">#</a></h2>
+<p>A database transaction symbolizes a unit of works, sometimes made up of multiple operations, performed within a database management system against a database, that is treated in a coherent and reliable way independent of other transactions. This is for keeping <strong>Data Integrity</strong>! A database transaction, by definition, must be:</p>
+<ul>
+<li><strong>A</strong>tomic (no half change, all or nothing)</li>
+<li><strong>C</strong>onsistent (the change can only happen if the new state is valid, any attempt to commit an invalid change will fail, leaving the system at its previous valid state, from one valid state to another)</li>
+<li><strong>I</strong>solated (nobody sees any part of the transaction until it&rsquo;s commited)</li>
+<li><strong>D</strong>urable (it must get written to persistent storage, no need to flush)</li>
+</ul>
+<p>Database practitioners often refer to these properties of database transactions using the acronym <strong>ACID</strong>.</p>
+<h2 id="connection-and-cursor">Connection and Cursor<a hidden class="anchor" aria-hidden="true" href="#connection-and-cursor">#</a></h2>
+<p>Before issuing SQL statements to database system, we need to connect it first. That&rsquo;s database connection. Connection holds transactions and lock state.</p>
+<p>A database cursor is a mechanism that enables traversal over the records from a database. It&rsquo;s similar to the programming language concept of iterator. Cursors are used by programmers to process individual rows returned by database queries. Cursors enable manipulation of whole result sets at once. In this scenario, a cursor enables the sequential processing of rows in a result set. A cursor can be viewed as a pointer to one row in a set of rows. The cursor can only refer to one row at a time, but can move to other rows of the result set as needed.</p>
+<p>We can have multi-cursor for one connection. But they share transactions and lock state. They would never be real paralleled. We can use multi-cursor in safe nested queries in one thread, but not recommend for multi-thread cases. <strong>Each thread should have its own connection</strong>. That&rsquo;s the standard pattern for both SQLite and PostgreSQL. Concurrent transactions are realized by multi-connection.</p>
+<h2 id="sql">SQL<a hidden class="anchor" aria-hidden="true" href="#sql">#</a></h2>
+<ul>
+<li><strong>Structure Query Language</strong>, ISO standard</li>
+<li><strong>Case-Insensitive</strong> (key words, table and column names)</li>
+<li><strong>Turning Complete</strong> since SQL:1999</li>
+<li>SQL does not guarantee the order of rows in a table in any way.</li>
+<li>The results are always a table or empty (zero row), even there is only one row and one column.</li>
+</ul>
+<h3 id="three-valued-logic-tvl-or-3vl">Three-Valued Logic (TVL or 3VL)<a hidden class="anchor" aria-hidden="true" href="#three-valued-logic-tvl-or-3vl">#</a></h3>
+<p><code>True</code>, <code>False</code> and <code>Null</code> which means <code>Unknown</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span># NOT
+</span></span><span style="display:flex;"><span>not true  = false
+</span></span><span style="display:flex;"><span>not false = true
+</span></span><span style="display:flex;"><span>not null  = null  -- not unknown is unknonwn
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span># AND
+</span></span><span style="display:flex;"><span>true &amp; true   = true
+</span></span><span style="display:flex;"><span>true &amp; false  = false
+</span></span><span style="display:flex;"><span>false &amp; false = false
+</span></span><span style="display:flex;"><span>true &amp; null   = null
+</span></span><span style="display:flex;"><span>false &amp; null  = false
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span># OR
+</span></span><span style="display:flex;"><span>true | true   = true
+</span></span><span style="display:flex;"><span>true | false  = true
+</span></span><span style="display:flex;"><span>false | false = false
+</span></span><span style="display:flex;"><span>true | null   = true
+</span></span><span style="display:flex;"><span>false | null  = null
+</span></span></code></pre></div><ul>
+<li>In WHERE clause, null (unknown) is treated as false.</li>
+<li>Comparison with null (unknown) result in null (unknown).</li>
+<li>Arithmetic operation with null (unknown) result is null (unknown).</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>null = null, false, this is comparison
+</span></span><span style="display:flex;"><span>null != null, true, therefore unique could be null
+</span></span><span style="display:flex;"><span>null is null, true, this is judgement
+</span></span><span style="display:flex;"><span>null [not] like, false
+</span></span><span style="display:flex;"><span>null [not] in, false
+</span></span><span style="display:flex;"><span>t1 = t2, false (unknown) when one of them is null (unknown)
+</span></span></code></pre></div><ul>
+<li>SELECT DISTINCT treats null as a fixed value.</li>
+<li>GROUP BY treats null as a fixed value.</li>
+<li>ORDER BY treats null as the biggest value by default.</li>
+<li>CHECK constraint treats null as true.</li>
+<li>In general, aggregation functions would ignore null value.</li>
+</ul>
+<h3 id="execution-order-of-sql">Execution Order of SQL<a hidden class="anchor" aria-hidden="true" href="#execution-order-of-sql">#</a></h3>
+<ol>
+<li>FROM         &ndash; identify source table(s), change table names</li>
+<li>JOIN         &ndash; merge tables</li>
+<li>WHERE        &ndash; filter individual rows</li>
+<li>GROUP BY     &ndash; group rows, reduce group into one row</li>
+<li>HAVING       &ndash; filter groups</li>
+<li>SELECT       &ndash; pick/compute columns, window functions</li>
+<li>DISTINCT     &ndash; remove duplicate rows</li>
+<li>ORDER BY     &ndash; sort the result</li>
+<li>LIMIT/OFFSET &ndash; restrict row count</li>
+</ol>
+<h3 id="join">JOIN<a hidden class="anchor" aria-hidden="true" href="#join">#</a></h3>
+<ul>
+<li><code>[INNER] JOIN</code></li>
+<li><code>LEFT [OUTER] JOIN</code></li>
+<li><code>RIGHT [OUTER] JOIN</code></li>
+<li><code>FULL [OUTER] JOIN</code></li>
+<li><code>CROSS JOIN</code>, Cartesian Product</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- other way to do cross join
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">FROM</span> t1 <span style="color:#66d9ef">CROSS</span> <span style="color:#66d9ef">JOIN</span> t2
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> t1, t2  <span style="color:#75715e">-- comma join
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">FROM</span> t1 <span style="color:#66d9ef">join</span> t2 <span style="color:#66d9ef">ON</span> <span style="color:#66d9ef">TRUE</span>
+</span></span></code></pre></div><ul>
+<li><code>ON</code> conditions</li>
+<li><code>USING (column,[...])</code> specifys matching columns as condition</li>
+<li><code>NATURAL JOIN</code> finds all matching columns as condition, fragile, not recommend</li>
+</ul>
+<h3 id="select">SELECT<a hidden class="anchor" aria-hidden="true" href="#select">#</a></h3>
+<p>Normally, when their is no row, select return empty. We can use <code>SELECT</code> to evalue scalar values, and change the name of columns w/o <code>AS</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">select</span> <span style="color:#ae81ff">123</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">123</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">---
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">123</span>
+</span></span><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">select</span> <span style="color:#ae81ff">123</span> [<span style="color:#66d9ef">as</span>] abc;
+</span></span><span style="display:flex;"><span>abc
+</span></span><span style="display:flex;"><span><span style="color:#75715e">---
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">123</span>
+</span></span><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">select</span> <span style="color:#ae81ff">123</span> abc, <span style="color:#ae81ff">234</span> bcd, <span style="color:#ae81ff">345</span> cde;
+</span></span><span style="display:flex;"><span>abc  bcd  cde
+</span></span><span style="display:flex;"><span><span style="color:#75715e">---  ---  ---
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">123</span>  <span style="color:#ae81ff">234</span>  <span style="color:#ae81ff">345</span>
+</span></span><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">select</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">+</span><span style="color:#ae81ff">2</span>;  <span style="color:#75715e">-- literal column name and evalue it
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">1</span><span style="color:#f92672">+</span><span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">---
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">3</span>
+</span></span></code></pre></div><p><code>SELECT (...)</code> is called <strong>Scalar Subquery</strong>.</p>
+<ul>
+<li>Subquery can only return one column.</li>
+<li>Select the first row (one column).</li>
+<li>If subquery returns empty (zero row), select return null.</li>
+</ul>
+<p><code>SELECT DISTINCT</code> is applied on multiple columns and treats the combination of those columns as the unit of uniqueness — not each column separately. <code>GROUP BY</code> is alternative.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- DISTINCT applies to the whole SELECT list, not just the column right after it
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">DISTINCT</span> department, job_title, salary <span style="color:#66d9ef">FROM</span> employees;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- distinct combinations of all three columns
+</span></span></span></code></pre></div><h3 id="5-aggregation-functions">5 Aggregation Functions<a hidden class="anchor" aria-hidden="true" href="#5-aggregation-functions">#</a></h3>
+<p><strong><code>count</code></strong>,<strong><code>sum</code></strong>,<strong><code>avg</code></strong>,<strong><code>max</code></strong>,and <strong><code>min</code></strong>.</p>
+<ul>
+<li><code>count(*)</code>, count all row</li>
+<li><code>count(a)</code>, count column a, ignore null</li>
+<li><code>count(DISTINCT a)</code>, count distinct non-null of column a (may not support multi-column)</li>
+<li>count never return null, return 0 when no row</li>
+<li>sum,avg,max and min would ignore null and return null if no input</li>
+</ul>
+<h3 id="case-when--then--else--end">CASE WHEN &hellip; THEN &hellip; ELSE &hellip; END<a hidden class="anchor" aria-hidden="true" href="#case-when--then--else--end">#</a></h3>
+<p>Could be used to modify column value just before it is shown up.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CASE</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">WHEN</span> N <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">OR</span> N <span style="color:#66d9ef">IS</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">THEN</span> <span style="color:#66d9ef">NULL</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">WHEN</span> N <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">100</span> <span style="color:#66d9ef">THEN</span> <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">ELSE</span> N 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">END</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">CASE</span> department
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">WHEN</span> <span style="color:#e6db74">&#39;Sales&#39;</span> <span style="color:#66d9ef">THEN</span> <span style="color:#e6db74">&#39;S&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">WHEN</span> <span style="color:#e6db74">&#39;IT&#39;</span> <span style="color:#66d9ef">THEN</span> <span style="color:#e6db74">&#39;I&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">ELSE</span> <span style="color:#e6db74">&#39;X&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">END</span>
+</span></span></code></pre></div><h3 id="group-by--having-">GROUP BY &hellip; HAVING &hellip;<a hidden class="anchor" aria-hidden="true" href="#group-by--having-">#</a></h3>
+<p><code>GROUP BY</code> reduces many rows into one row per group (you lose the individual rows). GROUP BY answers: &ldquo;For each distinct value (or combination) of these columns, give me one summary row.&rdquo;</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- groups all employees by department, aggregate on each group
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> department, <span style="color:#66d9ef">COUNT</span>(<span style="color:#f92672">*</span>) <span style="color:#66d9ef">AS</span> employee_count, <span style="color:#66d9ef">AVG</span>(salary) <span style="color:#66d9ef">AS</span> avg_salary
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> Employees
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> department;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- find customers who spend more than 1000
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> customer_id, <span style="color:#66d9ef">SUM</span>(amount) <span style="color:#66d9ef">AS</span> total_spent
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> Orders
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> customer_id
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">HAVING</span> <span style="color:#66d9ef">SUM</span>(amount) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1000</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- group by combination of more than one column
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> department, <span style="color:#66d9ef">YEAR</span>(hire_date) <span style="color:#66d9ef">AS</span> hire_year, <span style="color:#66d9ef">COUNT</span>(<span style="color:#f92672">*</span>) <span style="color:#66d9ef">AS</span> num_hired
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> Employees
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> department, hire_year;
+</span></span></code></pre></div><h3 id="11-window-functions">11 Window Functions<a hidden class="anchor" aria-hidden="true" href="#11-window-functions">#</a></h3>
+<p>A window function performs a calculation across a set of rows that are related to the current row — but without collapsing them into a single row, the way GROUP BY would. Each row keeps its identity, and gets an extra computed value attached to it based on a &ldquo;window&rdquo; of related rows.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- syntax
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>function_name(...) OVER (
+</span></span><span style="display:flex;"><span>    PARTITION <span style="color:#66d9ef">BY</span> column_a  <span style="color:#75715e">-- optional: split rows into groups
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> column_b      <span style="color:#75715e">-- optional: order rows within each group
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/*  PARTITION BY — divides the rows into groups
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    (like GROUP BY, but doesn&#39;t merge them).
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    The function resets/restarts for each partition.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    ORDER BY (inside the OVER()) — defines the order
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    in which rows are processed for ranking/running
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    calculations within each partition.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    If you omit PARTITION BY, the whole table is treated as one big partition.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">*/</span>
+</span></span></code></pre></div><p><strong>Ranking Function</strong></p>
+<ul>
+<li><code>row_number()</code>: unique sequential number, no ties</li>
+<li><code>rank()</code>: ties share rank, leaves gaps</li>
+<li><code>dense_rank()</code>: ties share rank, no gaps</li>
+<li><code>ntile(n)</code>: split rows into n roughly equal buckets, (row_number+n-1)/n</li>
+<li><code>percent_rank()</code>: [0,1], (row_number-1)/(max_row_number-1)</li>
+<li><code>cume_dist()</code>: cumulative distribution</li>
+</ul>
+<p><strong>Offset Function</strong></p>
+<ul>
+<li><code>lag()</code>: looks at the value from a previous row in the ordered window.</li>
+<li><code>lead()</code>: looks at the value from a following row.</li>
+<li><code>first_value()</code>: returns the first value in the window frame.</li>
+<li><code>last_value()</code>: returns the last value in the window frame.</li>
+<li><code>nth_value()</code>: returns the value from the Nth row of the window frame.</li>
+</ul>
+<p><strong>Aggregation Function as Window Function</strong></p>
+<p>Aggregate without collapsing rows.</p>
+<p><strong>Running Total and Moving Average</strong></p>
+<p>Adding ORDER BY inside OVER() changes the frame from <strong>&ldquo;whole partition&rdquo; to &ldquo;up through current row&rdquo;</strong> — this is what gives you a running total.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> name, department, salary,
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">SUM</span>(salary) OVER (PARTITION <span style="color:#66d9ef">BY</span> department <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> salary <span style="color:#66d9ef">DESC</span>) <span style="color:#66d9ef">AS</span> running_total
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> Employees;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/* By default, tied rows get the running total including all tied rows!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">   This is RANGE framing. If you want a strict row-by-row running total
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">   even with ties, use ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW instead. */</span>
+</span></span></code></pre></div><p><strong>Frame Clause</strong></p>
+<p>PARTITION BY picks the group. ORDER BY picks the order. The frame clause picks exactly which rows within that ordered group get fed into the function for the current row.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">/* This means: &#34;start from the first row of the partition,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">   and go all the way down to the current row — nothing after it.&#34; */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">ROWS</span> <span style="color:#66d9ef">BETWEEN</span> UNBOUNDED PRECEDING <span style="color:#66d9ef">AND</span> <span style="color:#66d9ef">CURRENT</span> <span style="color:#66d9ef">ROW</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/* Keyword	               Meaning
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">UNBOUNDED PRECEDING	       Start of the partition
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">N PRECEDING	               N rows before current
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">CURRENT ROW	               The current row
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">N FOLLOWING	               N rows after current
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">UNBOUNDED FOLLOWING	       End of the partition*/</span>
+</span></span></code></pre></div><h3 id="insert-into">INSERT INTO<a hidden class="anchor" aria-hidden="true" href="#insert-into">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- insert default value for every column
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> purchase_time <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">VALUES</span>;
+</span></span></code></pre></div><h3 id="update">UPDATE<a hidden class="anchor" aria-hidden="true" href="#update">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">UPDATE</span> <span style="color:#66d9ef">table_name</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SET</span> column1 <span style="color:#f92672">=</span> value1, column2 <span style="color:#f92672">=</span> value2
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> condition;
+</span></span></code></pre></div><h3 id="delete-from">DELETE FROM<a hidden class="anchor" aria-hidden="true" href="#delete-from">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">DELETE</span> <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">table_name</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> condition;
+</span></span></code></pre></div><h3 id="where-">WHERE &hellip;<a hidden class="anchor" aria-hidden="true" href="#where-">#</a></h3>
+<p><strong>&lt;, &gt;, =, &lt;=, &gt;=, &lt;&gt;, !=</strong></p>
+<p><strong>AND, OR, NOT</strong></p>
+<p><strong>IS [NOT] NULL</strong></p>
+<p><strong>[NOT] LIKE</strong></p>
+<ul>
+<li><code>%</code>: zero or more characters</li>
+<li><code>_</code>: single character</li>
+<li>In SQLite, LIKE is case-insensitive</li>
+<li>In PostgreSQL, LIKE is case-sensitive, so we have a non-standard <strong><code>ILIKE</code></strong> which is case-insensitive.</li>
+</ul>
+<p><strong>[NOT] BETWEEN &hellip; AND &hellip; (inclusive)</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- between text alphabetically
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> Products
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> ProductName <span style="color:#66d9ef">BETWEEN</span> <span style="color:#e6db74">&#39;Geitost&#39;</span> <span style="color:#66d9ef">AND</span> <span style="color:#e6db74">&#39;Louisiana Hot Spiced Okra&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> ProductName;
+</span></span></code></pre></div><p><strong>[NOT] IN</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> employees
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> department <span style="color:#66d9ef">IN</span> (<span style="color:#e6db74">&#39;Sales&#39;</span>, <span style="color:#e6db74">&#39;Marketing&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- IN (SELECT ...), single column
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> name <span style="color:#66d9ef">FROM</span> employees
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> dept_id <span style="color:#66d9ef">IN</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">SELECT</span> dept_id <span style="color:#66d9ef">FROM</span> departments <span style="color:#66d9ef">WHERE</span> budget <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">150000</span>
+</span></span><span style="display:flex;"><span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/* x IN (1,2,NULL) behaves exactly like x IN (1,2) from
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">   the WHERE clause&#39;s perspective — matches get included,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">   everything else gets excluded. The NULL is harmless here.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">   
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">   x NOT IN (1,2,NULL) is always FALSE!!!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     ≡ NOT (x = 1 OR x = 2 OR x = NULL)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        (FALSE or FALSE or UNKNOWN) = UNKNOWN
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        NOT UNKNOWN = UNKNOWN = FALSE*/</span>
+</span></span></code></pre></div><p><strong>[NOT] EXISTS</strong></p>
+<p>Instead of comparing values, EXISTS just checks whether the subquery returns any rows.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> name <span style="color:#66d9ef">FROM</span> employees e
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> <span style="color:#66d9ef">EXISTS</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">FROM</span> departments d
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">WHERE</span> d.dept_id <span style="color:#f92672">=</span> e.dept_id <span style="color:#66d9ef">AND</span> d.budget <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">150000</span>
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><p><strong>Correlated Subsquery</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">/* For each employee e1, the subquery computes the
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">   average salary of just that employee&#39;s department,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">   then compares. */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> e1.name, e1.salary, e1.dept_id
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> employees e1
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> e1.salary <span style="color:#f92672">&gt;</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">AVG</span>(e2.salary)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">FROM</span> employees e2
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">WHERE</span> e2.dept_id <span style="color:#f92672">=</span> e1.dept_id
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><p><strong>ANY</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> ProductName <span style="color:#66d9ef">FROM</span> Products
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> ProductID <span style="color:#f92672">=</span> <span style="color:#66d9ef">ANY</span> (
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">SELECT</span> ProductID
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">FROM</span> OrderDetails
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">WHERE</span> Quantity <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>); 
+</span></span></code></pre></div><p><strong>ALL</strong></p>
+<p><strong>SOME</strong></p>
+<h3 id="common-table-expression-cte">Common Table Expression (CTE)<a hidden class="anchor" aria-hidden="true" href="#common-table-expression-cte">#</a></h3>
+<p><code>WITH &lt;table_name&gt; AS (...)</code> create  a named, temporary result set that only exists for the duration of the query that follows it.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- basic syntax
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- more readable than subquery
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">WITH</span> cte_name <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">SELECT</span> ...
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> ...
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> cte_name
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- CTE can be chained
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">WITH</span> cte1 <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">SELECT</span> ...
+</span></span><span style="display:flex;"><span>),
+</span></span><span style="display:flex;"><span>cte2 <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">SELECT</span> ... <span style="color:#66d9ef">FROM</span> cte1 ...
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> cte2;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- recursive CTE
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">WITH</span> <span style="color:#66d9ef">RECURSIVE</span> cte_name <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- 1. Anchor member (base case)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">SELECT</span> ...
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">UNION</span> <span style="color:#66d9ef">ALL</span> <span style="color:#75715e">-- alwways union all
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- 2. Recursive member (references cte_name)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">SELECT</span> ...
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">FROM</span> cte_name
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">WHERE</span> ...  <span style="color:#75715e">-- stopping condition
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> cte_name;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- recursive CTE example (SQL loop)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">WITH</span> <span style="color:#66d9ef">RECURSIVE</span> cte <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">AS</span> n              <span style="color:#75715e">-- anchor: start at 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">UNION</span> <span style="color:#66d9ef">ALL</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">SELECT</span> n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">FROM</span> cte      <span style="color:#75715e">-- recursive: add 1 each time
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">WHERE</span> n <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">5</span>                <span style="color:#75715e">-- stop condition
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> cte;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- It&#39;s more like a loop, not recursive function! 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- recursive here means refering to the same table (itself).
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- In the loop, everytime only deal with new rows.
+</span></span></span></code></pre></div><h3 id="set-operations">Set Operations<a hidden class="anchor" aria-hidden="true" href="#set-operations">#</a></h3>
+<p>The queries being combined must have the same number of columns, in the same order, with compatible data types. Column names in the result come from the first query.</p>
+<ul>
+<li><code>UNION [ALL]</code>, all means keep duplications</li>
+<li><code>INTERSECT [ALL]</code>, all means min(a,b)</li>
+<li><code>EXCEPT [ALL]</code>, all means max(a-b,0)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>{1,2,3,4,1,3} except {1,2,3,4} --&gt; {}
+</span></span><span style="display:flex;"><span>              except all {1,2,3,4}  --&gt; {1,3}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- ORDER BY must be at last
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> name, department <span style="color:#66d9ef">FROM</span> current_employees
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">UNION</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> name, department <span style="color:#66d9ef">FROM</span> former_employees
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> name;
+</span></span></code></pre></div><h3 id="others">Others<a hidden class="anchor" aria-hidden="true" href="#others">#</a></h3>
+<ul>
+<li><code>coalesce(a,b,...)</code>: return the first non-null value</li>
+<li><code>CURRENT_TIMESTAMP</code>: current UTC datetime</li>
+</ul>
+<hr>
+<h2 id="sqlite">SQLite<a hidden class="anchor" aria-hidden="true" href="#sqlite">#</a></h2>
+<ul>
+<li><a href="https://www.sqlite.org/">https://www.sqlite.org/</a></li>
+<li>Disk file database, not client-server architecture.</li>
+<li>Lightweight, Fast, Embedded, Zero configuration, Severless.</li>
+</ul>
+<h3 id="concurrency">Concurrency<a hidden class="anchor" aria-hidden="true" href="#concurrency">#</a></h3>
+<p>SQLite uses OS-level file locks on the database file itself to coordinate access between processes and threads. This is fundamentally different from client-server databases (Postgres, MySQL) where a single server process arbitrates access. With SQLite, every process that opens the file is a peer, and they negotiate access through the filesystem&rsquo;s locking primitives (fcntl in Linux).</p>
+<p>Because locking depends on OS-level file locks, the database file must live on a filesystem that correctly implements locking. Network filesystems (NFS, SMB, some cloud-synced folders like Dropbox) often have buggy or incomplete lock implementations, which is why SQLite documentation explicitly warns against using it there for concurrent access.</p>
+<p><strong>Rollback Journal Mode (default)</strong></p>
+<p>Under the default rollback journal mode, the database file locking is just like a classic Read-Write Lock (RW-Lock). SQLite databases move through five lock states:</p>
+<ul>
+<li>UNLOCKED – no lock held, process hasn&rsquo;t touched the file yet</li>
+<li>SHARED – process wants to read; multiple processes can hold SHARED simultaneously</li>
+<li>RESERVED – process intends to write soon (e.g., began a write transaction); one process at a time, but readers with SHARED can continue read</li>
+<li>PENDING – transitional state; writer is waiting for existing readers to finish, and no new SHARED locks are allowed to start</li>
+<li>EXCLUSIVE – writer has sole access; needed to actually commit changes to the file</li>
+</ul>
+<p>Key rule: only one writer at a time, and a writer must wait for all readers to release their SHARED locks before it can escalate to EXCLUSIVE and commit. This is why concurrent writes from multiple processes will block or fail with SQLITE_BUSY if not handled properly.</p>
+<p><strong>Write-Ahead Logging (WAL) Mode</strong></p>
+<p>Under WAL mode, you could get better concurrent performance.</p>
+<ul>
+<li>Writers append changes to a separate <code>-wal</code> file rather than modifying the main database file directly</li>
+<li>Readers read from a consistent snapshot (main db + relevant WAL frames) and are not blocked by writers</li>
+<li>Only one writer at a time is allowed as well, but readers no longer block writers, and writers no longer block readers</li>
+<li>Periodically, a checkpoint operation copies WAL contents back into the main database file</li>
+<li>WAL mode requires a filesystem that supports shared memory (mmap), which is another reason network filesystems are problematic</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">/* enable WAL mode */</span>
+</span></span><span style="display:flex;"><span>PRAGMA journal_mode<span style="color:#f92672">=</span>WAL;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/* go back to rollback mode */</span>
+</span></span><span style="display:flex;"><span>PRAGMA journal_mode<span style="color:#f92672">=</span><span style="color:#66d9ef">DELETE</span>;
+</span></span></code></pre></div><p><strong>Multi-Version Concurrency Control (MVCC)</strong></p>
+<p>WAL is one of the implementation of MVCC idea. Instead of making readers and writers fight over the same copy of data, MVCC keeps multiple versions of data around so readers can see a consistent snapshot from a point in time, while writers create new versions without disturbing that snapshot.</p>
+<ol>
+<li>When a read transaction starts, SQLite records the current end of the WAL file — this defines that reader&rsquo;s snapshot boundary</li>
+<li>The reader reads pages by checking: &ldquo;is there a newer version of this page in the WAL, at or before my snapshot boundary? If yes, use that. If no, use the main .db file.&rdquo;</li>
+<li>Writers append new page versions to the end of the WAL — past the boundary any existing reader is using — so they never collide with what a reader is looking at</li>
+<li>Multiple readers can each have different snapshot boundaries simultaneously, all reading consistent (if slightly different-in-time) views</li>
+<li>Because old page versions in the WAL can&rsquo;t be discarded until the last reader referencing them finishes, long-running read transactions directly block WAL reclamation — this is the mechanism behind the &ldquo;WAL keeps growing&rdquo; problem</li>
+</ol>
+<blockquote>
+<p>PostgreSQL utilizes the same MVCC idea to improve concurrency!</p></blockquote>
+<p>There&rsquo;s still <strong>Only One Writer</strong> at a time in SQLite. MVCC in SQLite solves reader/writer contention, not writer/writer contention. That&rsquo;s still a plain mutex (the WAL-file write lock).</p>
+<p><strong>How Checkpoint Operation Works</strong></p>
+<p>In WAL mode, writes don&rsquo;t touch the main .db file — they&rsquo;re appended as frames to the <code>-wal</code> file. Checkpointing is the process of taking those WAL frames and writing them back into the main database file, then (potentially) resetting the WAL.</p>
+<p>The basic algorithm:</p>
+<ol>
+<li>Walk through the WAL file frame by frame</li>
+<li>For each page that was modified, copy the latest version of that page from the WAL into the corresponding position in the main .db file</li>
+<li>If a page was written multiple times across different transactions in the WAL, only the last version needs to be copied (checkpointing coalesces this automatically)</li>
+<li>Once all frames are copied, if no readers are still using older WAL frames, the WAL can be reset (truncated or overwritten from the start)</li>
+</ol>
+<p><strong>When Checkpoints Happen</strong></p>
+<p>By default, SQLite triggers an automatic checkpointing (PASSIVE mode) when the WAL file grows past 1000 pages (roughly 4MB at the default 4KB page size). This happens as part of a regular write transaction commit, on whichever connection happens to trigger the threshold.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">/* change the page number threshold,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">   0 disables automatic checkpointing entirely,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">   useful if you want to control checkpointing manually,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">   e.g., during low-traffic windows */</span>
+</span></span><span style="display:flex;"><span>PRAGMA wal_autocheckpoint <span style="color:#f92672">=</span> N;
+</span></span></code></pre></div><p>There are 4 checkpoint operation modes:</p>
+<ul>
+<li>PASSIVE
+<ul>
+<li>Checkpoints as many frames as possible without blocking anyone</li>
+<li>Does not wait for readers to finish, does not block new readers or writers from starting</li>
+<li>If a reader is holding a snapshot that references old WAL frames, PASSIVE simply stops at the boundary it can&rsquo;t cross and returns — partial progress is fine, no error</li>
+<li>Safest, least disruptive, but may leave the WAL file large if there&rsquo;s a slow/stuck reader</li>
+<li>This is what runs automatically at the 1000-page threshold</li>
+</ul>
+</li>
+<li>FULL
+<ul>
+<li>Blocks new writers from starting (but doesn&rsquo;t block readers)</li>
+<li>Waits for all in-progress writers to finish (there&rsquo;s at most one anyway)</li>
+<li>Checkpoints all frames up to the point where no active reader still needs them</li>
+<li>Will still stop short if a reader is holding an old snapshot — it just waits longer / tries harder than PASSIVE, but doesn&rsquo;t forcibly kick readers out</li>
+<li>Does not guarantee the WAL is reset back to the beginning afterward</li>
+</ul>
+</li>
+<li>RESTART
+<ul>
+<li>Does everything FULL does, plus: once the checkpoint completes, it ensures that the next write will start writing the WAL from the beginning again (logically resets the WAL sequence)</li>
+<li>Blocks new readers from starting partway through, briefly, to safely perform this reset</li>
+<li>Still doesn&rsquo;t shrink the file on disk — the WAL file&rsquo;s size stays the same, just its logical content resets</li>
+</ul>
+</li>
+<li>TRUNCATE
+<ul>
+<li>Does everything RESTART does, plus: actually truncates the -wal file on disk back to 0 bytes</li>
+<li>The strongest mode — most likely to briefly block concurrent connections to complete</li>
+<li>Best for reclaiming disk space, e.g., after a bulk import or during a maintenance window</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">/* manually trigger checkpoint operation,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">   you may need to check return values. */</span>
+</span></span><span style="display:flex;"><span>PRAGMA wal_checkpoint(<span style="color:#66d9ef">TRUNCATE</span>);
+</span></span></code></pre></div><p><strong>Better Practice</strong></p>
+<ul>
+<li>set WAL as default. Don&rsquo;t mix journal modes.</li>
+<li>set Busy Timeout. <code>PRAGMA busy_timeout = 5000;</code>, so that when a process hits a lock conflict, it retries for up to N milliseconds instead of immediately erroring with SQLITE_BUSY. (could be set by connect API in Python sqlite3 module)</li>
+<li>Short Transaction. Keep write transactions as short as possible to minimize the window where other writers are blocked. Keep read transaction short could help WAL checkpointing and avoid &ldquo;WAL keeps growing&rdquo; issue.</li>
+</ul>
+<h3 id="threading-modes">Threading Modes<a hidden class="anchor" aria-hidden="true" href="#threading-modes">#</a></h3>
+<p>SQLite could be compiled into 3 different threading modes:</p>
+<ul>
+<li>Single-thread: no mutexes at all, using it from more than one thread is undefined behavior.</li>
+<li>Multi-thread: safe to use different connections from different threads simultaneously, but a single connection must not be used by more than one thread at a time.</li>
+<li>Serialized (the default in most builds, including Python&rsquo;s sqlite3 module): SQLite wraps connection-level operations in an internal mutex, so sharing one connection across threads won&rsquo;t corrupt data. But it means threads are queued/serialized the moment they touch that connection, and transaction&rsquo;s might be interleaved with each other. Serialization is in SQL statement level, or low C API call level.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> <span style="color:#f92672">import</span> sqlite3
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 3 means serialized threading mode in Python</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;&gt;&gt;</span> sqlite3<span style="color:#f92672">.</span>threadsafety
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">3</span>
+</span></span></code></pre></div><h3 id="transaction-modes">Transaction Modes<a hidden class="anchor" aria-hidden="true" href="#transaction-modes">#</a></h3>
+<p>Transactions can be <code>DEFERRED</code>, <code>IMMEDIATE</code>, or <code>EXCLUSIVE</code>. The default transaction behavior is DEFERRED.</p>
+<p>DEFERRED means that the transaction does not actually start until the database is first accessed. Internally, the BEGIN DEFERRED statement merely sets a flag on the database connection that turns off the automatic commit that would normally occur when the last statement finishes. This causes the transaction that is automatically started to persist until an explicit COMMIT or ROLLBACK or until a rollback is provoked by an error or an ON CONFLICT ROLLBACK clause. If the first statement after BEGIN DEFERRED is a SELECT, then a read transaction is started. Subsequent write statements will upgrade the transaction to a write transaction if possible, or return SQLITE_BUSY. If the first statement after BEGIN DEFERRED is a write statement, then a write transaction is started.</p>
+<p>IMMEDIATE causes the database connection to start a new write immediately, without waiting for a write statement. The BEGIN IMMEDIATE might fail with SQLITE_BUSY if another write transaction is already active on another database connection.</p>
+<p>EXCLUSIVE is similar to IMMEDIATE in that a write transaction is started immediately. EXCLUSIVE and IMMEDIATE are the same in WAL mode, but in other journaling modes, EXCLUSIVE prevents other database connections from reading the database while the transaction is underway.</p>
+<h3 id="flexible-typing">Flexible Typing<a hidden class="anchor" aria-hidden="true" href="#flexible-typing">#</a></h3>
+<p>Unlike most SQL databases, SQLite doesn&rsquo;t enforce that a column can only holds one data type — any column can store any value of any <strong>Storage Class</strong>: <code>NULL</code>, <code>INTEGER</code>, <code>REAL</code>, <code>TEXT</code>, or <code>BLOB</code>, regardless of the declared type in CREATE TABLE. Tpye affinity is SQLite&rsquo;s middle ground: it&rsquo;s a recommendation for what type of data a column prefers to store, and SQLite will try to coerce inserted values toward that preference, but it won&rsquo;t refuse to store a mismatched type.</p>
+<ul>
+<li>Datatype names on column definitions are optional. A column definition can consist of just the column name and nothing else.</li>
+<li>SQLite began as a TCL extension that later escaped into the wild. TCL is a dynamic typing language in the sense that the programmer does not need to be aware of datatypes.</li>
+<li>When datatype names are provided, they can be just about <strong>Any Text</strong>. SQLite attempts to deduce the preferred datatype for the column based on the datatype name in the column definition, but that preferred datatype is advisory, not mandatory. The preferred datatype is known as the <strong>Column Affinity</strong>.</li>
+<li>An attempt is made to transform incoming data into the preferred datatype of the column. (All SQL database engines do this, not just SQLite.) If this transformation is successful, all is well. But if unsuccessful, instead of raising an error, SQLite just stores the content using its original datatype.</li>
+</ul>
+<blockquote>
+<p>SQLite is less restrictive!</p></blockquote>
+<p><strong>Five Affinities</strong></p>
+<p>Every column gets assigned exactly one of affinities based on its declared type:</p>
+<ul>
+<li>TEXT</li>
+<li>NUMERIC</li>
+<li>INTEGER</li>
+<li>REAL</li>
+<li>BLOB (also called &ldquo;no affinity&rdquo; — no coercion attempted at all)</li>
+</ul>
+<ol>
+<li>If the declared type contains the substring &ldquo;INT&rdquo; → INTEGER affinity</li>
+<li>Else if it contains &ldquo;CHAR&rdquo;, &ldquo;CLOB&rdquo;, or &ldquo;TEXT&rdquo; → TEXT affinity</li>
+<li>Else if it contains &ldquo;BLOB&rdquo;, or no type is specified at all → BLOB affinity</li>
+<li>Else if it contains &ldquo;REAL&rdquo;, &ldquo;FLOA&rdquo;, or &ldquo;DOUB&rdquo; → REAL affinity</li>
+<li>Else → NUMERIC affinity (the catch-all default)</li>
+</ol>
+<p><strong>NUMERIC</strong> affinity: attempts to convert text to INTEGER or REAL if the text looks losslessly convertible (e.g., &lsquo;123&rsquo; → integer, &lsquo;3.5&rsquo; → real). If conversion would lose information (like &lsquo;123abc&rsquo;), the value is stored as-is in its original TEXT form. NULL and BLOB pass through unchanged.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> demo (
+</span></span><span style="display:flex;"><span>  a INTEGER,   <span style="color:#75715e">-- INTEGER affinity
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  b TEXT,      <span style="color:#75715e">-- TEXT affinity
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">c</span> BLOB,      <span style="color:#75715e">-- BLOB affinity (none)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  d NUMERIC,   <span style="color:#75715e">-- NUMERIC affinity
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  e REAL       <span style="color:#75715e">-- REAL affinity
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>);
+</span></span><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> demo <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;5&#39;</span>, <span style="color:#e6db74">&#39;5&#39;</span>, <span style="color:#e6db74">&#39;5&#39;</span>, <span style="color:#e6db74">&#39;5&#39;</span>, <span style="color:#e6db74">&#39;5&#39;</span>);
+</span></span><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> typeof(a), typeof(b), typeof(<span style="color:#66d9ef">c</span>), typeof(d), typeof(e) <span style="color:#66d9ef">FROM</span> demo;
+</span></span><span style="display:flex;"><span>integer<span style="color:#f92672">|</span>text<span style="color:#f92672">|</span>text<span style="color:#f92672">|</span>integer<span style="color:#f92672">|</span>real
+</span></span><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> demo <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;5&#39;</span>, <span style="color:#e6db74">&#39;5&#39;</span>, <span style="color:#e6db74">&#39;5&#39;</span>, <span style="color:#66d9ef">null</span>, <span style="color:#e6db74">&#39;5&#39;</span>);
+</span></span><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> typeof(a), typeof(b), typeof(<span style="color:#66d9ef">c</span>), typeof(d), typeof(e) <span style="color:#66d9ef">FROM</span> demo <span style="color:#66d9ef">WHERE</span> rowid<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>;
+</span></span><span style="display:flex;"><span>integer<span style="color:#f92672">|</span>text<span style="color:#f92672">|</span>text<span style="color:#f92672">|</span><span style="color:#66d9ef">null</span><span style="color:#f92672">|</span>real
+</span></span></code></pre></div><p><strong>Max-Length for TEXT and BLOB</strong></p>
+<p>The real ceiling on how much you can store in a single TEXT or BLOB value is a compile-time setting:</p>
+<ul>
+<li>Default: 1,000,000,000 bytes (1 billion bytes, ~954 MiB)</li>
+<li>This is a compile-time constant (SQLITE_MAX_LENGTH), configurable up to a hard ceiling of 2^31 - 1 (about 2.1 GB) — it cannot be raised beyond that even by recompiling, since the internal length field is a signed 32-bit integer</li>
+<li>It can also be lowered at runtime (but never raised beyond the compiled-in max) via sqlite3_limit(db, SQLITE_LIMIT_LENGTH, newValue), or PRAGMA isn&rsquo;t used for this one — it&rsquo;s purely a C API call, not exposed as a PRAGMA</li>
+</ul>
+<p>Unless whoever built your SQLite binary changed the default, you can store up to ~1GB in a single TEXT or BLOB column value, per row, per column. If you really need length constraint, use <code>CHECK</code> on table definition.</p>
+<h3 id="strict-table">Strict Table<a hidden class="anchor" aria-hidden="true" href="#strict-table">#</a></h3>
+<p>Introduced in SQLite 3.37.0 (2021), STRICT is an opt-in table-level modifier that turns off SQLite&rsquo;s normally-flexible type system for that table and enforces actual type checking on insert/update. With STRICT, an insert that can&rsquo;t be sensibly converted to the declared type is rejected with an error instead of silently stored as an affinity type. There are 6 types in strict table:</p>
+<ol>
+<li>INT</li>
+<li>INTEGER (for ROWID column)</li>
+<li>REAL</li>
+<li>TEXT</li>
+<li>BLOB</li>
+<li>ANY (dynamic type column in strict table)</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> t (a INTEGER, b TEXT, <span style="color:#66d9ef">c</span> REAL) <span style="color:#66d9ef">STRICT</span>;
+</span></span></code></pre></div><h3 id="rowid-default-pk">ROWID (Default PK)<a hidden class="anchor" aria-hidden="true" href="#rowid-default-pk">#</a></h3>
+<p>Every row in an ordinary SQLite table has a 64-bit signed integer key called the rowid, which uniquely identifies that row within the table. This exists whether or not you ever reference it explicitly — it&rsquo;s the physical key SQLite&rsquo;s underlying B-tree structure uses to store and look up rows. Unless a table is declared WITHOUT ROWID, this key is always there.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> aa (name TEXT);
+</span></span><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> aa(name) <span style="color:#66d9ef">VALUES</span>(<span style="color:#e6db74">&#39;tom&#39;</span>);
+</span></span><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> aa(name) <span style="color:#66d9ef">VALUES</span>(<span style="color:#e6db74">&#39;jacky&#39;</span>);
+</span></span><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> aa;
+</span></span><span style="display:flex;"><span>tom
+</span></span><span style="display:flex;"><span>jacky
+</span></span><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> rowid,<span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> aa; <span style="color:#75715e">/* show rowid column */</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span><span style="color:#f92672">|</span>tom
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2</span><span style="color:#f92672">|</span>jacky
+</span></span></code></pre></div><p><strong>Create ROWID&rsquo;s Alias</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> bb (id INTEGER <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>, name TEXT);
+</span></span><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> bb(name) <span style="color:#66d9ef">VALUES</span>(<span style="color:#e6db74">&#39;tom&#39;</span>),(<span style="color:#e6db74">&#39;jacky&#39;</span>);
+</span></span><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> bb;
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span><span style="color:#f92672">|</span>tom
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2</span><span style="color:#f92672">|</span>jacky
+</span></span><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> bb(id,name) <span style="color:#66d9ef">VALUES</span>(<span style="color:#ae81ff">5</span>,<span style="color:#e6db74">&#39;xinlin&#39;</span>);
+</span></span><span style="display:flex;"><span>sqlite<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> rowid,<span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> bb;
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span><span style="color:#f92672">|</span><span style="color:#ae81ff">1</span><span style="color:#f92672">|</span>tom
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2</span><span style="color:#f92672">|</span><span style="color:#ae81ff">2</span><span style="color:#f92672">|</span>jacky
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">5</span><span style="color:#f92672">|</span><span style="color:#ae81ff">5</span><span style="color:#f92672">|</span>xinlin
+</span></span></code></pre></div><p>Only literal <strong><code>INTEGER PRIMARY KEY</code></strong> works.</p>
+<p><strong>ROWID Allocation</strong></p>
+<p>If you insert a row without specifying the rowid column (or explicitly insert NULL into it), SQLite auto-assigns one:</p>
+<ul>
+<li>Default algorithm: current max rowid in the table + 1</li>
+<li>If the table is empty, it starts at 1</li>
+<li>If the max rowid is already 9223372036854775807 (the largest signed 64-bit int), SQLite instead searches for an unused value at random — this is a fallback edge case you&rsquo;ll essentially never hit in practice, but it&rsquo;s documented behavior, not an error</li>
+</ul>
+<p>Important consequence: rowids get reused after deletion under this default scheme. If your table has rows with rowids 1, 2, 3 and you delete row 3, the next insert gets rowid 3 again (since max+1 logic just looks at current max, which is now 2). This is fine for most uses but dangerous if your application logic assumes rowids are permanently unique across the lifetime of the table (e.g., using them as external references, foreign keys held outside the transaction, or cache keys).</p>
+<p><strong>AUTOINCREMENT — Preventing Reuse</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> t (id INTEGER <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span> AUTOINCREMENT, name TEXT);
+</span></span></code></pre></div><p>Keyword AUTOINCREMENT changes the allocation algorithm: instead of max(rowid)+1 at insert time, SQLite tracks the highest rowid ever used in a hidden system table called sqlite_sequence, and always allocates strictly higher than that historical high-water mark — even if rows with high rowids were later deleted. This guarantees monotonically increasing, never-reused rowids for the lifetime of the table.</p>
+<p>Trade-offs of AUTOINCREMENT:</p>
+<ul>
+<li>Extra overhead: every insert now needs to check/update the sqlite_sequence table, so it&rsquo;s measurably slower than plain INTEGER PRIMARY KEY — the SQLite docs explicitly recommend avoiding it unless you actually need the no-reuse guarantee</li>
+<li>Can fail with <code>SQLITE_FULL</code> once the sequence is exhausted at the 64-bit max, since it won&rsquo;t fall back to the random-search behavior plain rowid tables use</li>
+<li>Only valid combined with INTEGER PRIMARY KEY — you cannot apply AUTOINCREMENT to a rowid alias declared any other way</li>
+</ul>
+<p>When to actually use it: if externally-visible IDs need to never repeat, even across deletes (e.g., you&rsquo;re handing out these IDs in URLs, API tokens, references stored in other systems) — otherwise, skip it.</p>
+<p><strong>Explicit ROWID Assignment</strong></p>
+<p>You can specify any rowid value yourself:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> t (id, name) <span style="color:#66d9ef">VALUES</span> (<span style="color:#ae81ff">100</span>, <span style="color:#e6db74">&#39;x&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- negative rowids are legal
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- rowid literal name could be directly used
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> aa (rowid, name) <span style="color:#66d9ef">VALUES</span> (<span style="color:#f92672">-</span><span style="color:#ae81ff">5</span>, <span style="color:#e6db74">&#39;y&#39;</span>);
+</span></span></code></pre></div><p>Rowids can be negative — the auto-assignment algorithm never picks a negative value on its own, but nothing stops you from inserting one explicitly. Ordering, comparisons, and lookups all work correctly with negative rowids since it&rsquo;s just a signed 64-bit integer.</p>
+<p><strong>Without ROWID Table</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> t (id TEXT <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>, name TEXT) <span style="color:#66d9ef">WITHOUT</span> ROWID;
+</span></span></code></pre></div><p>This opts a table out of the rowid mechanism entirely. Instead, the table&rsquo;s declared PRIMARY KEY becomes the actual B-tree key directly — there&rsquo;s no hidden 64-bit integer sitting underneath.</p>
+<p><strong>ROWID and INSERT &hellip; RETURNING</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- return the most recent auto-assigned rowid
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> t (name) <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;x&#39;</span>) RETURNING id;
+</span></span></code></pre></div><h3 id="foreign-key">Foreign Key<a hidden class="anchor" aria-hidden="true" href="#foreign-key">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- have to explicitly turn on
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>PRAGMA foreign_keys<span style="color:#f92672">=</span><span style="color:#66d9ef">on</span>;
+</span></span></code></pre></div><h3 id="memory-sqlite-memory">Memory SQLite <code>:memory:</code><a hidden class="anchor" aria-hidden="true" href="#memory-sqlite-memory">#</a></h3>
+<p>Creates a database that exists entirely in RAM, with no backing file on disk at all. It behaves like a fully-featured SQLite database — same SQL support, same transaction semantics — except nothing is ever persisted, and it disappears the moment the connection closes.</p>
+<p>An in-memory database&rsquo;s lifetime is exactly the lifetime of the database connection that created it. <strong>The moment that connection is closed, the entire database is gone, irrecoverably.</strong> There is no implicit &ldquo;attach to an existing in-memory db by name&rdquo; the way you might expect from a shared resource. Therefore, each :memory: connection is independent and private. Opening :memory: twice — even in the same process — gives you two completely separate, unrelated databases, not two handles to the same one. And <strong>WAL mode doesn&rsquo;t apply</strong> to in-memory databases.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>conn1 <span style="color:#f92672">=</span> sqlite3<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&#34;:memory:&#34;</span>)
+</span></span><span style="display:flex;"><span>conn2 <span style="color:#f92672">=</span> sqlite3<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&#34;:memory:&#34;</span>)
+</span></span><span style="display:flex;"><span>conn1<span style="color:#f92672">.</span>execute(<span style="color:#e6db74">&#34;CREATE TABLE t (x)&#34;</span>)
+</span></span><span style="display:flex;"><span>conn2<span style="color:#f92672">.</span>execute(<span style="color:#e6db74">&#34;SELECT * FROM t&#34;</span>)  <span style="color:#75715e"># ERROR: no such table — conn2 has its own empty db</span>
+</span></span></code></pre></div><p>Use cases:</p>
+<ol>
+<li>for test</li>
+<li>caching for SQL queries</li>
+<li>ETL staging step, query and transform data entirely in RAM before writing final results elsewhere</li>
+</ol>
+<h3 id="sqlite3-module-in-python">sqlite3 Module in Python<a hidden class="anchor" aria-hidden="true" href="#sqlite3-module-in-python">#</a></h3>
+<p><strong>connect</strong></p>
+<p>If <code>connect</code> a non-existed database file, SQLite would create it. This interface has a few important parameters:</p>
+<ul>
+<li><code>check_same_thread=True</code>, prevent the connection sharing among multiple threads in Python level</li>
+<li><code>timeout=5.0</code>, equals <code>PRAGMA busy_timeout = 5000;</code>, 5 seconds</li>
+<li><code>autocommit</code>, should be set to <strong><code>False</code></strong>, and use <code>commit()</code> and <code>rollback()</code> to close transaction explicitly. If it is True, commit() and rollback() callings have no effect. (&gt;=3.12)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># compatible style</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> sys<span style="color:#f92672">.</span>version_info <span style="color:#f92672">&gt;=</span> (<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">12</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># implicit BEGIN, explicit commit and rollback</span>
+</span></span><span style="display:flex;"><span>    self<span style="color:#f92672">.</span>conn <span style="color:#f92672">=</span> sqlite3<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&#39;items.db&#39;</span>, autocommit<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># default isolation level: DEFERRED</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># no implicit BEGIN for SELECT, commit is harmless!</span>
+</span></span><span style="display:flex;"><span>    self<span style="color:#f92672">.</span>conn <span style="color:#f92672">=</span> sqlite3<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&#39;items.db&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># turn on foreing key</span>
+</span></span><span style="display:flex;"><span>self<span style="color:#f92672">.</span>conn<span style="color:#f92672">.</span>execute(<span style="color:#e6db74">&#34;PRAGMA foreign_keys = ON;&#34;</span>)
+</span></span></code></pre></div><p><strong>execute</strong></p>
+<p><code>execute</code> could be called on both connection and cursor. Under the hood, they are the same. If it is called on connection, a brand-new cursor would be returned. You can throw it away, or chain it with fetchall(). It can only issue one single SQL statement, and support <strong><code>?</code></strong> placeholders for parameter binding. Control transaction by commit() and rollback().</p>
+<p><strong>executemany</strong></p>
+<p>Repeatedly execute the single SQL statement with an iterable parameter.</p>
+<p><strong>executescript</strong></p>
+<p>Take a SQL string to execute. If autocommit=False, no implicit transaction control.</p>
+<hr>
+<h2 id="postgresql">PostgreSQL<a hidden class="anchor" aria-hidden="true" href="#postgresql">#</a></h2>
+<ul>
+<li><a href="https://www.postgresql.org/">https://www.postgresql.org/</a></li>
+<li>Client-server Architecture.</li>
+</ul>
+<h3 id="plpgsql">PL/pgSQL<a hidden class="anchor" aria-hidden="true" href="#plpgsql">#</a></h3>
+<blockquote>
+<p>PL: Procedure Language</p></blockquote>
+<p>Plain SQL is declarative — great for querying, but it has no loops, no variables, no branching logic. PL/pgSQL adds procedural programming capability inside the database, so you can write complex logic that runs server-side (faster — no round trips to the app) instead of pulling data out, processing it in application code, and pushing it back. (SQLite doesn&rsquo;t have it since it is serverless and it is binded with app.)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- no transaction can be inside Function
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">OR</span> <span style="color:#66d9ef">REPLACE</span> <span style="color:#66d9ef">FUNCTION</span> function_name(param1 <span style="color:#66d9ef">TYPE</span>, param2 <span style="color:#66d9ef">TYPE</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">RETURNS</span> return_type <span style="color:#66d9ef">AS</span> <span style="color:#960050;background-color:#1e0010">$$</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">DECLARE</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- variable declarations
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    my_var INT;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">BEGIN</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- procedural logic here
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">RETURN</span> some_value;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">END</span>;
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">$$</span> <span style="color:#66d9ef">LANGUAGE</span> plpgsql;
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://xinlin-z.github.io/tags/database/">Database</a></li>
+      <li><a href="https://xinlin-z.github.io/tags/sql/">SQL</a></li>
+      <li><a href="https://xinlin-z.github.io/tags/python/">Python</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="https://xinlin-z.github.io/">Xinlin&#39;s Blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

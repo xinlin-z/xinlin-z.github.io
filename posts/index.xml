@@ -6,8 +6,27 @@
     <description>Recent content in Posts on Xinlin&#39;s Blog</description>
     <generator>Hugo -- 0.147.8</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 19 May 2026 12:29:25 +1200</lastBuildDate>
+    <lastBuildDate>Sun, 19 Jul 2026 12:29:25 +1200</lastBuildDate>
     <atom:link href="https://xinlin-z.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Database Practice: SQLite and PostgreSQL</title>
+      <link>https://xinlin-z.github.io/posts/dbms/</link>
+      <pubDate>Sun, 19 Jul 2026 12:29:25 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/posts/dbms/</guid>
+      <description>&lt;h2 id=&#34;database-design&#34;&gt;Database Design&lt;/h2&gt;
+&lt;p&gt;Database is a system to manage data, which is built on file system offered by OS. Broadly speaking, there are two cases in which database is utilized:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;OLTP&lt;/strong&gt;, OnLine Transaction Process, for supporting daily business&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;OLAP&lt;/strong&gt;, OnLine Analysis Process, for supporting data analysis in &lt;strong&gt;Data Warehouse&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Database design is actually the design of data tables (entities) and their relationships. The design purposes are:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;store information without unnecessary redundancy&lt;/li&gt;
+&lt;li&gt;retrieve information easily and fast&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;normal-form-nf&#34;&gt;Normal Form (NF)&lt;/h3&gt;
+&lt;p&gt;NFs are used to eliminate information redundancy. The higher NF, the less redundancy.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Object Detection, From R-CNN family to YOLO series</title>
       <link>https://xinlin-z.github.io/posts/rcnn-yolo/</link>
@@ -31,7 +50,7 @@
       <link>https://xinlin-z.github.io/posts/mean-average-precision/</link>
       <pubDate>Thu, 19 Feb 2026 12:29:25 +1200</pubDate>
       <guid>https://xinlin-z.github.io/posts/mean-average-precision/</guid>
-      <description>&lt;p&gt;Mean Aveage Precision (mAP) is actually not an easy-understanding metric.&lt;/p&gt;
+      <description>&lt;p&gt;mean Aveage Precision (mAP) is actually not an easy-understanding metric.&lt;/p&gt;
 &lt;h2 id=&#34;confusing-matrix&#34;&gt;Confusing Matrix&lt;/h2&gt;
 &lt;table&gt;
   &lt;thead&gt;
@@ -63,7 +82,7 @@
       &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;Normally people draw confusing matrix like this above. Left column is ground Truth (T), first row is the Prediction (P). In this confusing matrix, we have 3 classes, A, B, and C. Each class has 16 samples (sum of each row) which means data is balanced. If the model does a good job, its confusing matrix should have a very clear diagonal. In this example, the model is very confused about class C. Given class C, nearly half of the predictions are B (7/16).&lt;/p&gt;</description>
+&lt;p&gt;Normally people draw confusing matrix like this above. Left-most column is ground Truth (T), first row is the Prediction (P). In this confusing matrix, we have 3 classes, A, B, and C. Each class has 16 samples (sum of each row) which means data is balanced. If the model does a good job, its confusing matrix should have a very clear diagonal. In this example, the model is very confused about class C. Given class C, nearly half of the predictions are B (7/16).&lt;/p&gt;</description>
     </item>
     <item>
       <title>Convolutional Neuron Networks (CNN)</title>

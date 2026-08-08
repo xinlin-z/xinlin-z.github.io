@@ -6,8 +6,27 @@
     <description>Recent content in Python on Xinlin&#39;s Blog</description>
     <generator>Hugo -- 0.147.8</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 16 Mar 2026 11:22:03 +1200</lastBuildDate>
+    <lastBuildDate>Sun, 19 Jul 2026 12:29:25 +1200</lastBuildDate>
     <atom:link href="https://xinlin-z.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Database Practice: SQLite and PostgreSQL</title>
+      <link>https://xinlin-z.github.io/posts/dbms/</link>
+      <pubDate>Sun, 19 Jul 2026 12:29:25 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/posts/dbms/</guid>
+      <description>&lt;h2 id=&#34;database-design&#34;&gt;Database Design&lt;/h2&gt;
+&lt;p&gt;Database is a system to manage data, which is built on file system offered by OS. Broadly speaking, there are two cases in which database is utilized:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;OLTP&lt;/strong&gt;, OnLine Transaction Process, for supporting daily business&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;OLAP&lt;/strong&gt;, OnLine Analysis Process, for supporting data analysis in &lt;strong&gt;Data Warehouse&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Database design is actually the design of data tables (entities) and their relationships. The design purposes are:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;store information without unnecessary redundancy&lt;/li&gt;
+&lt;li&gt;retrieve information easily and fast&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;normal-form-nf&#34;&gt;Normal Form (NF)&lt;/h3&gt;
+&lt;p&gt;NFs are used to eliminate information redundancy. The higher NF, the less redundancy.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Concurrent Programming in Python</title>
       <link>https://xinlin-z.github.io/posts/concurrent-python/</link>

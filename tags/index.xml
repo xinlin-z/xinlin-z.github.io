@@ -6,8 +6,29 @@
     <description>Recent content in Tags on Xinlin&#39;s Blog</description>
     <generator>Hugo -- 0.147.8</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 19 May 2026 12:29:25 +1200</lastBuildDate>
+    <lastBuildDate>Sun, 19 Jul 2026 12:29:25 +1200</lastBuildDate>
     <atom:link href="https://xinlin-z.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Database</title>
+      <link>https://xinlin-z.github.io/tags/database/</link>
+      <pubDate>Sun, 19 Jul 2026 12:29:25 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/tags/database/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Python</title>
+      <link>https://xinlin-z.github.io/tags/python/</link>
+      <pubDate>Sun, 19 Jul 2026 12:29:25 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/tags/python/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>SQL</title>
+      <link>https://xinlin-z.github.io/tags/sql/</link>
+      <pubDate>Sun, 19 Jul 2026 12:29:25 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/tags/sql/</guid>
+      <description></description>
+    </item>
     <item>
       <title>CNN</title>
       <link>https://xinlin-z.github.io/tags/cnn/</link>
@@ -34,13 +55,6 @@
       <link>https://xinlin-z.github.io/tags/algorithm/</link>
       <pubDate>Mon, 16 Mar 2026 11:22:03 +1200</pubDate>
       <guid>https://xinlin-z.github.io/tags/algorithm/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Python</title>
-      <link>https://xinlin-z.github.io/tags/python/</link>
-      <pubDate>Mon, 16 Mar 2026 11:22:03 +1200</pubDate>
-      <guid>https://xinlin-z.github.io/tags/python/</guid>
       <description></description>
     </item>
     <item>
