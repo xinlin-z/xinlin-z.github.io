@@ -16,8 +16,8 @@
       <description>&lt;h2 id=&#34;database-design&#34;&gt;Database Design&lt;/h2&gt;
 &lt;p&gt;Database is a system to manage data, which is built on file system offered by OS. Broadly speaking, there are two cases in which database is utilized:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;OLTP&lt;/strong&gt;, OnLine Transaction Process, for supporting daily business&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;OLAP&lt;/strong&gt;, OnLine Analysis Process, for supporting data analysis in &lt;strong&gt;Data Warehouse&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;OLTP&lt;/strong&gt;, OnLine Transaction Processing, for supporting daily business&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;OLAP&lt;/strong&gt;, OnLine Analysis Processing, for supporting data analysis in &lt;strong&gt;Data Warehouse&lt;/strong&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;Database design is actually the design of data tables (entities) and their relationships. The design purposes are:&lt;/p&gt;
 &lt;ol&gt;
@@ -41,7 +41,7 @@
       <link>https://xinlin-z.github.io/posts/concurrent-python/</link>
       <pubDate>Mon, 16 Mar 2026 11:22:03 +1200</pubDate>
       <guid>https://xinlin-z.github.io/posts/concurrent-python/</guid>
-      <description>&lt;p&gt;Modern Python has come up to free-threaded version. We can achieve real multi-thread programming in Python. Programmers need to be more careful. Generally speaking, multi-thread is easier than multi-process since resource-sharing is straightforward because all threads are in one process. Python offers lots of thread synchronization and coordination primitives!&lt;/p&gt;
+      <description>&lt;p&gt;Modern Python has come up to free-threading version. We can achieve real multi-thread programming in Python. Programmers need to be more careful. Generally speaking, multi-thread is easier than multi-process since resource-sharing is straightforward because all threads are in one process. Python offers lots of thread synchronization and coordination primitives!&lt;/p&gt;
 &lt;h2 id=&#34;race-condition-and-atomicity&#34;&gt;Race Condition and Atomicity&lt;/h2&gt;
 &lt;p&gt;Race Condition is a result of uncontrolled access to shared resources. When the wrong access pattern happens, something unexpected occurs. Atomicity is the key to avoid race conditions. If an operation is atomic, no other thread can interrupt it mid-way. It either hasn&amp;rsquo;t started, or it is completely finished.&lt;/p&gt;</description>
     </item>
