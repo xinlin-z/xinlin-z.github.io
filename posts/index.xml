@@ -127,6 +127,29 @@
 &lt;p&gt;I would like to think of backtracking algorithm as a search method. Imaging you are in a forest and you need find a way out. There are multiple choices at each intersection, and you have no idea about which direction or path is right. So, you pick out one direction randomly or in any order you like and keep on going. If it is a dead end, you go back and choose another direction, otherwise you find a way out. During the whole process, there might be lots of &amp;ldquo;going back and choosing again&amp;rdquo; moments which is actually the spirit of backtracking.&lt;/p&gt;</description>
     </item>
     <item>
+      <title>How to Write Makefile?</title>
+      <link>https://xinlin-z.github.io/posts/make/</link>
+      <pubDate>Mon, 02 Jun 2025 20:03:25 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/posts/make/</guid>
+      <description>&lt;p&gt;Make is like a chef, which use &lt;strong&gt;recipes&lt;/strong&gt; to produce software. And the recipe is called Makefile. Inside makefile, there are lots of targets.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-make&#34; data-lang=&#34;make&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Makefile basic syntax, this line is comment.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;target&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; prerequisites     &lt;span style=&#34;color:#75715e&#34;&gt;# space-separated list
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;lt;tab&amp;gt;&lt;/span&gt;     &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;shell-commands&lt;/span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;# command run in shell
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;basics&#34;&gt;Basics&lt;/h2&gt;
+&lt;p&gt;Make uses file modification timestamps (mtime) to determine if a target needs rebuilding:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;If the target does not exist, make runs the following commands.&lt;/li&gt;
+&lt;li&gt;If any prerequisite is newer than the target, make runs the command to rebuild it.&lt;/li&gt;
+&lt;li&gt;If the target is newer than all prerequisites, make does nothing.&lt;/li&gt;
+&lt;li&gt;If any prerequisite is missing, make tries to make missing prerequisite, and this new prerequisite must be newer than target, go to 2.&lt;/li&gt;
+&lt;li&gt;Prerequisite list could be empty. E.g. phony targets. Phony targets could also have prerequisites.&lt;/li&gt;
+&lt;li&gt;Make makes the target always the newest.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$ make &amp;lt;target&amp;gt;       &lt;span style=&#34;color:#75715e&#34;&gt;# default Makefile, capital M&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$ make -f &amp;lt;makefile&amp;gt;  &lt;span style=&#34;color:#75715e&#34;&gt;# specify a makefile&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If target is missing in make command line, the first target in Makefile is the default target.&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>Shell Programming</title>
       <link>https://xinlin-z.github.io/posts/shell-script/</link>
       <pubDate>Sun, 01 Jun 2025 20:03:25 +1200</pubDate>

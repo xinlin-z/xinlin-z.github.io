@@ -280,16 +280,24 @@ What is Backtracking Algorithm? I would like to think of backtracking algorithm 
 
 <article class="post-entry"> 
   <header class="entry-header">
-    <h2 class="entry-hint-parent">Shell Programming
+    <h2 class="entry-hint-parent">How to Write Makefile?
     </h2>
   </header>
   <div class="entry-content">
-    <p>Shell is a powerful Command Line Interface (CLI) in Linux. We type commands, and shell executes them in a beautiful and sophisticated way. Shell is also a super flexible programing language for Linux. It could bind commands together with conditions, loops and various expansions ($,~). Shell is actually a raw interpreting programming language in which there is no compiled middle bytecode. In this post, I use bash, which is the most popular and widely deployed shell implementation.
+    <p>Make is like a chef, which use recipes to produce software. And the recipe is called Makefile. Inside makefile, there are lots of targets.
+# Makefile basic syntax, this line is comment. target: prerequisites # space-separated list &lt;tab&gt; shell-commands # command run in shell Basics Make uses file modification timestamps (mtime) to determine if a target needs rebuilding:
+If the target does not exist, make runs the following commands. If any prerequisite is newer than the target, make runs the command to rebuild it. If the target is newer than all prerequisites, make does nothing. If any prerequisite is missing, make tries to make missing prerequisite, and this new prerequisite must be newer than target, go to 2. Prerequisite list could be empty. E.g. phony targets. Phony targets could also have prerequisites. Make makes the target always the newest. $ make &lt;target&gt; # default Makefile, capital M $ make -f &lt;makefile&gt; # specify a makefile If target is missing in make command line, the first target in Makefile is the default target.
 ...</p>
   </div>
-  <footer class="entry-footer"><span title='2025-06-01 20:03:25 +1200 NZST'>June 1, 2025</span></footer>
-  <a class="entry-link" aria-label="post link to Shell Programming" href="https://xinlin-z.github.io/posts/shell-script/"></a>
+  <footer class="entry-footer"><span title='2025-06-02 20:03:25 +1200 NZST'>June 2, 2025</span></footer>
+  <a class="entry-link" aria-label="post link to How to Write Makefile?" href="https://xinlin-z.github.io/posts/make/"></a>
 </article>
+<footer class="page-footer">
+  <nav class="pagination">
+    <a class="next" href="https://xinlin-z.github.io/posts/page/2/">Next&nbsp;&nbsp;»
+    </a>
+  </nav>
+</footer>
     </main>
     
 <footer class="footer">

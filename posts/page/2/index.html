@@ -5,11 +5,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
-<title>Linux | Xinlin&#39;s Blog</title>
+<title>Posts | Xinlin&#39;s Blog</title>
 <meta name="keywords" content="">
-<meta name="description" content="">
+<meta name="description" content="Posts - Xinlin&#39;s Blog">
 <meta name="author" content="">
-<link rel="canonical" href="https://xinlin-z.github.io/tags/linux/">
+<link rel="canonical" href="https://xinlin-z.github.io/posts/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.381f5ace0de1ab2efa08db7875cfe0360217fb9fce6341c41e7c271d15965494.css" integrity="sha256-OB9azg3hqy76CNt4dc/gNgIX&#43;5/OY0HEHnwnHRWWVJQ=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://xinlin-z.github.io/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://xinlin-z.github.io/favicon-16x16.png">
@@ -18,8 +18,8 @@
 <link rel="mask-icon" href="https://xinlin-z.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" type="application/rss+xml" href="https://xinlin-z.github.io/tags/linux/index.xml">
-<link rel="alternate" hreflang="en" href="https://xinlin-z.github.io/tags/linux/">
+<link rel="alternate" type="application/rss+xml" href="https://xinlin-z.github.io/posts/index.xml">
+<link rel="alternate" hreflang="en" href="https://xinlin-z.github.io/posts/">
 <noscript>
     <style>
         #theme-toggle,
@@ -56,15 +56,30 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://xinlin-z.github.io/tags/linux/">
+</noscript><meta property="og:url" content="https://xinlin-z.github.io/posts/">
   <meta property="og:site_name" content="Xinlin&#39;s Blog">
-  <meta property="og:title" content="Linux">
+  <meta property="og:title" content="Posts">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Linux">
+<meta name="twitter:title" content="Posts">
 <meta name="twitter:description" content="">
 
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://xinlin-z.github.io/posts/"
+    }
+  ]
+}
+</script>
 </head>
 
 <body class="list" id="top">
@@ -114,7 +129,7 @@
             </li>
             <li>
                 <a href="https://xinlin-z.github.io/posts/" title="Posts">
-                    <span>Posts</span>
+                    <span class="active">Posts</span>
                 </a>
             </li>
             <li>
@@ -133,26 +148,11 @@
 <main class="main"> 
 <header class="page-header">
   <h1>
-    Linux
+    Posts
   </h1>
 </header>
 
-<article class="post-entry tag-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">How to Write Makefile?
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>Make is like a chef, which use recipes to produce software. And the recipe is called Makefile. Inside makefile, there are lots of targets.
-# Makefile basic syntax, this line is comment. target: prerequisites # space-separated list &lt;tab&gt; shell-commands # command run in shell Basics Make uses file modification timestamps (mtime) to determine if a target needs rebuilding:
-If the target does not exist, make runs the following commands. If any prerequisite is newer than the target, make runs the command to rebuild it. If the target is newer than all prerequisites, make does nothing. If any prerequisite is missing, make tries to make missing prerequisite, and this new prerequisite must be newer than target, go to 2. Prerequisite list could be empty. E.g. phony targets. Phony targets could also have prerequisites. Make makes the target always the newest. $ make &lt;target&gt; # default Makefile, capital M $ make -f &lt;makefile&gt; # specify a makefile If target is missing in make command line, the first target in Makefile is the default target.
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2025-06-02 20:03:25 +1200 NZST'>June 2, 2025</span></footer>
-  <a class="entry-link" aria-label="post link to How to Write Makefile?" href="https://xinlin-z.github.io/posts/make/"></a>
-</article>
-
-<article class="post-entry tag-entry"> 
+<article class="post-entry"> 
   <header class="entry-header">
     <h2 class="entry-hint-parent">Shell Programming
     </h2>
@@ -164,6 +164,13 @@ If the target does not exist, make runs the following commands. If any prerequis
   <footer class="entry-footer"><span title='2025-06-01 20:03:25 +1200 NZST'>June 1, 2025</span></footer>
   <a class="entry-link" aria-label="post link to Shell Programming" href="https://xinlin-z.github.io/posts/shell-script/"></a>
 </article>
+<footer class="page-footer">
+  <nav class="pagination">
+    <a class="prev" href="https://xinlin-z.github.io/posts/">
+      «&nbsp;Prev&nbsp;
+    </a>
+  </nav>
+</footer>
     </main>
     
 <footer class="footer">
