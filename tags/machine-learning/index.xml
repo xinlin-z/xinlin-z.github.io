@@ -45,7 +45,7 @@
       &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;Normally people draw confusing matrix like this above. Left-most column is ground Truth (T), first row is the Prediction (P). In this confusing matrix, we have 3 classes, A, B, and C. Each class has 16 samples (sum of each row) which means data is balanced. If the model does a good job, its confusing matrix should have a very clear diagonal. In this example, the model is very confused about class C. Given class C, nearly half of the predictions are B (7/16).&lt;/p&gt;</description>
+&lt;p&gt;Normally people draw confusing matrix like this above. Left-most column is ground Truth (T), head row is the Prediction (P). In this confusing matrix, we have 3 classes, A, B, and C. Each class has 16 samples (sum of each row) which means data is balanced. If the model does a good job, its confusing matrix should have a very clear diagonal. In this example, the model is very confused about class C. Given class C, nearly half of the predictions are B (7/16).&lt;/p&gt;</description>
     </item>
     <item>
       <title>Normalization, Regularization and Learning Rate Scheduling</title>

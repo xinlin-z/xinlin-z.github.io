@@ -139,6 +139,22 @@
 
 <article class="post-entry tag-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">C, ELF and Zig
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>There are something we should always remember. They are basics and foundations of computing system. You have to master them to write and understand C program very well.
+What is the difference between deleting a segment of code and killing a person…?
+Cola, My FirstCat
+C Programming Language C is more than 50 years old, which is still very popular and good. C or Non-C. ? C is high-level and portable assembly language. Assembly languange is not portalbe. It has to be associated with ISA (Instruction Set Architecture). C is just a thin portable layer above assembly. Modern C: ANSI-C/C89/C90 –&gt; C99 –&gt; C11 –&gt; C17 –&gt; C23 C is a strictly typing and compiling language. You mindset is about CPU, memory, bits and bytes while programming in C. Compilation Each .c file is compiled separately. We can get .o files from .c files. Then all .o files are linked together and produce executable binary file. Therefore we have make -j&lt;N&gt;. Before compilation, there is a pre-processing step in which all pre-processing macros are executed or replaced. The pre-processing results are normally stored in .i files, which are normally invisible temperory files. gcc -E command gives us .i files. We can also ask for generate assembly files .s by gcc -S command from .c files. Compile .s file can also give us .o file. .o files are in ELF format. We can get .o files from .c, .s or objcopy. .c –&gt; [.i –&gt; .s – &gt;] .o –&gt; ELF
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2025-06-03 20:03:25 +1200 NZST'>June 3, 2025</span></footer>
+  <a class="entry-link" aria-label="post link to C, ELF and Zig" href="https://xinlin-z.github.io/posts/c-elf-zig/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">How to Write Makefile?
     </h2>
   </header>

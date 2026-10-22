@@ -6,8 +6,41 @@
     <description>Recent content in Linux on Xinlin&#39;s Blog</description>
     <generator>Hugo -- 0.147.8</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 02 Jun 2025 20:03:25 +1200</lastBuildDate>
+    <lastBuildDate>Tue, 03 Jun 2025 20:03:25 +1200</lastBuildDate>
     <atom:link href="https://xinlin-z.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C, ELF and Zig</title>
+      <link>https://xinlin-z.github.io/posts/c-elf-zig/</link>
+      <pubDate>Tue, 03 Jun 2025 20:03:25 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/posts/c-elf-zig/</guid>
+      <description>&lt;p&gt;There are something we should always remember. They are basics and foundations of computing system. You have to master them to write and understand C program very well.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;What is the difference between deleting a segment of code and killing a person&amp;hellip;?&lt;/p&gt;&lt;/blockquote&gt;
+&lt;figure&gt;
+    &lt;img loading=&#34;lazy&#34; src=&#34;kele_20220105.png&#34;
+         alt=&#34;Cola, My FirstCat&#34;/&gt; &lt;figcaption&gt;
+            &lt;p&gt;Cola, My FirstCat&lt;/p&gt;
+        &lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;c-programming-language&#34;&gt;C Programming Language&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;C is more than 50 years old, which is still very popular and good.&lt;/li&gt;
+&lt;li&gt;C or Non-C. ?&lt;/li&gt;
+&lt;li&gt;C is high-level and portable assembly language. Assembly languange is not portalbe. It has to be associated with ISA (Instruction Set Architecture). C is just a thin portable layer above assembly.&lt;/li&gt;
+&lt;li&gt;Modern C: ANSI-C/C89/C90 &amp;ndash;&amp;gt; C99 &amp;ndash;&amp;gt; C11 &amp;ndash;&amp;gt; C17 &amp;ndash;&amp;gt; C23&lt;/li&gt;
+&lt;li&gt;C is a strictly typing and compiling language. You mindset is about CPU, memory, bits and bytes while programming in C.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;compilation&#34;&gt;Compilation&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Each .c file is compiled separately. We can get &lt;code&gt;.o&lt;/code&gt; files from &lt;code&gt;.c&lt;/code&gt; files. Then all .o files are linked together and produce executable binary file. Therefore we have &lt;code&gt;make -j&amp;lt;N&amp;gt;&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Before compilation, there is a pre-processing step in which all pre-processing macros are executed or replaced. The pre-processing results are normally stored in &lt;code&gt;.i&lt;/code&gt; files, which are normally invisible temperory files. &lt;code&gt;gcc -E&lt;/code&gt; command gives us .i files.&lt;/li&gt;
+&lt;li&gt;We can also ask for generate assembly files &lt;code&gt;.s&lt;/code&gt; by &lt;code&gt;gcc -S&lt;/code&gt; command from .c files. Compile .s file can also give us .o file.&lt;/li&gt;
+&lt;li&gt;.o files are in ELF format. We can get .o files from .c, .s or objcopy.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;.c &amp;ndash;&amp;gt; [.i &amp;ndash;&amp;gt; .s &amp;ndash; &amp;gt;] .o &amp;ndash;&amp;gt; ELF&lt;/p&gt;</description>
+    </item>
     <item>
       <title>How to Write Makefile?</title>
       <link>https://xinlin-z.github.io/posts/make/</link>

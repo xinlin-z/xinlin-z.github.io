@@ -82,7 +82,7 @@
       &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;Normally people draw confusing matrix like this above. Left-most column is ground Truth (T), first row is the Prediction (P). In this confusing matrix, we have 3 classes, A, B, and C. Each class has 16 samples (sum of each row) which means data is balanced. If the model does a good job, its confusing matrix should have a very clear diagonal. In this example, the model is very confused about class C. Given class C, nearly half of the predictions are B (7/16).&lt;/p&gt;</description>
+&lt;p&gt;Normally people draw confusing matrix like this above. Left-most column is ground Truth (T), head row is the Prediction (P). In this confusing matrix, we have 3 classes, A, B, and C. Each class has 16 samples (sum of each row) which means data is balanced. If the model does a good job, its confusing matrix should have a very clear diagonal. In this example, the model is very confused about class C. Given class C, nearly half of the predictions are B (7/16).&lt;/p&gt;</description>
     </item>
     <item>
       <title>Convolutional Neuron Networks (CNN)</title>
@@ -125,6 +125,39 @@
 &lt;p&gt;Take Algorithm as Technology!&lt;/p&gt;&lt;/blockquote&gt;
 &lt;h2 id=&#34;what-is-backtracking-algorithm&#34;&gt;What is Backtracking Algorithm?&lt;/h2&gt;
 &lt;p&gt;I would like to think of backtracking algorithm as a search method. Imaging you are in a forest and you need find a way out. There are multiple choices at each intersection, and you have no idea about which direction or path is right. So, you pick out one direction randomly or in any order you like and keep on going. If it is a dead end, you go back and choose another direction, otherwise you find a way out. During the whole process, there might be lots of &amp;ldquo;going back and choosing again&amp;rdquo; moments which is actually the spirit of backtracking.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>C, ELF and Zig</title>
+      <link>https://xinlin-z.github.io/posts/c-elf-zig/</link>
+      <pubDate>Tue, 03 Jun 2025 20:03:25 +1200</pubDate>
+      <guid>https://xinlin-z.github.io/posts/c-elf-zig/</guid>
+      <description>&lt;p&gt;There are something we should always remember. They are basics and foundations of computing system. You have to master them to write and understand C program very well.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;What is the difference between deleting a segment of code and killing a person&amp;hellip;?&lt;/p&gt;&lt;/blockquote&gt;
+&lt;figure&gt;
+    &lt;img loading=&#34;lazy&#34; src=&#34;kele_20220105.png&#34;
+         alt=&#34;Cola, My FirstCat&#34;/&gt; &lt;figcaption&gt;
+            &lt;p&gt;Cola, My FirstCat&lt;/p&gt;
+        &lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;c-programming-language&#34;&gt;C Programming Language&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;C is more than 50 years old, which is still very popular and good.&lt;/li&gt;
+&lt;li&gt;C or Non-C. ?&lt;/li&gt;
+&lt;li&gt;C is high-level and portable assembly language. Assembly languange is not portalbe. It has to be associated with ISA (Instruction Set Architecture). C is just a thin portable layer above assembly.&lt;/li&gt;
+&lt;li&gt;Modern C: ANSI-C/C89/C90 &amp;ndash;&amp;gt; C99 &amp;ndash;&amp;gt; C11 &amp;ndash;&amp;gt; C17 &amp;ndash;&amp;gt; C23&lt;/li&gt;
+&lt;li&gt;C is a strictly typing and compiling language. You mindset is about CPU, memory, bits and bytes while programming in C.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;compilation&#34;&gt;Compilation&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Each .c file is compiled separately. We can get &lt;code&gt;.o&lt;/code&gt; files from &lt;code&gt;.c&lt;/code&gt; files. Then all .o files are linked together and produce executable binary file. Therefore we have &lt;code&gt;make -j&amp;lt;N&amp;gt;&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Before compilation, there is a pre-processing step in which all pre-processing macros are executed or replaced. The pre-processing results are normally stored in &lt;code&gt;.i&lt;/code&gt; files, which are normally invisible temperory files. &lt;code&gt;gcc -E&lt;/code&gt; command gives us .i files.&lt;/li&gt;
+&lt;li&gt;We can also ask for generate assembly files &lt;code&gt;.s&lt;/code&gt; by &lt;code&gt;gcc -S&lt;/code&gt; command from .c files. Compile .s file can also give us .o file.&lt;/li&gt;
+&lt;li&gt;.o files are in ELF format. We can get .o files from .c, .s or objcopy.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;.c &amp;ndash;&amp;gt; [.i &amp;ndash;&amp;gt; .s &amp;ndash; &amp;gt;] .o &amp;ndash;&amp;gt; ELF&lt;/p&gt;</description>
     </item>
     <item>
       <title>How to Write Makefile?</title>
